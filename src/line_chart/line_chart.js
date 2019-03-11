@@ -1,5 +1,17 @@
 import { Scaffold } from 'core'
-import { MainLayer, MapLayer, NavigatorLayer } from './layers'
+import { MainLayer, MapLayer } from './layers'
+
+// изначальные
+window.map_d = 50;
+
+// var main_w = 1120; //вся ширина данных
+
+// задает юзер
+window.map_width = 300; // 200
+
+// вычисляем
+window.main_d = 100;  // 140
+window.move_coef = 2; // 2.8
 
 class LineChart {
 
