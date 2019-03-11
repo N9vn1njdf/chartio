@@ -1,5 +1,3 @@
-import Chart from './chart'
+import LineChart from './line_chart/line_chart'
 
-document.addEventListener('DOMContentLoaded', function(){
-   new Chart('chart', 600, 400);
-});
+window.LineChart = LineChart;

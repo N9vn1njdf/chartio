@@ -20,5 +20,11 @@ module.exports = {
         }
       }
     ]
+  },
+  resolve: {
+    alias: {
+      elements: path.resolve(__dirname, 'src/elements/index.js'),
+      core: path.resolve(__dirname, 'src/core/index.js')
+    }
   }
 }

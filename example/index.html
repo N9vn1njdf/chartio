@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script src="../dist/main.js"></script>
+      <script>
+         var data = [
+            {x: 'time', y: 12},
+            {x: 'time', y: 32},
+            {x: 'time', y: 22},
+            {x: 'time', y: 15},
+            {x: 'time', y: 14},
+            {x: 'time', y: 18},
+            {x: 'time', y: 23},
+            {x: 'time', y: 21},
+            {x: 'time', y: 14},
+            {x: 'time', y: 18},
+            {x: 'time', y: 21},
+         ];
+
+         document.addEventListener('DOMContentLoaded', function(){
+            var chart = new LineChart('chart', 600, 400);
+            chart.setData(data);
+         });
+      </script>
+      <style>
+         canvas {
+            background: #f5f5f5;
+            border: 1px solid #b3b3b3;
+         }
+      </style>
+   </head>
+   <body>
+      <canvas id="chart">
+   </body>
+</html>
