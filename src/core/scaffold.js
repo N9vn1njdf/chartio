@@ -1,28 +1,25 @@
-import Mouse from './mouse.js';
+import Input from './input.js';
 
 export default class Scaffold {
 
    constructor({id, width, height, children}) {
-      var canvas = document.getElementById(id);
-      var ctx = canvas.getContext("2d");
+      this.canvas = document.getElementById(id);
+      this.canvas.width = width;
+      this.canvas.height = height;
 
-      this.width = canvas.width = width;
-      this.height = canvas.height = height;
-      this.children = children;
+      this.input = new Input(this.canvas);
 
-      Mouse.init(canvas);
-      this.render(ctx);
+      this.children = children || [];
+      this.render();
    }
 
-   render(ctx) {
-      ctx.clearRect(0, 0, this.width, this.height);
-      let self = this;
+   render() {
+      var ctx = this.canvas.getContext('2d');
 
-      for(let i in self.children) {
-         self.children[i].render(ctx);
-      }
-
-      requestAnimationFrame(() => self.render(ctx));
+      ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.children.forEach((element) => element.render(ctx, this.input));
+      
+      requestAnimationFrame(() => this.render());
    }
 
    add(element) {

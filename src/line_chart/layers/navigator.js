@@ -1,36 +1,49 @@
 import { Rectangle } from 'elements'
-import { NavigatorObserver } from '../observers'
+import { Event } from 'core'
 
-export default class Navigator {
+export default class Navigator extends Event {
 
-   static init({width, height}) {
-      Navigator.width = 300;//window.map_width;
+   constructor({width, height}) {
+      super();
       
-      var x = width-Navigator.width;
+      var start_w = 300;
+      var start_x = width-start_w;
 
-      var left = new Rectangle({w: x, h: height, color: 'rgba(0, 255, 0, 0.1)'});
-      var right = new Rectangle({x: x+Navigator.width, w: width, h: height, color: 'rgba(0, 255, 0, 0.1)'});
-      Navigator._navigator = new Rectangle({x: x, w: Navigator.width, h: height, draggable: {x: true, y: false}});
+      this.navigator = new Rectangle({x: start_x, w: start_w, h: height, draggable: {x: true}});
       
-      Navigator._navigator.$on('dragging', (mouse) => {
-         left.w = Navigator._navigator.x;
-         right.x = Navigator._navigator.x + Navigator.width;
-
-         NavigatorObserver.broadcast();
+      this.navigator.on('dragging', (mouse) => {         
+         left.w = this.offset;
+         right.x = this.offset + this.width;
+         this.emit('offset');
       });
 
-      Navigator.element = new Rectangle({
+      var left = new Rectangle({w: start_x, h: height, color: 'rgba(0, 0, 0, 0.1)'});
+      var right = new Rectangle({x: this.offset + this.width, w: width, h: height, color: 'rgba(0, 0, 0, 0.1)'});
+      
+      this.element = new Rectangle({
          w: width,
          h: height,
          children: [
             left,
-            Navigator._navigator,
+            this.navigator,
             right,
          ]
       });
    }
 
-   static get offset() {
-      return Navigator._navigator.x;
+   get width() {      
+      return this.navigator.w;
+   }
+
+   set width(value) {      
+      this.navigator.w = value;
+   }
+
+   get offset() {
+      return this.navigator.x;
+   }
+
+   set offset(value) {      
+      this.navigator.x = value;
    }
 }

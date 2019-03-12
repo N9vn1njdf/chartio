@@ -1,7 +1,9 @@
 import Circle from './circle.js';
 import Rectangle from './rectangle.js';
+import Position from './position.js';
 
 export {
    Circle,
    Rectangle,
+   Position,
 }

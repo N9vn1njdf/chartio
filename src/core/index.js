@@ -1,7 +1,7 @@
 import Scaffold from './scaffold.js'
-import EventObserver from './event_observer.js'
+import Event from './event.js'
 
 export {
    Scaffold,
-   EventObserver,
+   Event,
 };

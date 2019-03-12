@@ -1,62 +1,71 @@
 import { Circle, Rectangle } from 'elements'
-import Main from './main.js'
-import Navigator from './navigator.js';
-import { ChartDataObserver, NavigatorObserver } from '../observers'
+import Navigator from './navigator.js'
+import { Event } from 'core'
 
-export default class Map {
+export default class Map extends Event {
 
-   static init({width, height, y}) {
-      Map.width = width;
-      Map.data = data;
+   constructor({width, height, ratio}) {
+      super();
 
-      Navigator.init({width, height});
+      this.width = width;
+      this.height = height;
+      this.ratio = ratio;
+      this.map_items = [];
 
-      Map._data_map = new Rectangle({w: width, h: height});
-      Map.element = new Rectangle({
-         y: y,
-         w: width,
-         h: height,
-         color: "rgba(110, 110, 100, 0.1)",
-         children: [
-            Map._data_map,
-            Navigator.element,
-         ]
+      this.navigator = new Navigator({width, height});
+      this.navigator.on('offset', () => {
+         this.emit('offset', this.main_offset);
       });
 
-      ChartDataObserver.subscribe((data) => {         
-         Map.data = data;
-         Map.update(data);
-      })
-
-      NavigatorObserver.subscribe(() => {
-
+      this.data_element = new Rectangle({w: width, h: height, children: this.map_items});
+      
+      this.element = new Rectangle({
+         w: width,
+         h: height,
+         color: 'rgba(110, 110, 100, 0.1)',
+         children: [
+            this.data_element,
+            this.navigator.element,
+         ]
       });
    }
 
-   static get scale() {
-      let y = !Main.element ? 0 : Map.element.h/Main.element.h
+   get main_offset() {
+      var sx = this.scale.x * this.width / this.navigator.width;
+      return -this.navigator.offset * (sx/this.scale.x)
+   }
+
+   get main_scale() {
+      return {
+         x: this.scale.x * this.width / this.navigator.width,
+         y: 0
+      };
+   }
+
+   get scale() {
+      
       return {
          x: 50,
-         y: y
+         y: this.ratio
       }
    }
 
-   static update(data) {
-      var children = [];
+   update(data) {
+      var map_items = [];
             
       for (let index = 0; index <= data.length; index++) {
 
          let rect = new Circle({
-            x: index * Map.scale.x,
-            y: (index%2 ? 55 : 170) * Map.scale.y,
+            x: index * this.scale.x,
+            y: (index%2 ? 5 : this.height-5), //  * this.scale.y
             r: 5,
             color: 'rgba(0, 0, 0, 0.4)',
          });
 
-         children.push(rect);
+         map_items.push(rect);
       }      
       
-      Map._data_map.children = children;
+      this.data_element.children = map_items;
    }
 }
 

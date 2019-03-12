@@ -18,8 +18,8 @@
          ];
 
          document.addEventListener('DOMContentLoaded', function(){
-            var chart = new LineChart('chart', 600, 400);
-            chart.setData(data);
+            new LineChart('chart', 600, 360).setData(data);
+            new LineChart('chart2', 700, 370).setData(data);
          });
       </script>
       <style>
@@ -30,6 +30,7 @@
       </style>
    </head>
    <body>
-      <canvas id="chart">
+      <canvas id="chart"></canvas>
+      <canvas id="chart2"></canvas>
    </body>
 </html>

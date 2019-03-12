@@ -12,13 +12,13 @@ export default class Rectangle extends Element {
    }
 
    isHover({x, y}) {
-      return (x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h);
+      return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
    }
 
-   render(ctx) {
+   render(ctx, input) {
       ctx.fillStyle = this.color;
       ctx.fillRect(this.x, this.y, this.w, this.h);
 
-      super.render(ctx);
+      super.render(ctx, input);
    }
 }

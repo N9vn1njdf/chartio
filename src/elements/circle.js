@@ -11,15 +11,15 @@ export default class Circle extends Element {
    }
 
    isHover({x, y}) {
-      return (x < this.x + this.r && x > this.x - this.r && y < this.y + this.r && y > this.y - this.r);
+      return x < this.x + this.r && x > this.x - this.r && y < this.y + this.r && y > this.y - this.r;
    }
 
-   render(ctx) {      
+   render(ctx, input) {      
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
       ctx.fillStyle = this.color;
       ctx.fill();
 
-      super.render(ctx);
+      super.render(ctx, input);
    }
 }
