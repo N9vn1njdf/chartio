@@ -1,7 +1,7 @@
 import ChartDataObserver from './chart_data.js'
-import MapObserver from './map.js'
+import NavigatorObserver from './navigator.js'
 
 export {
    ChartDataObserver,
-   MapObserver,
+   NavigatorObserver,
 };
