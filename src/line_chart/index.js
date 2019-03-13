@@ -1,27 +1,25 @@
 import { Scaffold } from 'core'
-import { MainLayer, MapLayer } from './layers'
 import { Position } from 'elements'
+import Main from './main'
+import MiniMap from './map'
 
 class LineChart {
 
    constructor(id, width, height) {
 
-      var map_height = 80;                // размер миникарты
+      var map_height = 60;                // размер миникарты
       var main_height = 200;              // размер графика
       var ratio = map_height/main_height; // соотношение
 
       // Создаем миникарту  
-      this.map = new MapLayer({width, height: map_height, ratio});
-
-      // Получаем данные для начального позиционирования графика
-      var offset = this.map.main_offset;
-      var scale = this.map.main_scale;
+      this.map = new MiniMap({width, height: map_height, ratio});
 
       // Создаем график
-      this.main = new MainLayer({height: main_height, offset, scale});
+      this.main = new Main({height: main_height});
 
       // Слушаем события миникарты и обновляем график
       this.map.on('offset', value => this.main.offset = value)
+      this.map.on('scale', value => this.main.scale = value)
 
       new Scaffold({
          id: id,

@@ -7,8 +7,6 @@ export default class Rectangle extends Element {
       
       this.w = w;
       this.h = h;
-
-      return this;
    }
 
    isHover({x, y}) {

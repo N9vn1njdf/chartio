@@ -6,8 +6,22 @@ export default class Circle extends Element {
       super({x, y, color, draggable, children});
       
       this.r = r;
+   }
 
-      return this;
+   get w() {
+      return this.r;
+   }
+
+   set w(value) {
+      this.r = value;
+   }
+
+   get h() {
+      return this.r;
+   }
+
+   set h(value) {
+      this.r = value;
    }
 
    isHover({x, y}) {

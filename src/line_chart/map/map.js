@@ -1,8 +1,8 @@
+import { Event } from 'core'
 import { Circle, Rectangle } from 'elements'
 import Navigator from './navigator.js'
-import { Event } from 'core'
 
-export default class Map extends Event {
+export default class MiniMap extends Event {
 
    constructor({width, height, ratio}) {
       super();
@@ -10,14 +10,14 @@ export default class Map extends Event {
       this.width = width;
       this.height = height;
       this.ratio = ratio;
-      this.map_items = [];
+      this.data = [];
 
       this.navigator = new Navigator({width, height});
       this.navigator.on('offset', () => {
          this.emit('offset', this.main_offset);
       });
 
-      this.data_element = new Rectangle({w: width, h: height, children: this.map_items});
+      this.data_element = new Rectangle({w: width, h: height});
       
       this.element = new Rectangle({
          w: width,
@@ -31,8 +31,7 @@ export default class Map extends Event {
    }
 
    get main_offset() {
-      var sx = this.scale.x * this.width / this.navigator.width;
-      return -this.navigator.offset * (sx/this.scale.x)
+      return -this.navigator.offset * ((this.scale.x * this.width / this.navigator.width) / this.scale.x)
    }
 
    get main_scale() {
@@ -42,19 +41,18 @@ export default class Map extends Event {
       };
    }
 
-   get scale() {
-      
+   get scale() {      
       return {
-         x: 50,
+         x: this.data.length > 0 ? this.width/this.data.length : 0,
          y: this.ratio
       }
    }
 
    update(data) {
-      var map_items = [];
-            
-      for (let index = 0; index <= data.length; index++) {
+      this.data = data;
+      var children = [];
 
+      for (let index = 0; index <= data.length; index++) {         
          let rect = new Circle({
             x: index * this.scale.x,
             y: (index%2 ? 5 : this.height-5), //  * this.scale.y
@@ -62,10 +60,12 @@ export default class Map extends Event {
             color: 'rgba(0, 0, 0, 0.4)',
          });
 
-         map_items.push(rect);
-      }      
-      
-      this.data_element.children = map_items;
+         children.push(rect);
+      }
+
+      this.data_element.children = children;
+      this.emit('offset', this.main_offset);
+      this.emit('scale', this.main_scale);
    }
 }
 

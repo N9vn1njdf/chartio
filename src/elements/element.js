@@ -12,28 +12,6 @@ export default class Element extends Event {
       this.children = children || [];
    }
 
-   handleDragging(input) {      
-      if (!input.down) {
-         this._drag = false;
-         this._drag_offset = null;
-         return;
-      }
-
-      if (!this._drag_offset) {
-         this._drag_offset = {x: input.x - this._x, y: input.y - this._y};   
-      }
-      
-      if (this.draggable.y) {
-         this.y = input.y - this._drag_offset.y;
-      }
-
-      if (this.draggable.x) {
-         this.x = input.x - this._drag_offset.x;
-      }
-
-      this.emit('dragging', input);
-   }
-
    get children() {
       return this._children;
    }
@@ -68,26 +46,6 @@ export default class Element extends Event {
    }
    
    render(ctx, input) {
-      
-      if (this.isHover({x: input.x, y: input.y})) {         
-         this.move = true;
-         this.emit('move', input);
-
-         if(this.draggable && input.down) {
-            this._drag = true;
-         }
-
-      } else {
-         if(this.move) {
-            this.move = false;
-            this.emit('leave', input);
-         }
-      }
-      
-      if(this._drag) {
-         this.handleDragging(input);
-      }
-
       for(let i in this.children) {
          this.children[i].render(ctx, input);
       }

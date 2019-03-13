@@ -2,10 +2,9 @@ import { Circle, Rectangle } from 'elements'
 
 export default class Main {
 
-   constructor({height, offset, scale}) {
+   constructor({height}) {
       this.height = height;
-      this.scale = scale;
-      this.element = new Rectangle({x: offset, h: height, color: 'rgba(200, 100, 100, 0.5)'});
+      this.element = new Rectangle({h: height, color: 'rgba(200, 100, 100, 0.5)'});
    }
 
    get offset() {
@@ -32,6 +31,6 @@ export default class Main {
       }
 
       this.element.children = children;
-      this.element.w = this.element.children.length*100;
+      this.element.w = (this.element.children.length-1)*this.scale.x;
    }
 }
