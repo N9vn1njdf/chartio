@@ -16,7 +16,7 @@ export default class Scalable extends Element {
       this.axisY = axisY || false;
 
       if (onScaling) {
-         this.on('dragging', onScaling);
+         this.on('scaling', onScaling);
       }
 
       this.children = this._getChildren();
@@ -40,10 +40,10 @@ export default class Scalable extends Element {
 
    _getChildren() {
       
-      this.left = new Rectangle({x: -15, w: 15, h: this.h, color: 'rgba(120, 160, 60, 0.5)'});
+      this.left = new Rectangle({x: -10, w: 10, h: this.h, color: 'rgba(120, 160, 60, 0.5)'});
       this.left.on('down', (input) => this.left._scaling = true);
 
-      this.right = new Rectangle({x: this.w, w: 15, h: this.h, color: 'rgba(120, 160, 60, 0.5)'});
+      this.right = new Rectangle({x: this.w, w: 10, h: this.h, color: 'rgba(120, 160, 60, 0.5)'});
       this.right.on('down', (input) => this.right._scaling = true);
 
       var edgesX = this.axisX ? [this.left, this.right] : [];
@@ -72,7 +72,7 @@ export default class Scalable extends Element {
       this.right.x = this.w;
       this.x = newX;
 
-      this.emit('dragging')
+      this.emit('scaling')
    }
    
    _slaleRightX(input) {
@@ -83,13 +83,13 @@ export default class Scalable extends Element {
       }
 
       if (!this.right._inputOffset) {
-         this.right._inputOffset = {x: input.x - this._x - this.w, y: input.y - this._y};   
+         this.right._inputOffset = {x: input.x - this._x - this.w, y: input.y - this._y, w: this.w + this._x};   
       }
             
-      this.w = input.x - this.x - this.right._inputOffset.x;
+      this.w = input.x - this.right._inputOffset.x;
       this.right.x = this.w;
 
-      this.emit('dragging')
+      this.emit('scaling')
    }
 
    render(ctx, input) {

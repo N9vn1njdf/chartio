@@ -3,6 +3,7 @@ import { Circle, Rectangle } from 'elements'
 export default class Main {
 
    constructor({height}) {
+      this.data = [];
       this.height = height;
       this.element = new Rectangle({h: height, color: 'rgba(200, 100, 100, 0.5)'});
    }
@@ -13,6 +14,18 @@ export default class Main {
 
    set offset(value) {
       this.element.x = value;
+   }
+
+   get scale() {
+      return this._scale;
+   }
+
+   set scale(value) {      
+      this._scale = value;
+
+      if (this.data) {
+         this.update(this.data);
+      }
    }
 
    update(data) {

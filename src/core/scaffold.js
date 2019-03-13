@@ -19,6 +19,10 @@ export default class Scaffold {
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.children.forEach((element) => element.render(ctx, this.input));
       
+      if (this.input.down && !this.input.event_down) {
+         this.input.event_down = true;
+      }
+
       requestAnimationFrame(() => this.render());
    }
 

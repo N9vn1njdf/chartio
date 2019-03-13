@@ -11,11 +11,12 @@ export default class Navigator extends Event {
 
       this.navigator = new Draggable({
          axisX: true,
+         onDragging: () => this.onDragging(),
          child: new Scalable({
             axisX: true,
-            child: new Rectangle({x: start_x, w: start_w, h: height, color: 'rgba(220, 220, 0, 0.9)'}),
+            onScaling: () => this.onScaling(),
+            child: new Rectangle({x: start_x, w: start_w, h: height, color: 'rgba(220, 220, 0, 0.2)'}),
          })
-         // onDragging: () => this.onDragging()
       });
       
       this.background = [
@@ -33,25 +34,31 @@ export default class Navigator extends Event {
       });
    }
 
+   onScaling() {      
+      this.background[0].w = this.offset;
+      this.background[1].x = this.offset + this.width;
+      this.emit('scaling');
+   }
+
    onDragging() {
       this.background[0].w = this.offset;
       this.background[1].x = this.offset + this.width;
       this.emit('offset');
    }
 
-   get width() {      
-      return this.navigator.w;
+   get width() {
+      return this.navigator.child.w;
    }
 
-   set width(value) {      
-      this.navigator.w = value;
+   set width(value) {
+      this.navigator.child.w = value;
    }
 
    get offset() {
-      return this.navigator.x;
+      return this.navigator.child.x;
    }
 
-   set offset(value) {      
-      this.navigator.x = value;
+   set offset(value) {
+      this.navigator.child.x = value;
    }
 }

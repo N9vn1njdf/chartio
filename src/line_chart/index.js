@@ -19,7 +19,10 @@ class LineChart {
 
       // Слушаем события миникарты и обновляем график
       this.map.on('offset', value => this.main.offset = value)
-      this.map.on('scale', value => this.main.scale = value)
+      this.map.on('scaling', ({offset, scale}) => {         
+         this.main.offset = offset;
+         this.main.scale = scale;
+      })
 
       new Scaffold({
          id: id,
@@ -43,8 +46,8 @@ class LineChart {
    }
 
    setData(data) {
-      this.map.update(data);
-      this.main.update(data);
+      this.main.data = data;
+      this.map.data = data;
    }
 }
 

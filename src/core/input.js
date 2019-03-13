@@ -5,6 +5,7 @@ export default class Input {
       this.x = 0;
       this.y = 0;
       this.down = false;
+      this.event_down = false;
 
       var _this = this;
 
@@ -23,6 +24,7 @@ export default class Input {
       document.addEventListener('mouseup', function(e) {
          if (e.target == canvas) {
             _this.down = false;
+            _this.event_down = null;
          }
       });
 

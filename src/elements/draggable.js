@@ -68,10 +68,6 @@ export default class Draggable extends Element {
    }
 
    render(ctx, input) {
-
-      ctx.fillStyle = 'rgba(220, 220, 220, 0.9)';
-      ctx.fillRect(this.childX, 0, this.w, this.h);
-
       super.render(ctx, input);
 
       if(this._mouse_down) {
