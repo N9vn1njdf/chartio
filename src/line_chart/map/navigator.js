@@ -1,4 +1,4 @@
-import { Rectangle, Draggable } from 'elements'
+import { Rectangle, Draggable, Scalable } from 'elements'
 import { Event } from 'core'
 
 export default class Navigator extends Event {
@@ -7,22 +7,18 @@ export default class Navigator extends Event {
       super();
       
       var start_w = 300;
-      var start_x = width-start_w;
+      var start_x = width-start_w-20;
 
-      this.navigator = new Draggable({
+      this.navigator = new Scalable({
          axisX: true,
-         child: new Rectangle({x: start_x, w: start_w, h: height}),
-         onDragging: () => this.onDragging()
+         child: new Rectangle({x: start_x, w: start_w, h: height, color: 'rgba(220, 220, 0, 0.9)'}),
+         // onDragging: () => this.onDragging()
       });
       
       this.background = [
          new Rectangle({w: start_x, h: height, color: 'rgba(0, 0, 0, 0.1)'}),
          new Rectangle({x: this.offset + this.width, w: width, h: height, color: 'rgba(0, 0, 0, 0.1)'})
       ];
-      
-      // var edges = [
-      //    new Rectangle({x: this.offset, w: this.width, w: 4, h: height, color: 'rgba(120, 160, 60, 0.5)'}),
-      // ];
 
       this.element = new Rectangle({
          w: width,
@@ -30,7 +26,6 @@ export default class Navigator extends Event {
          children: [
             ...this.background,
             this.navigator,
-            // ...edges,
          ]
       });
    }

@@ -8,6 +8,9 @@ export default class Draggable extends Element {
       this.w = child.w;
       this.h = child.h;
 
+      child.x = 0;
+      child.y = 0;
+
       this.axisX = axisX || false;
       this.axisY = axisY || false;
 
@@ -16,54 +19,38 @@ export default class Draggable extends Element {
       }
    }
 
-   isHover({x, y}) {
-      return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
-   }
-
    handleDragging(input) {      
       if (!input.down) {
          this._drag = false;
-         this._drag_offset = null;
+         this._inputOffset = null;
          return;
       }
-
-      if (!this._drag_offset) {
-         this._drag_offset = {x: input.x - this._x, y: input.y - this._y};   
+      
+      if (!this._inputOffset) {
+         this._inputOffset = {x: input.x - this._x, y: input.y - this._y};   
       }
       
       if (this.axisY) {
-         this.y = input.y - this._drag_offset.y;
+         this.y = input.y - this._inputOffset.y;
       }
 
       if (this.axisX) {
-         this.x = input.x - this._drag_offset.x;
+         this.x = input.x - this._inputOffset.x;
       }
 
       this.emit('dragging');
    }
 
    render(ctx, input) {
+      super.render(ctx, input);
 
-      if (this.isHover({x: input.x, y: input.y})) {         
-         this.move = true;
-         this.emit('move', input);
-
-         if(input.down && !input.drag) {
-            this._drag = true;
-            input.drag = true;
-         }
-
-      } else {
-         if(this.move) {
-            this.move = false;
-            this.emit('leave', input);
-         }
+      if(input.down && !input.drag) {
+         this._drag = true;
+         input.drag = true;
       }
       
       if(this._drag) {
          this.handleDragging(input);
       }
-
-      super.render(ctx, input);
    }
 }
