@@ -9,9 +9,12 @@ export default class Navigator extends Event {
       var start_w = 300;
       var start_x = width-start_w-20;
 
-      this.navigator = new Scalable({
+      this.navigator = new Draggable({
          axisX: true,
-         child: new Rectangle({x: start_x, w: start_w, h: height, color: 'rgba(220, 220, 0, 0.9)'}),
+         child: new Scalable({
+            axisX: true,
+            child: new Rectangle({x: start_x, w: start_w, h: height, color: 'rgba(220, 220, 0, 0.9)'}),
+         })
          // onDragging: () => this.onDragging()
       });
       

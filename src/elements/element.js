@@ -17,11 +17,11 @@ export default class Element extends Event {
       return this._children;
    }
 
-   set children(s) {
-      for (let i in s) {
-         s[i].parent = this;
+   set children(value) {
+      for (let i in value) {
+         value[i].parent = this;
       }
-      return this._children = s;
+      return this._children = value;
    }
 
    get x() {
@@ -31,8 +31,8 @@ export default class Element extends Event {
       return this._x;
    }
 
-   set x(s) {
-      return this._x = s;
+   set x(value) {      
+      return this._x = value;
    }
 
    get y() {
@@ -42,8 +42,8 @@ export default class Element extends Event {
       return this._y;
    }
 
-   set y(s) {
-      return this._y = s;
+   set y(value) {
+      return this._y = value;
    }
    
    isHover({x, y}) {      
@@ -51,20 +51,22 @@ export default class Element extends Event {
    }
    
    render(ctx, input) {
-      if (this.isHover({x: input.x, y: input.y})) {         
-         this.move = true;
+
+      if (this.isHover(input)) {
+         this._move = true;
          this.emit('move', input);
 
          if (input.down) {
             this._mouse_down = true;
             this.emit('down', input);
+
          } else if (this._mouse_down) {
             this._mouse_down = false;
             this.emit('up', input);
          }
 
-      } else if(this.move) {
-         this.move = false;
+      } else if(this._move) {
+         this._move = false;
          this.emit('leave', input);
       }
       

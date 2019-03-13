@@ -15,7 +15,7 @@ export default class Scaffold {
 
    render() {
       var ctx = this.canvas.getContext('2d');
-
+      
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.children.forEach((element) => element.render(ctx, this.input));
       

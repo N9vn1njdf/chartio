@@ -5,7 +5,6 @@ export default class Input {
       this.x = 0;
       this.y = 0;
       this.down = false;
-      this.drag = false;
 
       var _this = this;
 
@@ -24,7 +23,6 @@ export default class Input {
       document.addEventListener('mouseup', function(e) {
          if (e.target == canvas) {
             _this.down = false;
-            _this.drag = false;
          }
       });
 
@@ -41,7 +39,6 @@ export default class Input {
       document.addEventListener('touchend', function(e) {
          if (e.target == canvas) {
             _this.down = false;
-            _this.drag = false;
          }
       });
    }
