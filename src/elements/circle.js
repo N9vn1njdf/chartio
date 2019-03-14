@@ -2,8 +2,8 @@ import Element from './element.js'
 
 export default class Circle extends Element {
 
-   constructor({x, y, r, color, draggable, children}) {
-      super({x, y, color, draggable, children});
+   constructor({r}) {
+      super(arguments[0]);
       
       this.r = r;
    }

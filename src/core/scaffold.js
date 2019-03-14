@@ -23,6 +23,12 @@ export default class Scaffold {
          this.input.event_down = true;
       }
 
+      if (this.input.el) {         
+         this.canvas.style.cursor = this.input.el.cursor;
+      } else {
+         this.canvas.style.cursor = 'default';
+      }
+
       requestAnimationFrame(() => this.render());
    }
 

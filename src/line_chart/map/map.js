@@ -13,10 +13,10 @@ export default class MiniMap extends Event {
 
       this.navigator = new Navigator({width, height});
       this.navigator.on('offset', () => {
-         this.emit('offset', this.main_offset);
+         this.emit('update', this.main_update_data);
       });
       this.navigator.on('scaling', () => {
-         this.emit('scaling', {offset: this.main_offset, scale: this.main_scale});
+         this.emit('update', this.main_update_data);
       });
 
       this.data_element = new Rectangle({w: width, h: height});
@@ -24,7 +24,6 @@ export default class MiniMap extends Event {
       this.element = new Rectangle({
          w: width,
          h: height,
-         color: 'rgba(110, 110, 100, 0.1)',
          children: [
             this.data_element,
             this.navigator.element,
@@ -40,6 +39,13 @@ export default class MiniMap extends Event {
       return {
          x: this.scale.x * this.width / this.navigator.width,
          y: 0
+      };
+   }
+   
+   get main_update_data() {
+      return {
+         offset: this.main_offset,
+         scale: this.main_scale
       };
    }
 
@@ -74,7 +80,7 @@ export default class MiniMap extends Event {
       }
       
       this.data_element.children = children;
-      this.emit('scaling', {offset: this.main_offset, scale: this.main_scale});
+      this.emit('update', this.main_update_data);
    }
 }
 

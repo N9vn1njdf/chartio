@@ -15,13 +15,19 @@ export default class Navigator extends Event {
          child: new Scalable({
             axisX: true,
             onScaling: () => this.onScaling(),
-            child: new Rectangle({x: start_x, w: start_w, h: height, color: 'rgba(220, 220, 0, 0.2)'}),
+            child: new Rectangle({
+               x: start_x,
+               w: start_w,
+               h: height,
+               borderTop: {color: 'rgba(0, 0, 0, 0.12)', inside: true},
+               borderBottom: {color: 'rgba(0, 0, 0, 0.12)', inside: true},
+            }),
          })
       });
       
       this.background = [
-         new Rectangle({w: start_x, h: height, color: 'rgba(0, 0, 0, 0.1)'}),
-         new Rectangle({x: this.offset + this.width, w: width, h: height, color: 'rgba(0, 0, 0, 0.1)'})
+         new Rectangle({w: start_x, h: height, color: 'rgba(255, 255, 255, 0.5)', inputIgnore: true}),
+         new Rectangle({x: this.offset + this.width, w: width, h: height, color: 'rgba(255, 255, 255, 0.5)', inputIgnore: true})
       ];
 
       this.element = new Rectangle({

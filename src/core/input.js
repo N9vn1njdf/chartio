@@ -2,8 +2,8 @@
 export default class Input {
    
    constructor(canvas) {
-      this.x = 0;
-      this.y = 0;
+      this.x = null;
+      this.y = null;
       this.down = false;
       this.event_down = false;
 
@@ -11,9 +11,13 @@ export default class Input {
 
       // Мышь
       document.addEventListener('mousemove', function(e) {
+         _this.el = null;
          if (e.target == canvas) {
             _this.x = e.layerX;
             _this.y = e.layerY;
+         } else {
+            _this.x = null;
+            _this.y = null;
          }
       });
       document.addEventListener('mousedown', function(e) {

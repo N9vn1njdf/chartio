@@ -26,7 +26,7 @@ export default class Scalable extends Element {
       return this.child.w;
    }
 
-   set w(value) {      
+   set w(value) {
       return this.child.w = value;
    }
 
@@ -40,10 +40,10 @@ export default class Scalable extends Element {
 
    _getChildren() {
       
-      this.left = new Rectangle({x: -10, w: 10, h: this.h, color: 'rgba(120, 160, 60, 0.5)'});
+      this.left = new Rectangle({x: -6, w: 6, h: this.h, cursor: 'col-resize', color: 'rgba(0, 0, 0, 0.12)'});
       this.left.on('down', (input) => this.left._scaling = true);
 
-      this.right = new Rectangle({x: this.w, w: 10, h: this.h, color: 'rgba(120, 160, 60, 0.5)'});
+      this.right = new Rectangle({x: this.w, w: 6, h: this.h, cursor: 'col-resize', color: 'rgba(0, 0, 0, 0.12)'});
       this.right.on('down', (input) => this.right._scaling = true);
 
       var edgesX = this.axisX ? [this.left, this.right] : [];
@@ -52,7 +52,7 @@ export default class Scalable extends Element {
       var edgesY = this.axisY ? [] : [];
       // ~~~~~~~~~~~~
 
-      return [this.child, ...edgesX, ...edgesY];
+      return [...edgesX, ...edgesY, this.child];
    }
 
    _slaleLeftX(input) {
@@ -62,17 +62,18 @@ export default class Scalable extends Element {
          return;
       }
 
-      if (!this.left._inputOffset) {         
-         this.left._inputOffset = {x: input.x - this._x, y: input.y - this._y, w: this.w + this._x};   
+      if (!this.left._inputOffset) {
+         this.left._inputOffset = {x: input.x - this._x, y: input.y - this._y, w: this.w + this._x};
       }
 
       let newX = input.x - this.left._inputOffset.x;
       
       this.w = this.left._inputOffset.w - newX;
       this.right.x = this.w;
+      
       this.x = newX;
 
-      this.emit('scaling')
+      this.emit('scaling');
    }
    
    _slaleRightX(input) {
@@ -83,13 +84,13 @@ export default class Scalable extends Element {
       }
 
       if (!this.right._inputOffset) {
-         this.right._inputOffset = {x: input.x - this._x - this.w, y: input.y - this._y, w: this.w + this._x};   
+         this.right._inputOffset = {x: input.x - this.w, y: input.y - this._y, w: this.w + this._x};
       }
-            
+      
       this.w = input.x - this.right._inputOffset.x;
       this.right.x = this.w;
 
-      this.emit('scaling')
+      this.emit('scaling');
    }
 
    render(ctx, input) {
