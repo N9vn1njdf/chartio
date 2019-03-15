@@ -23,8 +23,9 @@ module.exports = {
   },
   resolve: {
     alias: {
-      elements: path.resolve(__dirname, 'src/elements/index.js'),
+      animations: path.resolve(__dirname, 'src/animations/index.js'),
       core: path.resolve(__dirname, 'src/core/index.js'),
+      elements: path.resolve(__dirname, 'src/elements/index.js'),
     }
   }
 }

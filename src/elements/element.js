@@ -2,12 +2,13 @@ import { Event } from 'core'
 
 export default class Element extends Event {
 
-   constructor({x, y, color, children, cursor, inputIgnore}) {
+   constructor({x, y, color, alpha, children, cursor, inputIgnore} = {}) {
       super();
       
       this.x = x || 0;
       this.y = y || 0;
       this.color = color || 'rgba(0, 0, 0, 0)';
+      this.alpha = alpha || 1;
       this.children = children || [];
       this.cursor = cursor || 'default';
       this.inputIgnore = inputIgnore || false;

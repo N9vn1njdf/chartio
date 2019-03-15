@@ -2,13 +2,13 @@ import Element from './element.js'
 
 export default class Rectangle extends Element {
 
-   constructor({w, h, borderTop, borderBottom, borderLeft, borderRight}) {
+   constructor({w, h, borderTop, borderBottom, borderLeft, borderRight} = {}) {
       super(arguments[0]);
       
       this.w = w;
       this.h = h;
 
-      if (borderTop) {
+      if (borderTop) {         
          this.borderTop = {
             color: borderTop.color || 'rgb(0, 0, 0)',
             width: borderTop.width || 1,
@@ -34,6 +34,7 @@ export default class Rectangle extends Element {
    }
 
    render(ctx, input) {
+      ctx.globalAlpha = this.alpha;
       ctx.fillStyle = this.color;
       ctx.fillRect(this.x, this.y, this.w, this.h);
 
@@ -48,7 +49,6 @@ export default class Rectangle extends Element {
          ctx.lineTo(this.x + this.w, y);
          ctx.stroke();
          ctx.closePath();
-
       }
 
       if (this.borderBottom) {

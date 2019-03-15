@@ -5,7 +5,7 @@ export default class Main {
    constructor({height}) {
       this.data = [];
       this.height = height;
-      this.element = new Rectangle({h: height, color: 'rgba(200, 100, 100, 0.5)'});
+      this.element = new Rectangle({h: height, borderBottom: {color: 'rgba(0, 0, 0, 0.8)', width: 0.5}, color: 'rgba(200, 100, 100, 0.3)'});
    }
 
    get offset() {
@@ -24,14 +24,14 @@ export default class Main {
       this._scale = value;
 
       if (this.data) {
-         this.update(this.data);
+         this.update();
       }
    }
 
-   update(data) {
+   update() {
       var children = [];
       
-      for (let index = 0; index <= data.length; index++) {
+      for (let index = 0; index <= this.data.length; index++) {
 
          let rect = new Circle({
             x: index * this.scale.x,

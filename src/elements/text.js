@@ -1,27 +1,28 @@
 import Element from './element.js'
 
-export default class Circle extends Element {
+export default class Text extends Element {
 
-   constructor({r} = {}) {
+   constructor({text, size}) {
       super(arguments[0]);
       
-      this.r = r;
+      this.text = text;
+      this.size = size || 14;
    }
 
    get w() {
-      return this.r;
+      return this.size * this.text.length;
    }
 
    set w(value) {
-      this.r = value;
+      this.size = value / this.text.length;
    }
 
    get h() {
-      return this.r;
+      return this.size;
    }
 
    set h(value) {
-      this.r = value;
+      this.size = value;
    }
 
    isHover({x, y}) {
@@ -30,10 +31,12 @@ export default class Circle extends Element {
 
    render(ctx, input) {
       ctx.globalAlpha = this.alpha;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+
       ctx.fillStyle = this.color;
-      ctx.fill();
+      ctx.fillRect(this.x, this.y, this.w, this.h);
+
+      ctx.font = "30px Arial";
+      ctx.fillText("Hello World", this.x, this.y);
 
       super.render(ctx, input);
    }

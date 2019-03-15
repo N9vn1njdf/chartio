@@ -2,7 +2,7 @@ import { Event } from 'core'
 import { Circle, Rectangle } from 'elements'
 import Navigator from './navigator.js'
 
-export default class MiniMap extends Event {
+export default class Map extends Event {
 
    constructor({width, height, ratio}) {
       super();
