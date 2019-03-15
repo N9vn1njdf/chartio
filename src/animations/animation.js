@@ -9,27 +9,12 @@ export default class Animation {
       this.completed = false;
    }
 
-   run() {
+   forward() {
       if (this._timer || this.completed) {
          return;
       }
-
-      this.running = true;
-      this._left = this.duration;
-
-      this._timer = setInterval(() => {
-         this._left -= 10;
-
-         if (this._left <= 0) {
-            clearInterval(this._timer);
-            this._timer = null;
-            this.running = false;
-            this.completed = !this.completed;
-         }
-         
-         this.handle(100/this.duration*this._left);
-
-      }, 10);
+      
+      this._run();
    }
 
    reverse() {
@@ -37,6 +22,10 @@ export default class Animation {
          return;
       }
 
+      this._run(true);
+   }
+
+   _run(reverse = false) {
       this.running = true;
       this._left = this.duration;
 
@@ -49,14 +38,11 @@ export default class Animation {
             this.running = false;
             this.completed = !this.completed;
          }
-         
-         this.handle(100-100/this.duration*this._left);
-         
-      }, 10);
-   }
 
-   progress() {
-      // логика анимации
+         var progress = reverse ? 100-100/this.duration*this._left : 100/this.duration*this._left;
+         this.handle(progress);
+
+      }, 10);
    }
 
    get child() {

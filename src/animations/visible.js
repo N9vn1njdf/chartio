@@ -6,8 +6,6 @@ export default class Visible extends Animation {
       super(arguments[0]);
 
       this.transition = transition;
-
-      this._x = this.child.x;
    }
 
    /**
@@ -15,7 +13,6 @@ export default class Visible extends Animation {
     * @param {%} progress 
     */
    handle(progress) {      
-      this.child.x = this._x + progress/100*-10 + 10;
       this.child.alpha = progress/100;
 
       if (this.child.alpha <= 0) {

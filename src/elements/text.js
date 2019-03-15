@@ -2,11 +2,15 @@ import Element from './element.js'
 
 export default class Text extends Element {
 
-   constructor({text, size}) {
+   constructor({text, size, fontFamily, align}) {
+      arguments[0].color = arguments[0].color || 'rgb(0, 0, 0)';
+
       super(arguments[0]);
       
       this.text = text;
       this.size = size || 14;
+      this.fontFamily = fontFamily || 'Arial';
+      this.align = align || 'left';
    }
 
    get w() {
@@ -33,10 +37,10 @@ export default class Text extends Element {
       ctx.globalAlpha = this.alpha;
 
       ctx.fillStyle = this.color;
-      ctx.fillRect(this.x, this.y, this.w, this.h);
-
-      ctx.font = "30px Arial";
-      ctx.fillText("Hello World", this.x, this.y);
+      ctx.font = `${this.size}px ${this.fontFamily}`;
+      ctx.textBaseline = 'top';
+      ctx.textAlign = this.align; 
+      ctx.fillText(this.text, this.x, this.y);
 
       super.render(ctx, input);
    }

@@ -48,6 +48,17 @@ export default class Element extends Event {
    set y(value) {
       return this._y = value;
    }
+
+   get alpha() {
+      if (this.parent != null && this.parent.alpha != null) {
+         return this._alpha * this.parent.alpha;
+      }
+      return this._alpha;
+   }
+
+   set alpha(value) {
+      return this._alpha = value;
+   }
    
    isHover({x, y}) {
       return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;

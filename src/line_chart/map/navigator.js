@@ -6,8 +6,8 @@ export default class Navigator extends Event {
    constructor({width, height}) {
       super();
       
-      var start_w = 300;
-      var start_x = width-start_w-20;
+      var start_w = 100;
+      var start_x = width-start_w;
 
       this.navigator = new Draggable({
          axisX: true,

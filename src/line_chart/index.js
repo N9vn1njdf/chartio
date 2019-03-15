@@ -16,7 +16,7 @@ class LineChart {
       this.map = new Map({width, height: map_height, ratio});
 
       // Создаем индиктор дат  
-      this.dates = new Dates({width, height: map_height, ratio});
+      this.dates = new Dates();
       
       // Создаем график
       this.main = new Main({height: main_height});
