@@ -4,20 +4,23 @@ import Navigator from './navigator.js'
 
 export default class Map extends Event {
 
-   constructor({width, map_height, main_height, main_padding_top}) {
+   constructor({width, map_height, main_height, main_padding_top, localization, locale_code}) {
       super();
-
-      this.columns = [];
-      this.hidden_columns = [];
-      this.colors = {};
 
       this.width = width;
       this.map_height = map_height;
       this.main_height = main_height;
       this.main_padding_top = main_padding_top || 40;
-      
+      this.localization = localization;
+      this.locale_code = locale_code;
+
       // Соотношение основного графика и миникарты
       this.ratio = map_height/main_height;
+
+      this.dates_column = [];
+      this.columns = [];
+      this.hidden_columns = [];
+      this.colors = {};
 
       this.navigator = new Navigator({width, height: map_height});
       this.navigator.on('offset', () => this.emitUpdate());
@@ -36,9 +39,8 @@ export default class Map extends Event {
    }
 
    emitUpdate() {
-      this.checkVisible();
-
-      this.emit('update', this.main_update_data);
+      this.caclMainYScale();
+      this.emit('update', this.update_data);
    }
 
    get main_offset() {
@@ -51,11 +53,21 @@ export default class Map extends Event {
          y: this.main_scale_y || 1
       };
    }
-   
-   get main_update_data() {
+
+   get locale() {
+      return this.localization[this.locale_code];
+   }
+
+   get update_data() {
       return {
          offset: this.main_offset,
-         scale: this.main_scale
+         scale: this.main_scale,
+         dates_column: this.dates_column,
+         columns: this.columns,
+         hidden_columns: this.hidden_columns,
+         colors: this.colors,
+         locale: this.locale,
+         locale_code: this.locale_code,
       };
    }
 
@@ -71,7 +83,8 @@ export default class Map extends Event {
    }
    
    setData({columns, colors}) {
-      this.columns = columns;
+      this.dates_column = columns[0];
+      this.columns = columns.splice(1, columns.length);
       this.colors = colors;
       this.update();
    }
@@ -115,17 +128,9 @@ export default class Map extends Event {
       this.data_element.children = children;
       this.emitUpdate();
    }
-
-
-
-
-
-
-
-
-
-   // main элементы находящиеся в видимой области 
-   checkVisible() {
+   
+   // Вычисляем Y масштаб для основного графика
+   caclMainYScale() {
       var visible_items = [];
       
       for (let i = 0; i < this.columns.length; i++) {
@@ -144,7 +149,6 @@ export default class Map extends Event {
          }
       }
 
-      // Вычисляем Y масштаб для основного графика
       var min_max2 = this.getMinMaxY(visible_items);
       var diff = this.main_height - min_max2.min;
       this.main_scale_y = (this.main_height-this.main_padding_top)/diff;

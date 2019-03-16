@@ -1,56 +1,27 @@
-import { Circle, Rectangle } from 'elements'
+import { Text, Circle, Rectangle } from 'elements'
 
 export default class Main {
 
    constructor({width, height}) {
-      this.columns = [];
-      this.hidden_columns = [];
-      this.colors = {};
-
       this.width = width;
       this.height = height;
+
       this.element = new Rectangle({h: height,
          color: 'rgba(200, 100, 100, 0.3)'
       });
    }
-
-   get offset() {
-      return this.element.x;
-   }
-
-   set offset(value) {
-      this.element.x = value;
-   }
-
-   get scale() {
-      return this._scale;
-   }
-
-   set scale(value) {
-      this._scale = value;
-      this.update();
-   }
-
-   setData({columns, colors}) {
+   
+   update({offset, scale, dates_column, columns, hidden_columns, colors, locale}) {
+      this.element.x = offset;
+      this.scale = scale;
       this.columns = columns;
+      this.hidden_columns = hidden_columns;
       this.colors = colors;
+
+      this.updateColumns();
    }
 
-   hideColumn(index) {
-      this.hidden_columns.push(index);
-      this.update();
-   }
-
-   showColumn(index) {
-      for(let i in this.hidden_columns) {
-         if (this.hidden_columns[i] == index) {
-            this.hidden_columns.splice(i, 1);
-         }
-      }      
-      this.update();
-   }
-
-   update() {
+   updateColumns() {
       if (this.columns.length == 0) {
          return;
       }
@@ -70,6 +41,9 @@ export default class Main {
                y: this.height - column[i] * this.scale.y,
                r: 5,
                color: this.colors[column[0]],
+               children: [
+                  new Text({text: column[i], size: 10})
+               ]
             });
 
             children.push(rect);

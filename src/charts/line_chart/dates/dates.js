@@ -3,14 +3,12 @@ import { Visible } from 'animations'
 
 export default class Dates {
 
-   constructor({font_size, item_width, animation_duration, localization, locale_code}) {
+   constructor({font_size, item_width, animation_duration}) {
       this.font_size = font_size || 14;
       this.item_width = item_width || 80;
       this.animation_duration = animation_duration || 300;
-      this.localization = localization;
-      this.locale_code = locale_code;
 
-      this.data = [];
+      this.dates = [];
       this.hidden_levels = [
          // [1,3,5]
          // [2,6,10]
@@ -19,39 +17,21 @@ export default class Dates {
       this.element = new Position();
    }
 
-   get offset() {
-      return this.element.x;
-   }
+   update({offset, scale, dates_column, columns, hidden_columns, colors, locale}) {
+      this.element.x = offset;
 
-   set offset(value) {
-      this.element.x = value;
-   }
-
-   get scale() {
-      return this._scale;
-   }
-
-   set scale(value) {
-      if (this._scale) {
-         this._prev_scale = this._scale;
+      if (this.scale) {
+         this.prev_scale = this.scale;
       }
+      this.scale = scale;
+      
+      this.dates = dates_column;
+      this.locale = locale;
 
-      this._scale = value;
-
-      if (this.data) {
-         this.update();
-      }
+      this.updateAxis();
    }
 
-   setData(data) {
-      this.data = data.splice(1, data.length);
-   }
-
-   get locale() {
-      return this.localization[this.locale_code];
-   }
-
-   update() {      
+   updateAxis() {      
       if (this.element.children.length > 0) {
          this.animate();
          return;
@@ -59,13 +39,13 @@ export default class Dates {
 
       var children = [];
       
-      for (let i = 0; i < this.data.length; i++) {
-         let date = new Date(this.data[i]);
+      for (let i = 1; i < this.dates.length; i++) {
+         let date = new Date(this.dates[i]);
          let d = date.getDate();         
          let m = this.locale.month[date.getMonth()];
          
          let rect = new Rectangle({
-            x: i * this.scale.x,
+            x: (i-1) * this.scale.x,
             w: this.item_width,
             children: [
                new Text({text: `${m} ${d}`, size: this.font_size, color: 'rgba(0, 0, 0, 0.3)', align: 'center'})
@@ -77,7 +57,6 @@ export default class Dates {
       }
 
       this.element.children = children;
-      // this.animate();
    }
 
    animate() {
@@ -121,7 +100,9 @@ export default class Dates {
       var visible_width = (this.element.children.length-this.hidden.length)*this.item_width;
 
       // Скрываем элементы
-      if (this._prev_scale.x > this.scale.x) {
+      if (this.prev_scale.x > this.scale.x) {
+         console.log(123);
+         
          var w = (all_width - visible_width)/(this.visible.length);
          
          if (w <= 1) {
@@ -137,7 +118,7 @@ export default class Dates {
       }
 
       // Показываем элементы
-      if(this._prev_scale.x < this.scale.x && this.hidden_levels.length > 0) {
+      if(this.prev_scale.x < this.scale.x && this.hidden_levels.length > 0) {
          var w = (all_width - visible_width)/(this.hidden_levels[this.hidden_levels.length-1].length);
 
          if (w > this.item_width) {

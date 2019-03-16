@@ -7,48 +7,19 @@ export default class YInformer {
       this.height = height;
       this.lines_count = 5;
 
-      this.hidden_columns = [];
-
       this.element = new Rectangle({h: height});      
    }
 
-   get offset() {
-      return this._offset;
-   }
-
-   set offset(value) {
-      this._offset = value;
+   update({offset, scale, dates_column, columns, hidden_columns, colors, locale}) {
       this.element.x = 0;
-   }
-
-   get scale() {
-      return this._scale;
-   }
-
-   set scale(value) {      
-      this._scale = value;
-      this.update();
-   }
-
-   setData(columns) {
+      this.scale = scale;
       this.columns = columns;
+      this.hidden_columns = hidden_columns;
+
+      this.updateColumns();
    }
 
-   hideColumn(index) {
-      this.hidden_columns.push(index);
-      this.update();
-   }
-
-   showColumn(index) {
-      for(let i in this.hidden_columns) {         
-         if (this.hidden_columns[i] == index) {
-            this.hidden_columns.splice(i, 1);
-         }
-      }      
-      this.update();
-   }
-
-   update() {
+   updateColumns() {
       if (this.columns.length == 0) {
          return;
       }
@@ -69,46 +40,5 @@ export default class YInformer {
 
       this.element.children = children;
       this.element.w = (this.columns[0].length-2)*this.scale.x;
-
-      this.checkVisible();
-   }
-
-
-
-
-
-   checkVisible() {
-      var visible_items = [];
-      
-      for (let i = 0; i < this.columns.length; i++) {
-         if (this.hidden_columns.includes(i)) {
-            continue;
-         }
-
-         let column = this.columns[i];
-
-         for (let i = 1; i < column.length; i++) {
-            let x = (i-1) * this.scale.x;
-
-            if (x > -this.offset && x < -this.offset + this.width) {
-               visible_items.push({x: x, y: this.height - column[i] * this.scale.y});
-            }
-         }
-      }
-   }
-
-   getMinMaxY(items) {
-      let min = items[items.length-1].y;
-      let max = 0;
-
-      items.forEach(element => {
-         max = element.y > max ? element.y : max;
-         min = element.y < min ? element.y : min;
-      });
-
-      return {
-         min,
-         max
-      }
    }
 }
