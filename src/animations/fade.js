@@ -1,11 +1,9 @@
 import Animation from './animation.js'
 
-export default class Visible extends Animation {
+export default class Fade extends Animation {
    
-   constructor({transition}) {
+   constructor({}) {
       super(arguments[0]);
-
-      this.transition = transition;
    }
 
    /**
@@ -17,9 +15,6 @@ export default class Visible extends Animation {
 
       if (this.child.alpha <= 0) {
          this.child.alpha = 0;
-         return true;
       }
-
-      return false;
    }
 }

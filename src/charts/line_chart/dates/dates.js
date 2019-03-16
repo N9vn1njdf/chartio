@@ -1,5 +1,5 @@
 import { Position, Text, Rectangle } from 'elements'
-import { Visible } from 'animations'
+import { Fade } from 'animations'
 
 export default class Dates {
 
@@ -19,12 +19,8 @@ export default class Dates {
 
    update({offset, scale, dates_column, columns, hidden_columns, colors, locale}) {
       this.element.x = offset;
-
-      if (this.scale) {
-         this.prev_scale = this.scale;
-      }
+      this.prev_scale = this.scale;
       this.scale = scale;
-      
       this.dates = dates_column;
       this.locale = locale;
 
@@ -52,7 +48,7 @@ export default class Dates {
             ]
          });
 
-         let child = new Visible({child: rect, duration: this.animation_duration});
+         let child = new Fade({child: rect, duration: this.animation_duration});
          children.push(child);
       }
 
@@ -100,9 +96,7 @@ export default class Dates {
       var visible_width = (this.element.children.length-this.hidden.length)*this.item_width;
 
       // Скрываем элементы
-      if (this.prev_scale.x > this.scale.x) {
-         console.log(123);
-         
+      if (this.prev_scale.x > this.scale.x) {         
          var w = (all_width - visible_width)/(this.visible.length);
          
          if (w <= 1) {

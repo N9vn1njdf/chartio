@@ -155,11 +155,7 @@ export default class Map extends Event {
    }
 
    getMinMaxY(items) {
-      if (items.length == 0) {
-         return null;
-      }
-
-      let min = items[items.length-1].y;
+      let min = items.length == 0 ? 0 : items[items.length-1].y;
       let max = 0;
 
       items.forEach(element => {

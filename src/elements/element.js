@@ -50,7 +50,7 @@ export default class Element extends Event {
    }
 
    get alpha() {
-      if (this.parent != null && this.parent.alpha != null) {
+      if (this.parent != null && this.parent.alpha != null) {         
          return this._alpha * this.parent.alpha;
       }
       return this._alpha;

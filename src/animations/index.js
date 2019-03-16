@@ -1,5 +1,7 @@
-import Visible from './visible.js'
+import Fade from './fade.js'
+import FadeSlide from './fade_slide.js'
 
 export {
-   Visible
+   Fade,
+   FadeSlide,
 }

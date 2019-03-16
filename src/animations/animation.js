@@ -1,12 +1,16 @@
 
 export default class Animation {
 
-   constructor({child, duration}) {
-      this.child = child;
-      this.duration = duration;  // продолжительность в милисекундах
+   constructor({child, duration, completed}) {
+      this.child = child;      
+      this.duration = duration || 300;
 
       this.running = false;
-      this.completed = false;
+      this.completed = completed || false;
+
+      if (completed) {         
+         this.handle(0);
+      }
    }
 
    forward() {
@@ -74,6 +78,14 @@ export default class Animation {
 
    set y(value) {
       this.parent.y = value;
+   }
+
+   get w() {
+      return this.parent.w;
+   }
+
+   get h() {
+      return this.parent.h;
    }
 
    render(ctx, input) {
