@@ -54,10 +54,10 @@ class LineChart {
       });
    }
 
-   setData(data) {
-      this.main.data = data;
-      this.dates.data = data;
-      this.map.data = data;
+   setData(columns) {
+      this.main.data = columns;
+      this.dates.data = columns[0];
+      this.map.data = columns;
    }
 }
 

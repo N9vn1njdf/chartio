@@ -39,7 +39,7 @@ export default class MainDates {
       }
    }
 
-   update() {
+   update() {      
       if (this.element.children.length > 0) {
          this.animate();
          return;

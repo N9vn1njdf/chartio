@@ -1,3 +1,3 @@
-import LineChart from './line_chart'
+import { LineChart } from 'charts'
 
 window.LineChart = LineChart;
