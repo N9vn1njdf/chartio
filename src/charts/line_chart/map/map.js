@@ -4,31 +4,41 @@ import Navigator from './navigator.js'
 
 export default class Map extends Event {
 
-   constructor({width, height, ratio}) {
+   constructor({width, map_height, main_height, main_padding_top}) {
       super();
 
+      this.columns = [];
+      this.hidden_columns = [];
+      this.colors = {};
+
       this.width = width;
-      this.height = height;
-      this.ratio = ratio;
+      this.map_height = map_height;
+      this.main_height = main_height;
+      this.main_padding_top = main_padding_top || 40;
+      
+      // Соотношение основного графика и миникарты
+      this.ratio = map_height/main_height;
 
-      this.navigator = new Navigator({width, height});
-      this.navigator.on('offset', () => {
-         this.emit('update', this.main_update_data);
-      });
-      this.navigator.on('scaling', () => {
-         this.emit('update', this.main_update_data);
-      });
+      this.navigator = new Navigator({width, height: map_height});
+      this.navigator.on('offset', () => this.emitUpdate());
+      this.navigator.on('scaling', () => this.emitUpdate());
 
-      this.data_element = new Rectangle({w: width, h: height});
+      this.data_element = new Rectangle({w: width, h: map_height});
       
       this.element = new Rectangle({
          w: width,
-         h: height,
+         h: map_height,
          children: [
             this.data_element,
             this.navigator.element,
          ]
       });
+   }
+
+   emitUpdate() {
+      this.checkVisible();
+
+      this.emit('update', this.main_update_data);
    }
 
    get main_offset() {
@@ -38,7 +48,7 @@ export default class Map extends Event {
    get main_scale() {
       return {
          x: this.scale.x * this.width / this.navigator.width,
-         y: 0
+         y: this.main_scale_y || 1
       };
    }
    
@@ -51,36 +61,109 @@ export default class Map extends Event {
 
    get scale() {
       return {
-         x: this.data.length > 0 ? this.width/this.data.length : 0,
+         x: this.data_count > 0 ? this.width/this.data_count : 0,
          y: this.ratio
       }
    }
 
-   get data() {
-      return this._data;
+   get data_count() {
+      return this.columns[0] ? this.columns[0].length-2 : 0;
+   }
+   
+   setData({columns, colors}) {
+      this.columns = columns;
+      this.colors = colors;
+      this.update();
    }
 
-   set data(value) {
-      this._data = value;
-      this.update(value);
+   hideColumn(index) {
+      this.hidden_columns.push(index);
+      this.update();
    }
 
-   update(data) {
+   showColumn(index) {
+      for(let i in this.hidden_columns) {
+         if (this.hidden_columns[i] == index) {
+            this.hidden_columns.splice(i, 1);
+         }
+      }      
+      this.update();
+   }
+
+   update() {
       var children = [];
 
-      for (let index = 0; index <= data.length; index++) {
-         let rect = new Circle({
-            x: index * this.scale.x,
-            y: (index%2 ? 5 : this.height-5), //  * this.scale.y
-            r: 5,
-            color: 'rgba(0, 0, 0, 0.4)',
-         });
+      for (let i = 0; i < this.columns.length; i++) {
+         if (this.hidden_columns.includes(i)) {
+            continue;
+         }
 
-         children.push(rect);
-      }
+         let column = this.columns[i];
+
+         for (let i = 1; i < column.length; i++) {
+            let rect = new Circle({
+               x: (i-1) * this.scale.x,
+               y: this.map_height - column[i] * this.scale.y,
+               r: 3,
+               color: this.colors[column[0]],
+            });
+
+            children.push(rect);
+         }
+      };
       
       this.data_element.children = children;
-      this.emit('update', this.main_update_data);
+      this.emitUpdate();
+   }
+
+
+
+
+
+
+
+
+
+   // main элементы находящиеся в видимой области 
+   checkVisible() {
+      var visible_items = [];
+      
+      for (let i = 0; i < this.columns.length; i++) {
+         if (this.hidden_columns.includes(i)) {
+            continue;
+         }
+
+         let column = this.columns[i];
+         
+         for (let i = 1; i < column.length; i++) {
+            let x = (i-1) * this.main_scale.x;
+            
+            if (x > -this.main_offset - 10 && x < -this.main_offset + this.width + 10) {
+               visible_items.push({x: x, y: this.main_height - column[i] * 1});
+            }
+         }
+      }
+
+      // Вычисляем Y масштаб для основного графика
+      var min_max2 = this.getMinMaxY(visible_items);
+      var diff = this.main_height - min_max2.min;
+      this.main_scale_y = (this.main_height-this.main_padding_top)/diff;
+   }
+
+   getMinMaxY(items) {
+      if (items.length == 0) {
+         return null;
+      }
+
+      let min = items[items.length-1].y;
+      let max = 0;
+
+      items.forEach(element => {
+         max = element.y > max ? element.y : max;
+         min = element.y < min ? element.y : min;
+      });
+
+      return {min, max}
    }
 }
 

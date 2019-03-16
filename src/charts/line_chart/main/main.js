@@ -2,10 +2,16 @@ import { Circle, Rectangle } from 'elements'
 
 export default class Main {
 
-   constructor({height}) {
-      this.data = [];
+   constructor({width, height}) {
+      this.columns = [];
+      this.hidden_columns = [];
+      this.colors = {};
+
+      this.width = width;
       this.height = height;
-      this.element = new Rectangle({h: height, borderBottom: {color: 'rgba(0, 0, 0, 0.8)', width: 0.5}, color: 'rgba(200, 100, 100, 0.3)'});
+      this.element = new Rectangle({h: height,
+         color: 'rgba(200, 100, 100, 0.3)'
+      });
    }
 
    get offset() {
@@ -20,30 +26,57 @@ export default class Main {
       return this._scale;
    }
 
-   set scale(value) {      
+   set scale(value) {
       this._scale = value;
+      this.update();
+   }
 
-      if (this.data) {
-         this.update();
-      }
+   setData({columns, colors}) {
+      this.columns = columns;
+      this.colors = colors;
+   }
+
+   hideColumn(index) {
+      this.hidden_columns.push(index);
+      this.update();
+   }
+
+   showColumn(index) {
+      for(let i in this.hidden_columns) {
+         if (this.hidden_columns[i] == index) {
+            this.hidden_columns.splice(i, 1);
+         }
+      }      
+      this.update();
    }
 
    update() {
-      var children = [];
-      
-      for (let index = 0; index <= this.data.length; index++) {
-
-         let rect = new Circle({
-            x: index * this.scale.x,
-            y: index % 2 ? 10 : this.height-10,
-            r: 10,
-            color: 'rgba(0, 0, 0, 0.4)',
-         });
-
-         children.push(rect);
+      if (this.columns.length == 0) {
+         return;
       }
 
+      var children = [];
+      
+      for (let i = 0; i < this.columns.length; i++) {
+         if (this.hidden_columns.includes(i)) {
+            continue;
+         }
+
+         let column = this.columns[i];
+         
+         for (let i = 1; i < column.length; i++) {
+            let rect = new Circle({
+               x: (i-1) * this.scale.x,
+               y: this.height - column[i] * this.scale.y,
+               r: 5,
+               color: this.colors[column[0]],
+            });
+
+            children.push(rect);
+         }
+      };
+
       this.element.children = children;
-      this.element.w = (this.element.children.length-1)*this.scale.x;
+      this.element.w = (this.columns[0].length-2)*this.scale.x;
    }
 }

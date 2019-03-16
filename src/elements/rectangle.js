@@ -8,7 +8,7 @@ export default class Rectangle extends Element {
       this.w = w;
       this.h = h;
 
-      if (borderTop) {         
+      if (borderTop) {
          this.borderTop = {
             color: borderTop.color || 'rgb(0, 0, 0)',
             width: borderTop.width || 1,

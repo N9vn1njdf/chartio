@@ -1,12 +1,16 @@
-import { Circle, Position, Text, Rectangle } from 'elements'
+import { Position, Text, Rectangle } from 'elements'
 import { Visible } from 'animations'
 
-export default class MainDates {
+export default class Dates {
 
-   constructor({item_width} = {}) {
+   constructor({font_size, item_width, animation_duration, localization, locale_code}) {
+      this.font_size = font_size || 14;
       this.item_width = item_width || 80;
-      this.data = [];
+      this.animation_duration = animation_duration || 300;
+      this.localization = localization;
+      this.locale_code = locale_code;
 
+      this.data = [];
       this.hidden_levels = [
          // [1,3,5]
          // [2,6,10]
@@ -39,6 +43,14 @@ export default class MainDates {
       }
    }
 
+   setData(data) {
+      this.data = data.splice(1, data.length);
+   }
+
+   get locale() {
+      return this.localization[this.locale_code];
+   }
+
    update() {      
       if (this.element.children.length > 0) {
          this.animate();
@@ -46,17 +58,21 @@ export default class MainDates {
       }
 
       var children = [];
-
-      for (let i = 0; i <= this.data.length; i++) {
+      
+      for (let i = 0; i < this.data.length; i++) {
+         let date = new Date(this.data[i]);
+         let d = date.getDate();         
+         let m = this.locale.month[date.getMonth()];
+         
          let rect = new Rectangle({
-            x: (i * this.scale.x),
+            x: i * this.scale.x,
             w: this.item_width,
             children: [
-               new Text({text: 'Mar ' + i, color: 'rgba(0, 0, 0, 0.4)', align: 'center'})
+               new Text({text: `${m} ${d}`, size: this.font_size, color: 'rgba(0, 0, 0, 0.3)', align: 'center'})
             ]
          });
 
-         let child = new Visible({child: rect, duration: 320});
+         let child = new Visible({child: rect, duration: this.animation_duration});
          children.push(child);
       }
 
@@ -70,7 +86,7 @@ export default class MainDates {
 
       for (let i = 0; i < this.element.children.length; i++) {
          let element = this.element.children[i];
-         element.child.x = (i * this.scale.x);
+         element.child.x = i * this.scale.x;
 
          if (this.hidden.includes(i)) {
             element.forward();

@@ -20,7 +20,7 @@ export default class Element extends Event {
       return this._children;
    }
 
-   set children(value) {
+   set children(value) {      
       for (let i in value) {
          value[i].parent = this;
       }
