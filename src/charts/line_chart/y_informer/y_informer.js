@@ -47,7 +47,7 @@ export default class YInformer {
             ]
          });
 
-         let child = new FadeSlide({child: line, offset: i*50, duration: 450, completed: false});
+         let child = new FadeSlide({child: line, offset: i*20, duration: 220, completed: false});
          
          children.push(child);
       }
@@ -66,7 +66,7 @@ export default class YInformer {
          console.log('анимация вниз');
       }
 
-      for (let i = 0; i < this.element.children.length; i++) {
+      for (let i = 1; i < this.element.children.length; i++) {
          const element = this.element.children[i];
          if (element.completed) {
             element.reverse();
