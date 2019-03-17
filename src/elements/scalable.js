@@ -95,7 +95,7 @@ export default class Scalable extends Element {
       this.emit('scaling');
    }
 
-   render(ctx, input) {
+   render(ctx, input, time) {
       if (this.left._scaling) {
          this._slaleLeftX(input);
       }
@@ -104,6 +104,6 @@ export default class Scalable extends Element {
          this._slaleRightX(input);
       }
 
-      super.render(ctx, input);
+      super.render(ctx, input, time);
    }
 }

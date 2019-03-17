@@ -10,7 +10,7 @@ export default class Main {
       this.height = height;
 
       this.y_axis = new YAxis({width, height, color: theme.text_color1});
-      this.lines = new Lines({width, height});
+      this.lines = new Lines({width, height, color: theme.line_color});
       this.columns = new Columns({width, height});
 
       this.element = new Position({

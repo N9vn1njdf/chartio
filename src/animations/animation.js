@@ -10,57 +10,27 @@ export default class Animation {
    }
 
    forward() {
-      if (this._timer || this.completed) {
+      if (this.running || this.completed) {
          return;
       }
-      console.log('forward');
 
       this.start = performance.now();
-
-      this._run();
+      this.running = true;
+      this.reversed = false;
    }
 
    reverse() {      
-      if (this._timer || !this.completed) {
+      if (this.running || !this.completed) {
          return;
       }
 
-      console.log('reverse');
-
       this.start = performance.now();
-
-      this._run(true);
-   }
-
-   _curve(time_fraction) {
-      return time_fraction;
-   }
-
-   _run(reverse = false) {
       this.running = true;
+      this.reversed = true;
+   }
 
-      requestAnimationFrame((time) => {         
-         let time_fraction = (time - this.start) / this.duration;
-         if (time_fraction > 1) {
-            time_fraction = 1;
-         }
-
-         let progress = reverse ? 1 - this._curve(1 - time_fraction) : this._curve(time_fraction);
-         // if (progress < 0) {
-         //    console.log(time , this.start,   this.duration);
-         // }
-         this.handle(progress, reverse);
-
-         if (time_fraction == 1) {
-            this.running = false;
-            this.completed = !this.completed;
-            return;
-         }
-         
-         if (time_fraction < 1) {
-           requestAnimationFrame(() => this._run(reverse));
-         }
-      });
+   curve(time_fraction) {
+      return time_fraction;
    }
 
    get child() {
@@ -102,7 +72,26 @@ export default class Animation {
       return this.parent.h;
    }
 
-   render(ctx, input) {
-      this.child.render(ctx, input);
+   render(ctx, input, time) {
+      this.child.render(ctx, input, time);
+
+      if (this.running) {
+         
+         let time_fraction = (time - this.start) / this.duration;
+         if (time_fraction > 1) {
+            time_fraction = 1;
+         }
+   
+         let progress = this.reversed ? 1 - this.curve(1 - time_fraction) : this.curve(time_fraction);
+         if (progress < 0) {
+            progress = 0;
+         }
+         this.handle(progress, this.reversed);
+   
+         if (time_fraction == 1) {            
+            this.running = false;
+            this.completed = !this.completed;
+         }
+      }
    }
 }

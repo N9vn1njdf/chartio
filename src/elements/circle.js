@@ -28,13 +28,13 @@ export default class Circle extends Element {
       return x < this.x + this.r && x > this.x - this.r && y < this.y + this.r && y > this.y - this.r;
    }
 
-   render(ctx, input) {
+   render(ctx, input, time) {
       ctx.globalAlpha = this.alpha;
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
       ctx.fillStyle = this.color;
       ctx.fill();
 
-      super.render(ctx, input);
+      super.render(ctx, input, time);
    }
 }

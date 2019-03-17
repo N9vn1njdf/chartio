@@ -67,9 +67,9 @@ export default class Element extends Event {
       return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
    }
    
-   render(ctx, input) {
+   render(ctx, input, time) {
       for(let i in this.children) {
-         this.children[i].render(ctx, input);
+         this.children[i].render(ctx, input, time);
       }
 
       if (this.isHover(input)) {

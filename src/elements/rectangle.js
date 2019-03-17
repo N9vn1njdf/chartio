@@ -33,7 +33,7 @@ export default class Rectangle extends Element {
       }
    }
 
-   render(ctx, input) {
+   render(ctx, input, time) {
       ctx.globalAlpha = this.alpha;
       ctx.fillStyle = this.color;
       ctx.fillRect(this.x, this.y, this.w, this.h);
@@ -63,6 +63,6 @@ export default class Rectangle extends Element {
          ctx.stroke();
       }
 
-      super.render(ctx, input);
+      super.render(ctx, input, time);
    }
 }

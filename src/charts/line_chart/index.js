@@ -20,6 +20,7 @@ var theme = {
    navigator_color1: 'rgba(205, 211, 236, 0.4)',
    navigator_color2: 'rgba(212, 220, 244, 0.28)',
    text_color1: '#858991',
+   line_color: '#c9c6c9'
 }
 
 class LineChart {

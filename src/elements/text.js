@@ -33,7 +33,7 @@ export default class Text extends Element {
       return x < this.x + this.r && x > this.x - this.r && y < this.y + this.r && y > this.y - this.r;
    }
 
-   render(ctx, input) {
+   render(ctx, input, time) {
       ctx.globalAlpha = this.alpha;
 
       ctx.fillStyle = this.color;
@@ -42,6 +42,6 @@ export default class Text extends Element {
       ctx.textAlign = this.align; 
       ctx.fillText(this.text, this.x, this.y);
 
-      super.render(ctx, input);
+      super.render(ctx, input, time);
    }
 }

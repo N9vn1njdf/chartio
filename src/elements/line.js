@@ -23,7 +23,7 @@ export default class Line extends Element {
       return this._x2 = value;
    }
 
-   render(ctx, input) {
+   render(ctx, input, time) {
       ctx.globalAlpha = this.alpha;
 
       ctx.strokeStyle = this.color;
@@ -35,6 +35,6 @@ export default class Line extends Element {
       ctx.stroke();
       ctx.closePath();
 
-      super.render(ctx, input);
+      super.render(ctx, input, time);
    }
 }

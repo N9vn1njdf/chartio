@@ -56,7 +56,7 @@ export default class Dates {
       this.element.children = children;
    }
 
-   animate() {
+   animate() {      
       this.element.w = (this.element.children.length-1)*this.scale.x;
       this.calc_hidden();
 

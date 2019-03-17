@@ -10,14 +10,14 @@ export default class Scaffold {
       this.input = new Input(this.canvas);
 
       this.children = children || [];
-      this.render();
+      requestAnimationFrame((time) => this.render(time));
    }
 
-   render() {
+   render(time) {
       var ctx = this.canvas.getContext('2d');
       
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.children.forEach((element) => element.render(ctx, this.input));
+      this.children.forEach((element) => element.render(ctx, this.input, time));
       
       if (this.input.down && !this.input.event_down) {
          this.input.event_down = true;
@@ -29,7 +29,7 @@ export default class Scaffold {
          this.canvas.style.cursor = 'default';
       }
 
-      requestAnimationFrame(() => this.render());
+      requestAnimationFrame((time) => this.render(time));
    }
 
    add(element) {
