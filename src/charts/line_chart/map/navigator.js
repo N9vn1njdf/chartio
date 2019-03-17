@@ -3,7 +3,7 @@ import { Event } from 'core'
 
 export default class Navigator extends Event {
 
-   constructor({width, height}) {
+   constructor({width, height, theme}) {
       super();
       
       var start_w = 100;
@@ -15,19 +15,20 @@ export default class Navigator extends Event {
          child: new Scalable({
             axisX: true,
             onScaling: () => this.onScaling(),
+            edgeColor: theme.navigator_color1,
             child: new Rectangle({
                x: start_x,
                w: start_w,
                h: height,
-               borderTop: {color: 'rgba(0, 0, 0, 0.12)', inside: true},
-               borderBottom: {color: 'rgba(0, 0, 0, 0.12)', inside: true},
+               borderTop: {color: theme.navigator_color1, inside: true, width: 2},
+               borderBottom: {color: theme.navigator_color1, inside: true, width: 2},
             }),
          })
       });
       
       this.background = [
-         new Rectangle({w: start_x, h: height, color: 'rgba(255, 255, 255, 0.5)', inputIgnore: true}),
-         new Rectangle({x: this.offset + this.width, w: width, h: height, color: 'rgba(255, 255, 255, 0.5)', inputIgnore: true})
+         new Rectangle({w: start_x, h: height, color: theme.navigator_color2, inputIgnore: true}),
+         new Rectangle({x: this.offset + this.width, w: width, h: height, color: theme.navigator_color2, inputIgnore: true})
       ];
 
       this.element = new Rectangle({

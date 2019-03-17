@@ -1,21 +1,26 @@
 import { Scaffold } from 'core'
 import { Position } from 'elements'
 import Main from './main'
-import YInformer from './y_informer'
 import Dates from './dates'
 import Map from './map'
 import localization from './localization'
 
 
-// Текущий язык
+// Язык
 let locale_code = 'ru';
 // Размер миникарты
 var map_height = 50;
 // Размер линии дат
-var date_height = 40;
+var date_height = 35;
 // Максимальный отступ сверху для графика
 var main_padding_top = 40;
 
+var theme = {
+   map_background: '#fff',
+   navigator_color1: 'rgba(205, 211, 236, 0.4)',
+   navigator_color2: 'rgba(212, 220, 244, 0.28)',
+   text_color1: '#858991',
+}
 
 class LineChart {
 
@@ -25,20 +30,16 @@ class LineChart {
       var main_height = height - map_height - date_height;
 
       // Создаем миникарту
-      this.map = new Map({width, map_height, main_height, main_padding_top, localization, locale_code});
+      this.map = new Map({width, map_height, main_height, main_padding_top, localization, locale_code, theme});
 
       // Создаем индиктор дат
-      this.dates = new Dates({font_size: 12.5, item_width: 70, animation_duration: 150});
+      this.dates = new Dates({color: theme.text_color1, font_size: 12.5, item_width: 70, animation_duration: 150});
       
       // Создаем график
-      this.main = new Main({width, height: main_height});
-
-      // Создаем индикатор оси Y
-      this.y_informer = new YInformer({width, height: main_height});
+      this.main = new Main({width, height: main_height, theme});
 
       // Слушаем события миникарты и обновляем график и даты
       this.map.on('update', (data) => this.main.update(data))
-      this.map.on('update', (data) => this.y_informer.update(data))
       this.map.on('update', (data) => this.dates.update(data))
 
       new Scaffold({
@@ -48,12 +49,11 @@ class LineChart {
          children: [
             new Position({
                children: [
-                  this.y_informer.element,
                   this.main.element
                ]
             }),
             new Position({
-               y: this.main.element.h + date_height/4,
+               y: main_height + date_height/4,
                children: [
                   this.dates.element
                ]

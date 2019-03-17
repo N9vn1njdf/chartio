@@ -10,7 +10,7 @@ export default class Rectangle extends Element {
 
       if (borderTop) {
          this.borderTop = {
-            color: borderTop.color || 'rgb(0, 0, 0)',
+            color: borderTop.color || 'rgba(0, 0, 0, 0.2)',
             width: borderTop.width || 1,
             inside: borderTop.inside || false
          };
@@ -18,7 +18,7 @@ export default class Rectangle extends Element {
 
       if (borderBottom) {
          this.borderBottom = {
-            color: borderBottom.color || 'rgb(0, 0, 0)',
+            color: borderBottom.color || 'rgba(0, 0, 0, 0.2)',
             width: borderBottom.width || 1,
             inside: borderBottom.inside || false
          };

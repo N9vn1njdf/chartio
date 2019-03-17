@@ -1,52 +1,66 @@
 
 export default class Animation {
 
-   constructor({child, duration, completed}) {
+   constructor({child, duration}) {
       this.child = child;      
       this.duration = duration || 300;
 
       this.running = false;
-      this.completed = completed || false;
-
-      if (completed) {         
-         this.handle(0);
-      }
+      this.completed = false;
    }
 
    forward() {
       if (this._timer || this.completed) {
          return;
       }
-      
+      console.log('forward');
+
+      this.start = performance.now();
+
       this._run();
    }
 
-   reverse() {
+   reverse() {      
       if (this._timer || !this.completed) {
          return;
       }
 
+      console.log('reverse');
+
+      this.start = performance.now();
+
       this._run(true);
+   }
+
+   _curve(time_fraction) {
+      return time_fraction;
    }
 
    _run(reverse = false) {
       this.running = true;
-      this._left = this.duration;
 
-      this._timer = setInterval(() => {
-         this._left -= 10;
-
-         if (this._left <= 0) {
-            clearInterval(this._timer);
-            this._timer = null;
-            this.running = false;
-            this.completed = !this.completed;
+      requestAnimationFrame((time) => {         
+         let time_fraction = (time - this.start) / this.duration;
+         if (time_fraction > 1) {
+            time_fraction = 1;
          }
 
-         var progress = reverse ? 100-100/this.duration*this._left : 100/this.duration*this._left;
-         this.handle(progress);
+         let progress = reverse ? 1 - this._curve(1 - time_fraction) : this._curve(time_fraction);
+         // if (progress < 0) {
+         //    console.log(time , this.start,   this.duration);
+         // }
+         this.handle(progress, reverse);
 
-      }, 10);
+         if (time_fraction == 1) {
+            this.running = false;
+            this.completed = !this.completed;
+            return;
+         }
+         
+         if (time_fraction < 1) {
+           requestAnimationFrame(() => this._run(reverse));
+         }
+      });
    }
 
    get child() {

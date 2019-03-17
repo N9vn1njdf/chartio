@@ -6,21 +6,31 @@ export default class FadeY extends Animation {
       super(arguments[0]);
 
       this.offset = offset || 20;
-      this.start_y = this.child.y - this.offset;
    }
 
-   /**
-    * 
-    * @param {%} progress 
-    */
-   handle(progress) {      
-      var y = this.offset * progress / 100      
-      this.child.y = this.child.y2 = this.start_y + y;
+   get offset() {
+      return this._offset;
+   }
 
-      this.child.alpha = progress/100;
+   set offset(value) {
+      this._offset = value;
+      this.start_y = this.child.y;
+   }
 
-      if (this.child.alpha <= 0) {
-         this.child.alpha = 0;
+   handle(progress, reverse) {
+      let y = progress * this._offset;
+
+      if (reverse) {
+         this.child.y = this.start_y + this._offset - y;
+         this.child.alpha = progress;
+
+      } else {
+         this.child.y = this.start_y + y;
+         this.child.alpha = 0.8 - progress;
+      }
+
+      if (this.child.y2) {
+         this.child.y2 = this.child.y;
       }
    }
 }

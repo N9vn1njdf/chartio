@@ -3,7 +3,8 @@ import { Fade } from 'animations'
 
 export default class Dates {
 
-   constructor({font_size, item_width, animation_duration}) {
+   constructor({color, font_size, item_width, animation_duration}) {
+      this.color = color;
       this.font_size = font_size || 14;
       this.item_width = item_width || 80;
       this.animation_duration = animation_duration || 300;
@@ -17,7 +18,7 @@ export default class Dates {
       this.element = new Position();
    }
 
-   update({offset, scale, dates_column, columns, hidden_columns, colors, locale}) {
+   update({offset, scale, dates_column, locale}) {
       this.element.x = offset;
       this.prev_scale = this.scale;
       this.scale = scale;
@@ -44,7 +45,7 @@ export default class Dates {
             x: (i-1) * this.scale.x,
             w: this.item_width,
             children: [
-               new Text({text: `${m} ${d}`, size: this.font_size, color: 'rgba(0, 0, 0, 0.3)', align: 'center'})
+               new Text({text: `${m} ${d}`, size: this.font_size, color: this.color, align: 'center'})
             ]
          });
 

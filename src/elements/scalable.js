@@ -5,7 +5,7 @@ import Rectangle from './rectangle.js'
 
 export default class Scalable extends Element {
 
-   constructor({child, axisX, axisY, onScaling} = {}) {
+   constructor({child, axisX, axisY, onScaling, edgeColor} = {}) {
       super({x: child.x, y: child.y, w: child.w, h: child.h});
 
       child.x = 0;
@@ -19,6 +19,8 @@ export default class Scalable extends Element {
          this.on('scaling', onScaling);
       }
 
+      this.edgeColor = edgeColor || 'rgba(0, 0, 0, 0.2)'
+      
       this.children = this._getChildren();
    }
 
@@ -40,10 +42,10 @@ export default class Scalable extends Element {
 
    _getChildren() {
       
-      this.left = new Rectangle({x: -6, w: 6, h: this.h, cursor: 'col-resize', color: 'rgba(0, 0, 0, 0.12)'});
+      this.left = new Rectangle({x: -5, w: 5, h: this.h, cursor: 'col-resize', color: this.edgeColor});
       this.left.on('down', (input) => this.left._scaling = true);
 
-      this.right = new Rectangle({x: this.w, w: 6, h: this.h, cursor: 'col-resize', color: 'rgba(0, 0, 0, 0.12)'});
+      this.right = new Rectangle({x: this.w, w: 5, h: this.h, cursor: 'col-resize', color: this.edgeColor});
       this.right.on('down', (input) => this.right._scaling = true);
 
       var edgesX = this.axisX ? [this.left, this.right] : [];
