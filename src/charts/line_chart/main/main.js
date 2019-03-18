@@ -5,13 +5,13 @@ import Lines from './lines.js'
 
 export default class Main {
 
-   constructor({width, height, theme}) {
+   constructor({width, height, themeObserver}) {
       this.width = width;
       this.height = height;
 
-      this.y_axis = new YAxis({width, height, color: theme.text_color1});
-      this.lines = new Lines({width, height, color: theme.line_color});
-      this.columns = new Columns({width, height});
+      this.y_axis = new YAxis({width, height, themeObserver});
+      this.lines = new Lines({width, height, themeObserver});
+      this.columns = new Columns({width, height, themeObserver});
 
       this.element = new Position({
          children: [
@@ -21,8 +21,8 @@ export default class Main {
          ]
       });
    }
-   
-   update({offset, scale, columns, hidden_columns, colors}) {
+
+   update({offset, scale, columns, hidden_columns, colors}) {      
       this.y_axis.update({scale, columns, hidden_columns});
       this.lines.update({scale, columns, hidden_columns});
       this.columns.update({offset, scale, columns, hidden_columns, colors});

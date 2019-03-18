@@ -3,32 +3,40 @@ import { Event } from 'core'
 
 export default class Navigator extends Event {
 
-   constructor({width, height, theme}) {
+   constructor({width, height, themeObserver}) {
       super();
       
+      themeObserver.subscribe(theme => {
+         if (this.scalable) {
+            this.scalable.edgeColor = this.scalable.child.borderTop.color = this.scalable.child.borderBottom.color = theme.map_color1;
+            this.background[0].color = this.background[1].color = theme.map_color2;
+         }
+      })
+
       var start_w = 100;
       var start_x = width-start_w;
+
+      this.scalable = new Scalable({
+         axisX: true,
+         onScaling: () => this.onScaling(),
+         child: new Rectangle({
+            x: start_x,
+            w: start_w,
+            h: height,
+            borderTop: {inside: true, width: 2},
+            borderBottom: {inside: true, width: 2},
+         }),
+      });
 
       this.navigator = new Draggable({
          axisX: true,
          onDragging: () => this.onDragging(),
-         child: new Scalable({
-            axisX: true,
-            onScaling: () => this.onScaling(),
-            edgeColor: theme.navigator_color1,
-            child: new Rectangle({
-               x: start_x,
-               w: start_w,
-               h: height,
-               borderTop: {color: theme.navigator_color1, inside: true, width: 2},
-               borderBottom: {color: theme.navigator_color1, inside: true, width: 2},
-            }),
-         })
+         child: this.scalable
       });
       
       this.background = [
-         new Rectangle({w: start_x, h: height, color: theme.navigator_color2, inputIgnore: true}),
-         new Rectangle({x: this.offset + this.width, w: width, h: height, color: theme.navigator_color2, inputIgnore: true})
+         new Rectangle({w: start_x, h: height, inputIgnore: true}),
+         new Rectangle({x: this.offset + this.width, w: width, h: height, inputIgnore: true})
       ];
 
       this.element = new Rectangle({

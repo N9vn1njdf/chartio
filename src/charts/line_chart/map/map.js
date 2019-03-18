@@ -4,7 +4,7 @@ import Navigator from './navigator.js'
 
 export default class Map extends Event {
 
-   constructor({width, map_height, main_height, main_padding_top, localization, locale_code, theme}) {
+   constructor({width, map_height, main_height, main_padding_top, localization, locale_code, themeObserver}) {
       super();
 
       this.width = width;
@@ -22,7 +22,7 @@ export default class Map extends Event {
       this.hidden_columns = [];
       this.colors = {};
 
-      this.navigator = new Navigator({width: width, height: map_height, theme});
+      this.navigator = new Navigator({width: width, height: map_height, themeObserver});
       this.navigator.on('offset', () => this.emitUpdate());
       this.navigator.on('scaling', () => this.emitUpdate());
 
@@ -31,12 +31,11 @@ export default class Map extends Event {
       this.element = new Rectangle({
          w: width,
          h: map_height,
-         color: theme.map_background,
          children: [
             this.data_element,
             this.navigator.element,
          ]
-      });
+      });      
    }
 
    emitUpdate() {
@@ -84,6 +83,7 @@ export default class Map extends Event {
    }
    
    setData({columns, colors}) {
+      columns = columns.slice();
       this.dates_column = columns[0];
       this.columns = columns.splice(1, columns.length);
       this.colors = colors;
@@ -167,4 +167,3 @@ export default class Map extends Event {
       return {min, max}
    }
 }
-

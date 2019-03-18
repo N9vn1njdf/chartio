@@ -5,7 +5,7 @@ import Rectangle from './rectangle.js'
 
 export default class Scalable extends Element {
 
-   constructor({child, axisX, axisY, onScaling, edgeColor} = {}) {
+   constructor({child, axisX, axisY, onScaling, edgeColor}) {
       super({x: child.x, y: child.y, w: child.w, h: child.h});
 
       child.x = 0;
@@ -20,7 +20,23 @@ export default class Scalable extends Element {
       }
 
       this.edgeColor = edgeColor || 'rgba(0, 0, 0, 0.2)'
-      
+   }
+
+   get child() {
+      return this._child;
+   }
+
+   set child(value) {
+      this._child = value;
+      this.children = this._getChildren();
+   }
+
+   get edgeColor() {
+      return this._edgeColor;
+   }
+
+   set edgeColor(value) {
+      this._edgeColor = value;
       this.children = this._getChildren();
    }
 

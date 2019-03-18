@@ -71,9 +71,8 @@ export default class Element extends Event {
       for(let i in this.children) {
          this.children[i].render(ctx, input, time);
       }
-
+      
       if (this.isHover(input)) {
-
          if(!input.el && this.color != 'rgba(0, 0, 0, 0)' && !this.inputIgnore) {
             input.el = this;
          }

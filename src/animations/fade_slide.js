@@ -18,7 +18,7 @@ export default class FadeY extends Animation {
    }
    
    curve(time_fraction) {
-      return Math.pow(time_fraction, 2);
+      return Math.pow(time_fraction, 3);
    }
 
    handle(progress, reverse) {
@@ -30,7 +30,7 @@ export default class FadeY extends Animation {
 
       } else {
          this.child.y = this.start_y + y;
-         this.child.alpha = 0.8 - progress;
+         this.child.alpha = 1 - progress/0.9;
       }
 
       if (this.child.y2) {

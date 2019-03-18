@@ -2,15 +2,25 @@ import Input from './input.js';
 
 export default class Scaffold {
 
-   constructor({id, width, height, children}) {
+   constructor({id, width, height, background, children}) {
       this.canvas = document.getElementById(id);
       this.canvas.width = width;
       this.canvas.height = height;
+      this.canvas.style.background = background || '#fff';
 
       this.input = new Input(this.canvas);
 
       this.children = children || [];
       requestAnimationFrame((time) => this.render(time));
+   }
+
+   get background() {
+      return this._background;
+   }
+
+   set background(value) {
+      this._background = value;
+      this.canvas.style.background = value;
    }
 
    render(time) {
