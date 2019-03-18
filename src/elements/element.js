@@ -8,7 +8,7 @@ export default class Element extends Event {
       this.x = x || 0;
       this.y = y || 0;
       this.color = color || 'rgba(0, 0, 0, 0)';
-      this.alpha = alpha || 1;
+      this.alpha = alpha != null ? alpha : 1;
       this.children = children || [];
       this.cursor = cursor || 'default';
       this.inputIgnore = inputIgnore || false;

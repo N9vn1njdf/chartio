@@ -2,7 +2,7 @@ import Element from './element.js'
 
 export default class Draggable extends Element {
 
-   constructor({child, axisX, axisY, onDragging}) {
+   constructor({child, axisX, axisY, canDragX, canDragY, onDragging}) {
       super({x: child.x, y: child.y, w: child.w, h: child.h, children: [child]});
 
       child.x = 0;
@@ -11,6 +11,9 @@ export default class Draggable extends Element {
 
       this.axisX = axisX || false;
       this.axisY = axisY || false;
+
+      this.canDragX = canDragX;
+      this.canDragY = canDragY;
 
       if (onDragging) {
          this.on('dragging', onDragging);
@@ -57,11 +60,13 @@ export default class Draggable extends Element {
       }
 
       if (this.axisY) {
-         this.y = input.y - this._inputOffset.y;
+         let y = input.y - this._inputOffset.y;
+         this.y = this.canDragY({child: this.child, y});
       }
 
       if (this.axisX) {
-         this.x = input.x - this._inputOffset.x;
+         let x = input.x - this._inputOffset.x;
+         this.x = this.canDragX({child: this.child, x});
       }
 
       this.emit('dragging');

@@ -5,7 +5,7 @@ import Rectangle from './rectangle.js'
 
 export default class Scalable extends Element {
 
-   constructor({child, axisX, axisY, onScaling, edgeColor}) {
+   constructor({child, axisX, axisY, onScaling, edgeColor, edgeWidth}) {
       super({x: child.x, y: child.y, w: child.w, h: child.h});
 
       child.x = 0;
@@ -19,16 +19,8 @@ export default class Scalable extends Element {
          this.on('scaling', onScaling);
       }
 
-      this.edgeColor = edgeColor || 'rgba(0, 0, 0, 0.2)'
-   }
-
-   get child() {
-      return this._child;
-   }
-
-   set child(value) {
-      this._child = value;
-      this.children = this._getChildren();
+      this.edgeColor = edgeColor || 'rgba(0, 0, 0, 0.2)';
+      this.edgeWidth = edgeWidth || 5;
    }
 
    get edgeColor() {
@@ -37,6 +29,24 @@ export default class Scalable extends Element {
 
    set edgeColor(value) {
       this._edgeColor = value;
+      this.children = this._getChildren();
+   }
+
+   get edgeWidth() {
+      return this._edgeWidth;
+   }
+
+   set edgeWidth(value) {
+      this._edgeWidth = value;
+      this.children = this._getChildren();
+   }
+   
+   get child() {
+      return this._child;
+   }
+
+   set child(value) {
+      this._child = value;
       this.children = this._getChildren();
    }
 
@@ -58,11 +68,11 @@ export default class Scalable extends Element {
 
    _getChildren() {
       
-      this.left = new Rectangle({x: -5, w: 5, h: this.h, cursor: 'col-resize', color: this.edgeColor});
-      this.left.on('down', (input) => this.left._scaling = true);
+      this.left = new Rectangle({x: -this.edgeWidth, w: this.edgeWidth, h: this.h, cursor: 'col-resize', color: this.edgeColor});
+      this.left.on('down', () => this.left._scaling = true);
 
-      this.right = new Rectangle({x: this.w, w: 5, h: this.h, cursor: 'col-resize', color: this.edgeColor});
-      this.right.on('down', (input) => this.right._scaling = true);
+      this.right = new Rectangle({x: this.w, w: this.edgeWidth, h: this.h, cursor: 'col-resize', color: this.edgeColor});
+      this.right.on('down', () => this.right._scaling = true);
 
       var edgesX = this.axisX ? [this.left, this.right] : [];
 
@@ -88,6 +98,7 @@ export default class Scalable extends Element {
       
       this.w = this.left._inputOffset.w - newX;
       this.right.x = this.w;
+      console.log(newX);
       
       this.x = newX;
 

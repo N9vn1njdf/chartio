@@ -30,7 +30,7 @@ export default class FadeY extends Animation {
 
       } else {
          this.child.y = this.start_y + y;
-         this.child.alpha = 1 - progress/0.9;
+         this.child.alpha = 1 - progress;
       }
 
       if (this.child.y2) {

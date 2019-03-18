@@ -1,12 +1,12 @@
 
 export default class Animation {
 
-   constructor({child, duration}) {
+   constructor({child, duration, completed}) {
       this.child = child;      
       this.duration = duration || 300;
 
       this.running = false;
-      this.completed = false;
+      this.completed = completed != null ? completed : false;
    }
 
    forward() {

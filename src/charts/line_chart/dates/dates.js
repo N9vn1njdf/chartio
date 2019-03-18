@@ -3,17 +3,11 @@ import { Fade } from 'animations'
 
 export default class Dates {
 
-   constructor({color, font_size, item_width, animation_duration, themeObserver}) {
-      this.color = color;
-      this.font_size = font_size || 14;
-      this.item_width = item_width || 80;
+   constructor({animation_duration, themeObserver}) {
       this.animation_duration = animation_duration || 300;
 
       this.dates = [];
-      this.hidden_levels = [
-         // [1,3,5]
-         // [2,6,10]
-      ];
+      this.hidden_levels = [];
 
       this.element = new Position();
 
@@ -21,6 +15,9 @@ export default class Dates {
          if (this.element) {
             this.color = theme.text_color2;
             this.font_size = theme.text_size2;
+
+            if (this.scale)
+            this.calc_hidden_levels(true);
             this.updateAxis();
          }
       })
@@ -28,16 +25,21 @@ export default class Dates {
 
    update({offset, scale, dates_column, locale}) {
       this.element.x = offset;
-      this.prev_scale = this.scale;
+      this.prev_scale = !this.scale ? scale : this.scale;
       this.scale = scale;
       this.dates = dates_column;
       this.locale = locale;
-
+      
+      this.calc_hidden_levels(true);
       this.updateAxis();
    }
 
+   get item_width() {
+      return this.font_size*5;
+   }
+
    updateAxis() {      
-      if (this.prev_scale) {
+      if (this.element.children.length > 0) {
          this.animate();
          return;
       }
@@ -50,14 +52,15 @@ export default class Dates {
          let m = this.locale.month[date.getMonth()];
          
          let rect = new Rectangle({
+            alpha: this.hidden.includes(i) ? 1 : 0,
             x: (i-1) * this.scale.x,
             w: this.item_width,
             children: [
                new Text({text: `${m} ${d}`, size: this.font_size, color: this.color, align: 'center'})
             ]
          });
-
-         let child = new Fade({child: rect, duration: this.animation_duration});
+         
+         let child = new Fade({child: rect, duration: this.animation_duration, completed: !this.hidden.includes(i)});
          children.push(child);
       }
 
@@ -66,12 +69,12 @@ export default class Dates {
 
    animate() {      
       this.element.w = (this.element.children.length-1)*this.scale.x;
-      this.calc_hidden();
+      this.calc_hidden_levels();
 
       for (let i = 0; i < this.element.children.length; i++) {
          let element = this.element.children[i];
          element.child.x = i * this.scale.x;
-
+         
          if (this.hidden.includes(i)) {
             element.forward();
          } else {
@@ -92,7 +95,7 @@ export default class Dates {
    // Возвращает индексы элементов, которые показаны
    get visible() {
       let result = [];
-      for (let i = 0; i < this.element.children.length; i++) {
+      for (let i = 0; i < this.dates.length; i++) {
          if (!this.hidden.includes(i)) {
             result.push(i);
          }
@@ -100,13 +103,13 @@ export default class Dates {
       return result;
    }
  
-   calc_hidden() {
-      var all_width = (this.element.children.length)*this.scale.x;
-      var visible_width = (this.element.children.length-this.hidden.length)*this.item_width;
+   calc_hidden_levels(force = false) {
+      var all_width = (this.dates.length)*this.scale.x;
+      var visible_width = (this.dates.length-this.hidden.length)*this.item_width;
 
       // Скрываем элементы
-      if (this.prev_scale.x > this.scale.x) {         
-         var w = (all_width - visible_width)/(this.visible.length);
+      if (force || this.prev_scale.x > this.scale.x) {
+         var w = (all_width - visible_width)/this.visible.length;
          
          if (w <= 1) {
             var visible = this.visible.slice();
@@ -118,6 +121,7 @@ export default class Dates {
                }
             }
          }
+         return;
       }
 
       // Показываем элементы

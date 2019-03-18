@@ -19,6 +19,7 @@ var defaultTheme = {
    background: '#fff',
    map_color1: 'rgba(205, 211, 236, 0.4)',
    map_color2: 'rgba(212, 220, 244, 0.28)',
+   map_edge_width: 4,
    text_color1: '#858991',
    text_size1: 12.5,
    text_color2: '#858991',
@@ -39,7 +40,7 @@ class LineChart {
       this.map = new Map({width, map_height, main_height, main_padding_top, localization, locale_code, themeObserver});
 
       // Создаем индиктор дат
-      this.dates = new Dates({font_size: 12.5, item_width: 70, animation_duration: 150, themeObserver});
+      this.dates = new Dates({animation_duration: 280, themeObserver});
       
       // Создаем график
       this.main = new Main({width, height: main_height, themeObserver});
