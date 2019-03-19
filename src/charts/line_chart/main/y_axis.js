@@ -1,23 +1,44 @@
 import { Text, Line, Position } from 'elements'
+import { FadeSlide } from 'animations'
 
 export default class YAxis {
 
    constructor({width, height, themeObserver}) {
       this.width = width;
       this.height = height;
+      this.data = [];
 
-      this.lines_count = 5;
-      this.step = (this.height-30)/this.lines_count;
-      
+      this.lines = {
+         top: new Position({w: width}),
+         bottom: new Position({w: width}),
+      };
+
       themeObserver.subscribe(theme => {         
-         this.color = theme.text_color1;
-         this.font_size = theme.text_size1;
+         this.lines_count = theme.lines_count;
+         this.step = (this.height-30)/this.lines_count;
+         this.color = this.bottom_text.color = theme.text_color1;
+         this.font_size = this.bottom_text.size = theme.text_size1;
+         this.duration = theme.animation_duration_2;
+
          if (this.scale) {
-            this.updateColumns();
+            this.createLines()
          }
       })
       
-      this.element = new Position();
+      this.bottom_text =  new Text({
+         y: this.height - 15,
+         text: 0,
+         size: this.font_size,
+         color: this.color
+      });
+
+      this.element = new Position({
+         children: [
+            this.lines.top,
+            this.lines.bottom,
+            this.bottom_text
+         ]
+      });
    }
 
    update({scale, columns, hidden_columns}) {
@@ -27,22 +48,78 @@ export default class YAxis {
       this.columns = columns;
       this.hidden_columns = hidden_columns;
             
-      this.updateColumns();
+      if (this.prev_scale) {
+         this.animateDirection();
+
+      } else {
+         this.createLines()
+      }
    }
 
-   updateColumns() {
-      var children = [];
+   createLines() {
+      this.data = [];
+      for (let i = 1; i <= this.lines_count; i++) {
+         this.data.push(parseInt(i*this.step/this.scale.y));
+      }
+      this.lines.top.children = this.getLinesGroup(0, 0, this.data);
+   }
+
+   animateDirection() {
+      if (this.lines.top.children.running) {
+         return;
+      }
+
+      if (this.prev_scale.y < this.scale.y) {
+         this.animateFrom('bottom');
+      }
       
-      for (let i = 0; i <= this.lines_count; i++) {
-         children.push(new Text({
-            y: this.height-(i*this.step)-15,
-            text: parseInt(i*this.step/this.scale.y),
-            size: this.font_size,
-            color: this.color
+      if (this.prev_scale.y > this.scale.y) {
+         this.animateFrom('top');
+      }
+
+      this.data = [];
+      for (let i = 1; i <= this.lines_count; i++) {
+         this.data.push(parseInt(i*this.step/this.scale.y));
+      }
+   }
+
+   animateFrom(from) {
+      let to = from == 'top' ? 'bottom' : 'top';
+      
+      let data = []
+      for (let i = 1; i <= this.lines_count; i++) {
+         data.push(parseInt(i*this.step/this.scale.y));
+      }
+
+      this.lines[from].children = this.getLinesGroup(-90, -220, to == 'top' ? this.data : data);
+      this.lines[to].children = this.getLinesGroup(22, 50, to == 'bottom' ? this.data : data);
+      
+      this.lines.top.children.forEach(element => {
+         element.completed = true
+         element.reverse()
+      });
+
+      this.lines.bottom.children.forEach(element => {
+         element.forward()
+      });
+   }
+
+   getLinesGroup(offset, m, data) {
+      var children = [];      
+      
+      for (let i = 1; i <= this.lines_count; i++) {
+         children.push(new FadeSlide({
+            child: new Text({
+               y: this.height-(i*this.step)-15,
+               text: data[i-1],
+               size: this.font_size,
+               color: this.color
+            }),
+            offset: (i*m)+offset,
+            duration: this.duration,
          }));
       }
 
-      this.element.children = children;
-      this.element.w = (this.columns[0].length-2)*this.scale.x;
+      return children;
    }
 }

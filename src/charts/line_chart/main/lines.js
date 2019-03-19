@@ -7,17 +7,17 @@ export default class Lines {
       this.width = width;
       this.height = height;
 
-      this.lines_count = 5;
-      this.step = (this.height-30)/this.lines_count;
-
       this.lines = {
          top: new Position({w: width}),
          bottom: new Position({w: width}),
       };
 
       themeObserver.subscribe(theme => {
+         this.lines_count = theme.lines_count;
+         this.step = (this.height-30)/this.lines_count;
          this.color = this.bottom_line.color = theme.line_color;
-         this.lines.top.children = this.getLinesGroup(0, -50, -90, this.color);
+         this.duration = theme.animation_duration_1;
+         this.lines.top.children = this.getLinesGroup(0, 0, 0);
       })
 
       this.bottom_line = new Line({x: 0, y: this.height, color: this.color});
@@ -38,40 +38,34 @@ export default class Lines {
       this.scale = scale;
       this.columns = columns;
       this.hidden_columns = hidden_columns;
-      
+
       if (this.prev_scale) {
-         this.animateLines();
+         this.animateDirection();
 
       } else {         
-         this.lines.top.children = this.getLinesGroup(0, -50, -90, this.color);
+         this.lines.top.children = this.getLinesGroup(0, 0, 0);
       }
    }
 
-   animateLines() {
+   animateDirection() {
       if (this.lines.top.children.running) {
          return;
       }
-
-      var direction = null;
       
       if (this.prev_scale.y < this.scale.y) {
-         direction = 'bottom';
+         this.animateFrom('bottom');
       }
       
       if (this.prev_scale.y > this.scale.y) {
-         direction = 'top';
-      }
-
-      if (direction != null) {
-         this.animateFrom(direction);
+         this.animateFrom('top');
       }
    }
 
    animateFrom(from) {
       let to = from == 'top' ? 'bottom' : 'top';
 
-      this.lines[from].children = this.getLinesGroup(0, -2, -28, this.color);
-      this.lines[to].children = this.getLinesGroup(0, 22, 20, this.color);
+      this.lines[from].children = this.getLinesGroup(0, -90, -220);
+      this.lines[to].children = this.getLinesGroup(0, 220, 50);
       
       this.lines.top.children.forEach(element => {         
          element.completed = true
@@ -83,14 +77,14 @@ export default class Lines {
       });
    }
    
-   getLinesGroup(y, offset, m, color) {
+   getLinesGroup(y, offset, m) {
       var children = [];
       
       for (let i = 1; i <= this.lines_count; i++) {
          let child = new FadeSlide({
-            child: new Line({x: 0, y: y + this.height-(i*this.step), color: color}),
-            offset: ((i+1)*m)+offset,
-            duration: 320,
+            child: new Line({x: 0, y: y + this.height-(i*this.step), color: this.color}),
+            offset: (i*m)+offset,
+            duration: this.duration,
          });
          children.push(child);
       }

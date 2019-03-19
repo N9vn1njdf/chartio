@@ -14,7 +14,8 @@ export default class Animation {
          return;
       }
 
-      this.start = performance.now();
+      this.start();
+      this.start_time = performance.now();
       this.running = true;
       this.reversed = false;
    }
@@ -24,10 +25,13 @@ export default class Animation {
          return;
       }
 
-      this.start = performance.now();
-      this.running = true;
       this.reversed = true;
+      this.start();
+      this.start_time = performance.now();
+      this.running = true;
    }
+
+   start() {}
 
    curve(time_fraction) {
       return time_fraction;
@@ -77,7 +81,7 @@ export default class Animation {
 
       if (this.running) {
          
-         let time_fraction = (time - this.start) / this.duration;
+         let time_fraction = (time - this.start_time) / this.duration;
          if (time_fraction > 1) {
             time_fraction = 1;
          }
@@ -86,7 +90,7 @@ export default class Animation {
          if (progress < 0) {
             progress = 0;
          }
-         this.handle(progress, this.reversed);
+         this.handle(progress, time_fraction);
    
          if (time_fraction == 1) {            
             this.running = false;

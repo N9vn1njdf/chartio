@@ -25,6 +25,10 @@ var defaultTheme = {
    text_color2: '#858991',
    text_size2: 14,
    line_color: '#c9c6c9',
+   lines_count: 5,
+   animation_duration_1: 900,
+   animation_duration_2: 800,
+   animation_duration_3: 200,
 }
 
 class LineChart {
@@ -90,7 +94,13 @@ class LineChart {
       this.map.setData({columns: data.columns, colors: data.colors});
    }
 
-   setTheme(theme) {      
+   setTheme(theme) {
+      for(let key in defaultTheme) {
+         if (!theme[key]) {
+            theme[key] = defaultTheme[key];
+         }
+      }
+      
       this.scaffold.background = theme.background;
       this.themeObserver.broadcast(theme)
    }

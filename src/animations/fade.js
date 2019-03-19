@@ -6,13 +6,9 @@ export default class Fade extends Animation {
       super(arguments[0]);
    }
 
-   /**
-    * 
-    * @param {%} progress 
-    */
-   handle(progress, reverse) {
-      // console.log(progress.toFixed(2));
-      
-      this.child.alpha = reverse ? progress : 1-progress;
+   start() {}
+
+   handle(progress, time_fraction) {      
+      this.child.alpha = this.reversed ? progress : 1-progress;
    }
 }

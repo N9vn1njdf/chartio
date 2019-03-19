@@ -3,18 +3,17 @@ import { Fade } from 'animations'
 
 export default class Dates {
 
-   constructor({animation_duration, themeObserver}) {
-      this.animation_duration = animation_duration;
-
+   constructor({themeObserver}) {
       this.dates = [];
       this.hidden_levels = [];
 
       this.element = new Position();
-
+      
       themeObserver.subscribe(theme => {
          if (this.element) {
             this.color = theme.text_color2;
             this.font_size = theme.text_size2;
+            this.duration = theme.animation_duration_3;
 
             this.element.children = [];
             this.updateAxis();
@@ -59,7 +58,7 @@ export default class Dates {
             ]
          });
          
-         let child = new Fade({child: rect, duration: this.animation_duration, completed: this.hidden.includes(i)});
+         let child = new Fade({child: rect, duration: this.duration, completed: this.hidden.includes(i)});
          children.push(child);
       }
 

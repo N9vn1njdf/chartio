@@ -18,19 +18,29 @@ export default class FadeY extends Animation {
    }
    
    curve(time_fraction) {
-      return Math.pow(time_fraction, 3);
+      return Math.pow(time_fraction, 2);
    }
 
-   handle(progress, reverse) {
-      let y = progress * this._offset;
+   alphaCurve(time_fraction) {
+      return time_fraction;
+   }
+   
+   start() {
+      if (this.reversed) {
+         this.start_y = this.start_y + this.offset;
+      }
+   }
 
-      if (reverse) {
-         this.child.y = this.start_y + this._offset - y;
-         this.child.alpha = progress*progress
+   handle(progress, time_fraction) {
+      let y = progress * this.offset;
+
+      if (this.reversed) {
+         this.child.y = this.start_y - y;
+         this.child.alpha = this.alphaCurve(time_fraction)
 
       } else {
          this.child.y = this.start_y + y;
-         this.child.alpha = 1 - progress;
+         this.child.alpha = 1 - this.alphaCurve(time_fraction);
       }
 
       if (this.child.y2) {
