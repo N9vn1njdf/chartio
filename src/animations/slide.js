@@ -2,10 +2,11 @@ import Animation from './animation.js'
 
 export default class FadeY extends Animation {
    
-   constructor({offset}) {
+   constructor({offset, alpha}) {
       super(arguments[0]);
 
       this.offset = offset || 20;
+      this.alpha = alpha || 1;
    }
 
    get offset() {
@@ -17,6 +18,14 @@ export default class FadeY extends Animation {
       this.start_y = this.child.y;
    }
    
+   get alpha() {
+      return this._alpha;
+   }
+
+   set alpha(value) {
+      this._alpha = value;
+   }  
+
    curve(time_fraction) {
       return Math.pow(time_fraction, 0.8)
    }
@@ -40,5 +49,7 @@ export default class FadeY extends Animation {
       if (this.child.y2) {
          this.child.y2 = this.child.y;
       }
+
+      this.child.alpha = time_fraction * this.alpha;
    }
 }

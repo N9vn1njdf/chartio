@@ -5,7 +5,6 @@ import Dates from './dates'
 import Map from './map'
 import localization from './localization'
 
-
 // Язык
 let locale_code = 'ru';
 // Размер миникарты
@@ -27,7 +26,7 @@ var defaultTheme = {
    line_color: '#f2f4f5',
    lines_count: 5,
    animation_duration_1: 260,
-   animation_duration_2: 270,
+   animation_duration_2: 260,
    animation_duration_3: 200,
    animation_duration_4: 220,
 }
@@ -37,18 +36,19 @@ class LineChart {
    constructor(id, width, height, theme) {
 
       var themeObserver = this.themeObserver = new Observer();
+      var hiddenColumnsObserver = this.hiddenColumnsObserver = new Observer();
 
       // Вычисляем размер графика
       var main_height = height - map_height - date_height;
 
       // Создаем миникарту
-      this.map = new Map({width, map_height, main_height, main_padding_top, localization, locale_code, themeObserver});
+      this.map = new Map({width, map_height, main_height, main_padding_top, localization, locale_code, themeObserver, hiddenColumnsObserver});
 
       // Создаем индиктор дат
       this.dates = new Dates({animation_duration: 280, themeObserver});
       
       // Создаем график
-      this.main = new Main({width, height: main_height, themeObserver});
+      this.main = new Main({width, height: main_height, themeObserver, hiddenColumnsObserver});
 
       // Слушаем события миникарты и обновляем график и даты
       this.map.on('update', (data) => this.main.update(data))
@@ -84,11 +84,11 @@ class LineChart {
    }
 
    hideColumn(index) {
-      this.map.hideColumn(index);
+      this.hiddenColumnsObserver.broadcast(['hide', index]);
    }
 
    showColumn(index) {
-      this.map.showColumn(index);
+      this.hiddenColumnsObserver.broadcast(['show', index]);
    }
 
    setData(data) {

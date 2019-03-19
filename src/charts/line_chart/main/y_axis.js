@@ -1,4 +1,4 @@
-import { Text, Line, Position } from 'elements'
+import { Text, Position } from 'elements'
 import { FadeSlide } from 'animations'
 
 export default class YAxis {
@@ -41,12 +41,11 @@ export default class YAxis {
       });
    }
 
-   update({scale, columns, hidden_columns}) {
+   update({scale, columns}) {
       this.element.x = 0;
       this.prev_scale = this.scale;
       this.scale = scale;
       this.columns = columns;
-      this.hidden_columns = hidden_columns;
             
       if (this.prev_scale) {
          this.animateDirection();

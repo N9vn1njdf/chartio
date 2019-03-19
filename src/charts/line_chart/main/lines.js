@@ -31,13 +31,12 @@ export default class Lines {
       });
    }
 
-   update({scale, columns, hidden_columns}) {
+   update({scale, columns}) {
       this.element.w = (columns[0].length-2)*scale.x;      
       this.element.x = 0;
       this.prev_scale = this.scale;
       this.scale = scale;
       this.columns = columns;
-      this.hidden_columns = hidden_columns;
 
       if (this.prev_scale) {
          this.animateDirection();
