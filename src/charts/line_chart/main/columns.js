@@ -1,18 +1,31 @@
 import { Text, Circle, Rectangle } from 'elements'
+import { FadeSlide, Slide } from 'animations'
 
 export default class Lines {
 
-   constructor({width, height}) {
-      this.lines_count = 5;
-      
+   constructor({width, height, themeObserver}) {      
       this.width = width;
       this.height = height;
+
+      themeObserver.subscribe(theme => {
+         this.duration = theme.animation_duration_4;
+      })
 
       this.element = new Rectangle({h: height});
    }
 
+   get running() {
+      for(let i in this.element.children) {
+         if (this.element.children[i].running) {
+            return true;
+         }
+      }
+      return false;
+   }
+
    update({offset, scale, columns, hidden_columns, colors}) {
       this.element.x = offset;
+      this.prev_scale = this.scale;
       this.scale = scale;
       this.columns = columns;
       this.hidden_columns = hidden_columns;
@@ -22,16 +35,57 @@ export default class Lines {
    }
 
    updateColumns() {
+      if (this.element.children.length > 0) {
+         for (let i = 0; i < this.element.children.length; i++) {
+            this.element.children[i].child.x = this.element.children[i].child.index * this.scale.x;
+         }
+
+         return this.animateDirection();
+      }
+
+      this.element.children = this.getColumnsGroup();
+      this.element.w = (this.columns[0].length-2)*this.scale.x;
+   }
+
+   animateDirection() {
+      if (this.running || !this.prev_scale) {         
+         return;
+      }
+
+      // this.element.children = this.getColumnsGroup();
+      // return;
+
+      if (this.prev_scale.y < this.scale.y) {         
+         this.animateColumns();
+      }
+      
+      if (this.prev_scale.y > this.scale.y) {
+         this.animateColumns();
+      }
+   }
+
+   animateColumns() {
+      this.element.children.forEach(element => {
+         let offset = (this.height - element.column_value * this.scale.y);
+
+         element.completed = false
+         element.offset = -(element.child.y - offset);
+         element.forward()
+      });
+   }
+
+   getColumnsGroup() {
       var children = [];
       
-      for (let i = 0; i < this.columns.length; i++) {
-         if (this.hidden_columns.includes(i)) {
+      for (let c_i = 0; c_i < this.columns.length; c_i++) {
+         if (this.hidden_columns.includes(c_i)) {
             continue;
          }
 
-         let column = this.columns[i];
+         let column = this.columns[c_i];
          
          for (let i = 1; i < column.length; i++) {
+
             let rect = new Circle({
                x: (i-1) * this.scale.x,
                y: this.height - column[i] * this.scale.y,
@@ -41,12 +95,16 @@ export default class Lines {
                   new Text({text: column[i], size: 10})
                ]
             });
+            rect.index = i-1;
 
-            children.push(rect);
+            let child = new Slide({child: rect, duration: this.duration});
+            child.column_index = c_i;
+            child.column_value = column[i];
+
+            children.push(child);
          }
-      };
+      }
 
-      this.element.children = children;
-      this.element.w = (this.columns[0].length-2)*this.scale.x;
+      return children;
    }
 }

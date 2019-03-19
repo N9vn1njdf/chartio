@@ -3,8 +3,6 @@ import Element from './element.js'
 export default class Line extends Element {
 
    constructor({x, y, x2, y2, w, color}) {
-      arguments[0].color = arguments[0].color || 'rgb(0, 0, 0)';
-
       super(arguments[0]);
       
       this.x2 = x2 || 0;

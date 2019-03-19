@@ -18,14 +18,10 @@ export default class FadeY extends Animation {
    }
    
    curve(time_fraction) {
-      return Math.pow(time_fraction, 0.8);
+      return Math.pow(time_fraction, 0.8)
    }
 
-   alphaCurve(time_fraction) {
-      return Math.pow(time_fraction, 0.5);
-   }
-   
-   start() {
+   start() {      
       if (this.reversed) {
          this.start_y = this.start_y + this.offset;
       }
@@ -36,11 +32,9 @@ export default class FadeY extends Animation {
 
       if (this.reversed) {
          this.child.y = this.start_y - y;
-         this.child.alpha = this.alphaCurve(time_fraction)
 
       } else {
          this.child.y = this.start_y + y;
-         this.child.alpha = 1 - this.alphaCurve(time_fraction);
       }
 
       if (this.child.y2) {

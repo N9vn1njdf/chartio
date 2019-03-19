@@ -91,8 +91,8 @@ export default class YAxis {
          data.push(parseInt(i*this.step/this.scale.y));
       }
 
-      this.lines[from].children = this.getLinesGroup(-90, -220, to == 'top' ? this.data : data);
-      this.lines[to].children = this.getLinesGroup(22, 50, to == 'bottom' ? this.data : data);
+      this.lines[from].children = this.getLinesGroup(-120, -120, to == 'top' ? this.data : data);
+      this.lines[to].children = this.getLinesGroup(22, 20, to == 'bottom' ? this.data : data);
       
       this.lines.top.children.forEach(element => {
          element.completed = true

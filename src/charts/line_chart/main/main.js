@@ -22,7 +22,7 @@ export default class Main {
       });
    }
 
-   update({offset, scale, columns, hidden_columns, colors}) {      
+   update({offset, scale, columns, hidden_columns, colors}) {
       this.y_axis.update({scale, columns, hidden_columns});
       this.lines.update({scale, columns, hidden_columns});
       this.columns.update({offset, scale, columns, hidden_columns, colors});

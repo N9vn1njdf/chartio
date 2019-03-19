@@ -21,6 +21,7 @@ export default class Map extends Event {
       this.columns = [];
       this.hidden_columns = [];
       this.colors = {};
+      this.main_scale_y = 1;
 
       this.navigator = new Navigator({width: width, height: map_height, themeObserver});
       this.navigator.on('offset', () => this.emitUpdate());
@@ -50,7 +51,7 @@ export default class Map extends Event {
    get main_scale() {
       return {
          x: this.scale.x * this.width / this.navigator.width,
-         y: this.main_scale_y || 1
+         y: this.main_scale_y
       };
    }
 

@@ -3,8 +3,6 @@ import Element from './element.js'
 export default class Text extends Element {
 
    constructor({text, size, fontFamily, align}) {
-      arguments[0].color = arguments[0].color || 'rgb(0, 0, 0)';
-
       super(arguments[0]);
       
       this.text = text;

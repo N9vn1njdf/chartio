@@ -20,15 +20,16 @@ var defaultTheme = {
    map_color1: 'rgba(205, 211, 236, 0.4)',
    map_color2: 'rgba(212, 220, 244, 0.28)',
    map_edge_width: 4,
-   text_color1: '#858991',
+   text_color1: '#99a4ac',
    text_size1: 12.5,
-   text_color2: '#858991',
-   text_size2: 14,
-   line_color: '#c9c6c9',
+   text_color2: '#99a4ac',
+   text_size2: 12,
+   line_color: '#f2f4f5',
    lines_count: 5,
-   animation_duration_1: 900,
-   animation_duration_2: 800,
+   animation_duration_1: 260,
+   animation_duration_2: 270,
    animation_duration_3: 200,
+   animation_duration_4: 220,
 }
 
 class LineChart {

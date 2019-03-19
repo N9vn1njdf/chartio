@@ -15,7 +15,7 @@ export default class Lines {
       themeObserver.subscribe(theme => {
          this.lines_count = theme.lines_count;
          this.step = (this.height-30)/this.lines_count;
-         this.color = this.bottom_line.color = theme.line_color;
+         this.color = this.bottom_line.color = theme.line_color;         
          this.duration = theme.animation_duration_1;
          this.lines.top.children = this.getLinesGroup(0, 0, 0);
       })
@@ -41,9 +41,6 @@ export default class Lines {
 
       if (this.prev_scale) {
          this.animateDirection();
-
-      } else {         
-         this.lines.top.children = this.getLinesGroup(0, 0, 0);
       }
    }
 
@@ -64,8 +61,8 @@ export default class Lines {
    animateFrom(from) {
       let to = from == 'top' ? 'bottom' : 'top';
 
-      this.lines[from].children = this.getLinesGroup(0, -90, -220);
-      this.lines[to].children = this.getLinesGroup(0, 220, 50);
+      this.lines[from].children = this.getLinesGroup(0, -60, -20);
+      this.lines[to].children = this.getLinesGroup(0, 100, 5);
       
       this.lines.top.children.forEach(element => {         
          element.completed = true
