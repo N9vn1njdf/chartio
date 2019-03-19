@@ -4,27 +4,26 @@ import { Fade } from 'animations'
 export default class Dates {
 
    constructor({animation_duration, themeObserver}) {
-      this.animation_duration = animation_duration || 300;
+      this.animation_duration = animation_duration;
 
       this.dates = [];
       this.hidden_levels = [];
 
       this.element = new Position();
 
-      themeObserver.subscribe(theme => {         
+      themeObserver.subscribe(theme => {
          if (this.element) {
             this.color = theme.text_color2;
             this.font_size = theme.text_size2;
 
-            if (this.scale)
-            this.calc_hidden_levels(true);
+            this.element.children = [];
             this.updateAxis();
          }
       })
    }
 
    update({offset, scale, dates_column, locale}) {
-      this.element.x = offset;
+      this.element.x = offset + 20;
       this.prev_scale = !this.scale ? scale : this.scale;
       this.scale = scale;
       this.dates = dates_column;
@@ -38,7 +37,7 @@ export default class Dates {
       return this.font_size*5;
    }
 
-   updateAxis() {      
+   updateAxis() {
       if (this.element.children.length > 0) {
          this.animate();
          return;
@@ -48,32 +47,32 @@ export default class Dates {
       
       for (let i = 1; i < this.dates.length; i++) {
          let date = new Date(this.dates[i]);
-         let d = date.getDate();         
+         let d = date.getDate();
          let m = this.locale.month[date.getMonth()];
          
          let rect = new Rectangle({
-            alpha: this.hidden.includes(i) ? 1 : 0,
-            x: (i-1) * this.scale.x,
+            alpha: !this.hidden.includes(i) ? 1 : 0,
+            x: (i-1) * this.scale.x + (i == 1 ? 0 : -20) + (i+1 == this.dates.length ? -20 : 0),
             w: this.item_width,
             children: [
                new Text({text: `${m} ${d}`, size: this.font_size, color: this.color, align: 'center'})
             ]
          });
          
-         let child = new Fade({child: rect, duration: this.animation_duration, completed: !this.hidden.includes(i)});
+         let child = new Fade({child: rect, duration: this.animation_duration, completed: this.hidden.includes(i)});
          children.push(child);
       }
 
       this.element.children = children;
    }
 
-   animate() {      
+   animate() {
       this.element.w = (this.element.children.length-1)*this.scale.x;
       this.calc_hidden_levels();
 
       for (let i = 0; i < this.element.children.length; i++) {
          let element = this.element.children[i];
-         element.child.x = i * this.scale.x;
+         element.child.x = i * this.scale.x + (i == 0 ? 0 : -20) + (i+1 == this.element.children.length ? -20 : 0);
          
          if (this.hidden.includes(i)) {
             element.forward();
@@ -116,7 +115,7 @@ export default class Dates {
             this.hidden_levels.push([]);
 
             for (let i = 0; i < visible.length; i++) {
-               if (i%2) {
+               if (i%2 == 0) {
                   this.hidden_levels[this.hidden_levels.length-1].push(visible[i]);
                }
             }

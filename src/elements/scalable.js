@@ -97,9 +97,7 @@ export default class Scalable extends Element {
       let newX = input.x - this.left._inputOffset.x;
       
       this.w = this.left._inputOffset.w - newX;
-      this.right.x = this.w;
-      console.log(newX);
-      
+      this.right.x = this.w;      
       this.x = newX;
 
       this.emit('scaling');

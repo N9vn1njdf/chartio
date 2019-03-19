@@ -9,13 +9,16 @@ export default class Navigator extends Event {
       themeObserver.subscribe(theme => {
          if (this.scalable) {
             this.scalable.edgeWidth = theme.map_edge_width;
+            this.background[0].w = this.offset;
+            this.background[1].x = this.offset + this.width;
+
             this.scalable.edgeColor = this.scalable.child.borderTop.color = this.scalable.child.borderBottom.color = theme.map_color1;
             this.background[0].color = this.background[1].color = theme.map_color2;
          }
       })
 
       var start_w = 100;
-      var start_x = width-start_w-20;
+      var start_x = width-start_w-6;
 
       this.scalable = new Scalable({
          axisX: true,
@@ -24,7 +27,6 @@ export default class Navigator extends Event {
             x: start_x,
             w: start_w,
             h: height,
-            color: 'red',
             borderTop: {inside: true, width: 2},
             borderBottom: {inside: true, width: 2},
          }),
@@ -38,7 +40,7 @@ export default class Navigator extends Event {
       });
       
       this.background = [
-         new Rectangle({w: start_x, h: height, inputIgnore: true}),
+         new Rectangle({h: height, inputIgnore: true}),
          new Rectangle({x: this.offset + this.width, w: width, h: height, inputIgnore: true})
       ];
 
@@ -59,16 +61,16 @@ export default class Navigator extends Event {
    }
 
    canDragX({child, x}) {
-      if (child.x-x < x) {
-         // console.log(x, child.w);
+      if (child.x - child._x - x > 0) {         
+         if (x + child._x < this.scalable.edgeWidth) {
+            return this.scalable.edgeWidth - child._x;
+         }
+      }
 
-      }
-      
-      if (child.x-x > 0 && x < this.scalable.edgeWidth) {
-         return this.scalable.edgeWidth;
-      }
-      if (child.x-x < x && x+child.w > this.element.w - this.scalable.edgeWidth) {
-         return this.element.w - child.w - this.scalable.edgeWidth;
+      if (child.x - child._x - x < 0) {
+         if (x + child.w + child._x > this.element.w - this.scalable.edgeWidth) {
+            return this.element.w - child.w - this.scalable.edgeWidth - child._x;
+         }
       }
       return x;
    }
@@ -80,7 +82,7 @@ export default class Navigator extends Event {
    }
 
    get width() {
-      return this.navigator.child.w + this.scalable.edgeWidth;
+      return this.navigator.child.w + this.scalable.edgeWidth*2;
    }
 
    set width(value) {
@@ -88,7 +90,7 @@ export default class Navigator extends Event {
    }
 
    get offset() {
-      return this.navigator.child.x;
+      return this.navigator.child.x - this.scalable.edgeWidth;
    }
 
    set offset(value) {
