@@ -1,5 +1,5 @@
 import { Event } from 'core'
-import { Circle, Rectangle } from 'elements'
+import { Circle, Rectangle, Position } from 'elements'
 import { Slide } from 'animations'
 import Navigator from './navigator.js'
 
@@ -10,16 +10,13 @@ export default class Map extends Event {
 
       this.width = width;
       this.map_height = map_height;
-      this.padding_top = 4;
-      this.padding_bottom = 4;
+      this.padding_top = 5;
+      this.padding_bottom = 5;
 
       this.main_height = main_height;
       this.main_padding_top = main_padding_top || 40;
       this.localization = localization;
       this.locale_code = locale_code;
-
-      // Соотношение основного графика и миникарты
-      this.ratio = map_height/main_height;
 
       this.dates_column = [];
       this.columns = [];
@@ -27,14 +24,17 @@ export default class Map extends Event {
       this.colors = {};
       this.main_scale_y = 1;
       this.map_scale_y = 1;
+      this.duration = 200
 
       themeObserver.subscribe(theme => {
-         this.duration = theme.animation_duration_4;
+         // this.duration = theme.animation_duration_4;
+         // this.update();
       })
 
       hiddenColumnsObserver.subscribe(([act, index]) => {
          if (act == 'hide') {
             this.hidden_columns.push(index);
+            this.caclMapYScale();
             this.hideColumn(index);
 
          } else {
@@ -43,8 +43,10 @@ export default class Map extends Event {
                   this.hidden_columns.splice(i, 1);
                }
             }
+            this.caclMapYScale();
             this.showColumn(index);
          }
+         
          this.emitUpdate();
       })
 
@@ -52,12 +54,15 @@ export default class Map extends Event {
       this.navigator.on('offset', () => this.emitUpdate());
       this.navigator.on('scaling', () => this.emitUpdate());
 
-      this.data_element = new Rectangle({w: width, h: map_height});
+      this.data_element = new Position();
       
       this.element = new Rectangle({
+         clip: true,
          w: width,
          h: map_height,
          children: [
+            new Rectangle({w: 1000, h: this.padding_top, color: 'rgba(230, 63, 54, 0.31)'}),
+            new Rectangle({w: 1000, h: this.padding_bottom, y: map_height-this.padding_bottom, color: 'rgba(230, 63, 54, 0.31)'}),
             this.data_element,
             this.navigator.element,
          ]
@@ -112,77 +117,109 @@ export default class Map extends Event {
       this.dates_column = columns[0];
       this.columns = columns.splice(1, columns.length);
       this.colors = colors;
+
+      this.caclMapYScale();
       this.update();
+      this.emitUpdate();
+   }
+
+   get visible_columns() {
+      var result = [];
+      
+      for (let i = 0; i < this.columns.length; i++) {
+         if (!this.hidden_columns.includes(i)) {
+            result.push(i);
+         }
+      }
+      return result;
    }
 
    hideColumn(index) {
-      this.data_element.children.forEach(element => {         
-         if (element.column_index !== index) {
-            return;            
+      this.data_element.children.forEach(element => {
+         if (element.column_index == index) {
+            element.toAlpha(0);
+         }
+         
+         let new_y = 0;
+
+         if (this.visible_columns.length == 0) {
+            new_y = -((this.map_height - this.padding_bottom - this.padding_top)/8)
+         } else {
+            new_y = this.map_height - element.column_value * this.scale.y + this.min_y * this.scale.y - this.padding_bottom
          }
 
-         let offset = (this.height - element.column_value * this.scale.y);
-         console.log(offset);
-         
-         element.completed = false
-         element.offset = -(element.child.y - offset);
-         element.alpha = 0;
+         if (new_y < 0 && element.column_index !== index) {
+            new_y = -new_y
+         }
+
+         element.completed = false;
+         element.offset = -(element.child._y - new_y);
          element.forward()
-      });
+      })
    }
 
    showColumn(index) {
- 
+      this.data_element.children.forEach(element => {
+         if (element.column_index == index) {
+            element.toAlpha(1);
+         }
+         
+         let new_y = this.map_height - element.column_value * this.scale.y + this.min_y * this.scale.y - this.padding_bottom;
+         
+         if (new_y < 0 && element.column_index !== index) {
+            new_y = -new_y
+         }
+
+         if (element.child._y == new_y) {
+            element.offset = 0;
+         } else {
+            element.offset = -(element.child._y - new_y);
+         }
+
+         element.completed = false;
+         element.forward()
+      })
    }
 
    update() {
       var children = [];
-
-      this.caclMapYScale();
       
       for (let c_i = 0; c_i < this.columns.length; c_i++) {
          let column = this.columns[c_i];
-
+         
          for (let i = 1; i < column.length; i++) {
             let rect = new Circle({
                x: (i-1) * this.scale.x,
-               y: this.map_height - this.padding_bottom - column[i] * this.scale.y,
+               y: this.map_height - column[i] * this.scale.y + this.min_y * this.scale.y - this.padding_bottom,
                r: 3,
                color: this.colors[column[0]],
             });
-
+            
             let child = new Slide({child: rect, duration: this.duration});
             child.column_index = c_i;
+            child.column_value = column[i];
 
             children.push(child);
          }
       };
       
       this.data_element.children = children;
-      this.emitUpdate();
    }
 
    // Вычисляем Y масштаб для миникарты
    caclMapYScale() {
-      var items = [];
+      let items = [];
       
       for (let i = 0; i < this.columns.length; i++) {
          if (this.hidden_columns.includes(i)) {
             continue;
          }
-
-         let column = this.columns[i];
-         
-         for (let i = 1; i < column.length; i++) {
-            let y = this.map_height - column[i] * this.scale.y;
-            items.push(y);
-         }
-      }
+         this.columns[i].forEach(element => items.push(element));
+      }      
       
-      var min_max2 = this.getMinMaxY(items);
-      var diff = -(this.map_height - this.padding_top - this.padding_bottom - (min_max2.max - min_max2.min));
-
-      this.map_scale_y = (this.map_height - this.padding_top - this.padding_bottom)/(this.map_height + this.padding_top + this.padding_bottom  + diff)
+      let min_max = this.getMinMaxY(items);
+      this.min_y = min_max.min;
+      this.map_scale_y = (this.map_height-this.padding_top-this.padding_bottom)/(min_max.max - min_max.min)
    }
    
    // Вычисляем Y масштаб для основного графика

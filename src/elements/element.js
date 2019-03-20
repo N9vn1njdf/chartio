@@ -7,7 +7,7 @@ export default class Element extends Event {
       
       this.x = x || 0;
       this.y = y || 0;
-      this.color = color || 'rgba(0, 0, 0, 0)';
+      this.color = color || 'transparent';
       this.alpha = alpha != null ? alpha : 1;
       this.children = children || [];
       this.cursor = cursor || 'default';
@@ -73,7 +73,7 @@ export default class Element extends Event {
       }
       
       if (this.isHover(input)) {
-         if(!input.el && this.color != 'rgba(0, 0, 0, 0)' && !this.inputIgnore) {
+         if(!input.el && this.color != 'transparent' && !this.inputIgnore) {
             input.el = this;
          }
 

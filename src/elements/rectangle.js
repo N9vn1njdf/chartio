@@ -2,11 +2,12 @@ import Element from './element.js'
 
 export default class Rectangle extends Element {
 
-   constructor({w, h, borderTop, borderBottom, borderLeft, borderRight} = {}) {
+   constructor({w, h, borderTop, borderBottom, borderLeft, borderRight, clip} = {}) {
       super(arguments[0]);
       
       this.w = w;
       this.h = h;
+      this.clip = clip || false;
 
       if (borderTop) {
          this.borderTop = {
@@ -34,6 +35,14 @@ export default class Rectangle extends Element {
    }
 
    render(ctx, input, time) {
+      if(this.clip) {
+         ctx.save();
+         ctx.rect(this.x, this.y, this.w, this.h);
+         ctx.strokeStyle = 'transparent';
+         ctx.stroke();
+         ctx.clip();
+      }
+
       ctx.globalAlpha = this.alpha;
       ctx.fillStyle = this.color;
       ctx.fillRect(this.x, this.y, this.w, this.h);
@@ -64,5 +73,9 @@ export default class Rectangle extends Element {
       }
 
       super.render(ctx, input, time);
+
+      if(this.clip) {
+         ctx.restore();
+      }
    }
 }
