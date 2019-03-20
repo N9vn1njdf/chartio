@@ -6,21 +6,45 @@ export default class Lines {
    constructor({width, height, themeObserver, hiddenColumnsObserver}) {      
       this.width = width;
       this.height = height;
+      this.hidden_columns = [];
 
       themeObserver.subscribe(theme => {
          this.duration = theme.animation_duration_4;
       })
-
-      hiddenColumnsObserver.subscribe(([act, index]) => {
-         if (act == 'hide') {
+      
+      hiddenColumnsObserver.subscribe(([act, index]) => {         
+         if (act == 'hide' && this.visible_columns.length > 1) {
+            this.hidden_columns.push(index);
             this.hideColumn(index);
+         }
 
-         } else {
-            this.showColumn(index); 
+         if (act == 'show') {
+            let has = false
+            for(let i in this.hidden_columns) {
+               if (this.hidden_columns.includes(index)) {
+                  has = true;
+                  this.hidden_columns.splice(i, 1);
+               }
+            }
+
+            if (has) {
+               this.showColumn(index);
+            }
          }
       })
 
       this.element = new Rectangle({h: height});
+   }
+   
+   get visible_columns() {
+      var result = [];
+      
+      for (let i = 0; i < this.columns.length; i++) {
+         if (!this.hidden_columns.includes(i)) {
+            result.push(i);
+         }
+      }
+      return result;
    }
 
    get running() {
@@ -87,8 +111,8 @@ export default class Lines {
          let offset = (this.height - element.column_value * this.scale.y);
 
          element.completed = false
-         element.offset = -(element.child.y - offset);
-         element.alpha = 0;
+         element.offset = -(element.child.y - offset)
+         element.toAlpha(0)
          element.forward()
       });
    }
@@ -102,8 +126,8 @@ export default class Lines {
          let offset = (this.height - element.column_value * this.scale.y);
 
          element.completed = false
-         element.offset = -(element.child.y - offset);
-         element.alpha = 1;
+         element.offset = -(element.child.y - offset)
+         element.toAlpha(1)
          element.forward()
       });
    }

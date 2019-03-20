@@ -27,27 +27,34 @@ export default class Map extends Event {
       this.duration = 200
 
       themeObserver.subscribe(theme => {
-         // this.duration = theme.animation_duration_4;
-         // this.update();
+         this.duration = theme.animation_duration_4;
+         this.update();
       })
 
       hiddenColumnsObserver.subscribe(([act, index]) => {
-         if (act == 'hide') {
+         if (act == 'hide' && this.visible_columns.length > 1) {
             this.hidden_columns.push(index);
             this.caclMapYScale();
             this.hideColumn(index);
+            this.emitUpdate();
+         }
 
-         } else {
+         if (act == 'show') {
+            let has = false
             for(let i in this.hidden_columns) {
                if (this.hidden_columns.includes(index)) {
+                  has = true;
                   this.hidden_columns.splice(i, 1);
                }
             }
-            this.caclMapYScale();
-            this.showColumn(index);
+
+            if (has) {
+               this.hidden_columns_count--;
+               this.caclMapYScale();
+               this.showColumn(index);
+               this.emitUpdate();
+            }
          }
-         
-         this.emitUpdate();
       })
 
       this.navigator = new Navigator({width: width, height: map_height, themeObserver});
@@ -163,19 +170,8 @@ export default class Map extends Event {
          if (element.column_index == index) {
             element.toAlpha(1);
          }
-         
-         let new_y = this.map_height - element.column_value * this.scale.y + this.min_y * this.scale.y - this.padding_bottom;
-         
-         if (new_y < 0 && element.column_index !== index) {
-            new_y = -new_y
-         }
 
-         if (element.child._y == new_y) {
-            element.offset = 0;
-         } else {
-            element.offset = -(element.child._y - new_y);
-         }
-
+         element.offset = -element.offset;
          element.completed = false;
          element.forward()
       })
