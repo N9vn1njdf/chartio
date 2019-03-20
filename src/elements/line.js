@@ -11,7 +11,7 @@ export default class Line extends Element {
    }
 
    get x2() {
-      if (this.parent != null) {         
+      if (this.parent != null && this.parent.w) {         
          return this._x2 + this.parent.w;
       }
       return this._x2;
@@ -26,6 +26,11 @@ export default class Line extends Element {
 
       ctx.strokeStyle = this.color;
       ctx.lineWidth = this.w;
+      
+      // if (this.color == 'red') {
+      //    console.log(this);
+      // throw this.y;
+      // }
       
       ctx.beginPath();
       ctx.moveTo(this.x + 0.5, this.y + 0.5);

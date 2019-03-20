@@ -1,7 +1,7 @@
-import { Text, Circle, Rectangle } from 'elements'
+import { Text, Line, Circle, Rectangle } from 'elements'
 import { Slide } from 'animations'
 
-export default class Lines {
+export default class Columns {
 
    constructor({width, height, themeObserver, hiddenColumnsObserver}) {      
       this.width = width;
@@ -33,7 +33,16 @@ export default class Lines {
          }
       })
 
-      this.element = new Rectangle({h: height});
+      this.pointers = new Rectangle({h: height})
+      this.lines = new Rectangle({h: height})
+
+      this.element = new Rectangle({
+         h: height,
+         children: [
+            this.pointers,
+            this.lines
+         ]
+      })
    }
    
    get visible_columns() {
@@ -48,8 +57,8 @@ export default class Lines {
    }
 
    get running() {
-      for(let i in this.element.children) {
-         if (this.element.children[i].running) {
+      for(let i in this.pointers.children) {
+         if (this.pointers.children[i].running) {
             return true;
          }
       }
@@ -64,18 +73,42 @@ export default class Lines {
       this.colors = colors;
       
       this.updateColumns();
+      this.updateLines();
    }
 
    updateColumns() {
-      if (this.element.children.length > 0) {
-         for (let i = 0; i < this.element.children.length; i++) {
-            this.element.children[i].child.x = this.element.children[i].child.index * this.scale.x;
+      if (this.pointers.children.length > 0) {
+         for (let i = 0; i < this.pointers.children.length; i++) {
+            this.pointers.children[i].child.x = this.pointers.children[i].child.index * this.scale.x;
          }
          return this.animateDirection();
       }
 
-      this.element.children = this.getColumnsGroup();
+      this.pointers.children = this.getColumnsGroup();
       this.element.w = (this.columns[0].length-2)*this.scale.x;
+   }
+
+   updateLines() {
+      let children = [];
+
+      for (let i = 0; i < this.pointers.children.length; i++) {
+         const element = this.pointers.children[i];
+         const element2 = this.pointers.children[i+1] ? this.pointers.children[i+1] : null;
+         
+         if (element2 && element.column_index == element2.column_index) {
+            let line = element.child.children[0]
+            line.x2 = element2.child.x - element2.child.r/2
+            line.y2 = element2.child.y + element2.child.r/2
+         }
+      }
+
+      this.lines.children = children;
+   }
+
+   onProgress(index, line) {
+      // let child = this.pointers.children[index+1].child;
+      // line.x2 = child.x - child.r/2
+      // line.y2 = child.y + child.r/2
    }
 
    animateDirection() {
@@ -93,7 +126,7 @@ export default class Lines {
    }
 
    animateColumns() {
-      this.element.children.forEach(element => {
+      this.pointers.children.forEach(element => {         
          let offset = (this.height - element.column_value * this.scale.y);
 
          element.completed = false
@@ -103,7 +136,7 @@ export default class Lines {
    }
 
    hideColumn(index) {
-      this.element.children.forEach(element => {         
+      this.pointers.children.forEach(element => {         
          if (element.column_index !== index) {
             return;            
          }
@@ -118,7 +151,7 @@ export default class Lines {
    }
 
    showColumn(index) {
-      this.element.children.forEach(element => {         
+      this.pointers.children.forEach(element => {         
          if (element.column_index !== index) {
             return;            
          }
@@ -139,19 +172,30 @@ export default class Lines {
          let column = this.columns[c_i];
          
          for (let i = 1; i < column.length; i++) {
+            let y = this.height - column[i] * this.scale.y;
+            let r = 4;
+
+            let line = null;
+            
+            if (i < column.length-1) {
+               line = new Line({
+                  x: r/2,
+                  y: r/2,
+                  color: this.colors[column[0]],
+                  w: 2
+               });
+            }
 
             let rect = new Circle({
                x: (i-1) * this.scale.x,
-               y: this.height - column[i] * this.scale.y,
-               r: 5,
-               color: this.colors[column[0]],
-               children: [
-                  new Text({text: column[i], size: 10, color: '#000'})
-               ]
+               y,
+               r,
+               color: 'transparent',
+               children: line ? [line] : []
             });
             rect.index = i-1;
 
-            let child = new Slide({child: rect, duration: this.duration});
+            let child = new Slide({child: rect, duration: this.duration, onProgress: () => this.updateLines()});
             child.column_index = c_i;
             child.column_value = column[i];
 

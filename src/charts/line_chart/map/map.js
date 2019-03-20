@@ -238,8 +238,8 @@ export default class Map extends Event {
          }
       }
 
-      var min_max2 = this.getMinMaxY(visible_items);
-      var diff = this.main_height - min_max2.min;
+      var min_max = this.getMinMaxY(visible_items);
+      var diff = this.main_height - min_max.min;
       this.main_scale_y = (this.main_height-this.main_padding_top)/diff;
    }
 
