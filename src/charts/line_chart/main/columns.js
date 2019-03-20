@@ -35,12 +35,14 @@ export default class Columns {
 
       this.pointers = new Rectangle({h: height})
       this.lines = new Rectangle({h: height})
+      this.info_columns = new Rectangle({h: height})
 
       this.element = new Rectangle({
          h: height,
          children: [
             this.pointers,
-            this.lines
+            this.lines,
+            this.info_columns,
          ]
       })
    }
@@ -72,11 +74,12 @@ export default class Columns {
       this.columns = columns;
       this.colors = colors;
       
-      this.updateColumns();
+      this.updatePointers();
       this.updateLines();
+      this.updateInfoColumns();
    }
 
-   updateColumns() {
+   updatePointers() {
       if (this.pointers.children.length > 0) {
          for (let i = 0; i < this.pointers.children.length; i++) {
             this.pointers.children[i].child.x = this.pointers.children[i].child.index * this.scale.x;
@@ -105,10 +108,77 @@ export default class Columns {
       this.lines.children = children;
    }
 
-   onProgress(index, line) {
-      // let child = this.pointers.children[index+1].child;
-      // line.x2 = child.x - child.r/2
-      // line.y2 = child.y + child.r/2
+   updateInfoColumns() {
+      let w = 12;
+
+      if (this.info_columns.children.length > 0) {
+         for (let i = 0; i < this.info_columns.children.length; i++) {
+            let element = this.info_columns.children[i];
+            
+            if (i == this.info_columns.children.length-1) {
+               element.x = this.pointers.children[i].child._x - w
+            } else {
+               element.x = this.pointers.children[i].child._x - w/2;
+            }
+         }
+         return;
+      }
+
+
+
+
+
+
+      let children = [];
+
+      for (let i = 0; i < this.pointers.children.length; i++) {
+         const element = this.pointers.children[i];
+         if (element.column_index > 0) {
+            continue;
+         }
+
+         let x = element.child._x - w/2;
+         if (this.pointers.children[i+1].column_index > 0) {
+            x = element.child._x - w;
+         }
+
+         let rect = new Rectangle({x, w, h: this.height, color: 'rgba(0,0,0,0.25)'});
+
+         rect.on('move', (input, element) => {
+            // console.log(element.column);
+            element.children = this.createHoverCircles()
+         })
+         rect.on('leave', (input, element) => {
+            // console.log(element.column);
+            element.children = []
+         })
+         children.push(rect)
+      }
+      
+      this.info_columns.children = children;
+   }
+
+   createHoverCircles() {
+      var children = [];
+      
+      for (let i = 0; i < this.columns.length; i++) {
+         if (!this.hidden_columns.includes(i)) {
+            
+            for (let n = 1; n < this.columns[i].length; n++) {
+               let y = this.height - this.columns[i][n] * this.scale.y;
+               // console.log(this.columns[i][n]);
+               
+               children.push(new Circle({
+                  r: 12,
+                  x: (n-1) * this.scale.x,
+                  y: y,
+                  color: 'red'
+               }))
+            }
+         }
+      }
+
+      return children
    }
 
    animateDirection() {
@@ -173,24 +243,17 @@ export default class Columns {
          
          for (let i = 1; i < column.length; i++) {
             let y = this.height - column[i] * this.scale.y;
-            let r = 4;
 
             let line = null;
             
             if (i < column.length-1) {
-               line = new Line({
-                  x: r/2,
-                  y: r/2,
-                  color: this.colors[column[0]],
-                  w: 2
-               });
+               line = new Line({color: this.colors[column[0]], w: 2});
             }
 
             let rect = new Circle({
                x: (i-1) * this.scale.x,
                y,
-               r,
-               color: 'transparent',
+               r: 0,
                children: line ? [line] : []
             });
             rect.index = i-1;

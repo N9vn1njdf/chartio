@@ -12,9 +12,9 @@ export default class Event {
       this.listeners[event].push(callback);
    }
 
-   emit(event, data) {
+   emit(event, data, data2 = null) {
       if (this.listeners[event]) {
-         this.listeners[event].forEach(callback => callback((data)));
+         this.listeners[event].forEach(callback => callback(data, data2));
       }
    }
 }

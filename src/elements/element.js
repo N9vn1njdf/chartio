@@ -78,20 +78,20 @@ export default class Element extends Event {
          }
 
          this._move = true;
-         this.emit('move', input);
+         this.emit('move', input, this);
 
          if (input.down && !input.event_down) {
             this._mouse_down = true;
-            this.emit('down', input);
+            this.emit('down', input, this);
 
          } else if (this._mouse_down) {
             this._mouse_down = false;
-            this.emit('up', input);
+            this.emit('up', input, this);
          }
 
       } else if(this._move) {
          this._move = false;
-         this.emit('leave', input);
+         this.emit('leave', input, this);
       }
    }
 }
