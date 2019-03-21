@@ -1,4 +1,5 @@
 import { Position } from 'elements'
+import Hover from './hover.js'
 import YAxis from './y_axis.js'
 import Columns from './columns.js'
 import Lines from './lines.js'
@@ -9,6 +10,7 @@ export default class Main {
       this.width = width;
       this.height = height;
 
+      this.hover = new Hover({width, height, themeObserver, hiddenColumnsObserver});
       this.y_axis = new YAxis({width, height, themeObserver});
       this.lines = new Lines({width, height, themeObserver});
       this.columns = new Columns({width, height, themeObserver, hiddenColumnsObserver});
@@ -18,13 +20,15 @@ export default class Main {
             this.lines.element,
             this.columns.element,
             this.y_axis.element,
+            this.hover.element,
          ]
       });
    }
 
-   update({offset, scale, columns, colors}) {
+   update({offset, scale, columns, colors, names}) {
       this.y_axis.update({scale, columns});
       this.lines.update({scale, columns});
       this.columns.update({offset, scale, columns, colors});
+      this.hover.update({offset, scale, columns, colors, names});
    }
 }

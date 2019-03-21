@@ -22,6 +22,7 @@ export default class Map extends Event {
       this.columns = [];
       this.hidden_columns = [];
       this.colors = {};
+      this.names = {}
       this.main_scale_y = 1;
       this.map_scale_y = 1;
       this.duration = 200
@@ -103,6 +104,7 @@ export default class Map extends Event {
          dates_column: this.dates_column,
          columns: this.columns,
          colors: this.colors,
+         names: this.names,
          locale: this.locale,
          locale_code: this.locale_code,
       };
@@ -119,11 +121,12 @@ export default class Map extends Event {
       return this.columns[0] ? this.columns[0].length-2 : 0;
    }
    
-   setData({columns, colors}) {
+   setData({columns, colors, names}) {
       columns = columns.slice();
       this.dates_column = columns[0];
       this.columns = columns.splice(1, columns.length);
       this.colors = colors;
+      this.names = names;
 
       this.caclMapYScale();
       this.update();
@@ -222,18 +225,18 @@ export default class Map extends Event {
    caclMainYScale() {
       var visible_items = [];
       
-      for (let i = 0; i < this.columns.length; i++) {
-         if (this.hidden_columns.includes(i)) {
+      for (let c = 0; c < this.columns.length; c++) {
+         if (this.hidden_columns.includes(c)) {
             continue;
          }
 
-         let column = this.columns[i];
+         let column = this.columns[c];
          
          for (let i = 1; i < column.length; i++) {
             let x = (i-1) * this.main_scale.x;
             
-            if (x > -this.main_offset - 10 && x < -this.main_offset + this.width + 10) {
-               visible_items.push(this.main_height - column[i] * 1);
+            if (x > -this.main_offset - 50 && x < -this.main_offset + this.width + 50) {
+               visible_items.push(this.main_height - column[i]);
             }
          }
       }

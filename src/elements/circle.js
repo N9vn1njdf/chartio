@@ -2,10 +2,11 @@ import Element from './element.js'
 
 export default class Circle extends Element {
 
-   constructor({r} = {}) {
+   constructor({r, border} = {}) {
       super(arguments[0]);
       
       this.r = r;
+      this.border = border;
    }
 
    get w() {
@@ -30,10 +31,20 @@ export default class Circle extends Element {
 
    render(ctx, input, time) {
       ctx.globalAlpha = this.alpha;
+
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+
       ctx.fillStyle = this.color;
       ctx.fill();
+      
+      if (this.border) {
+         ctx.beginPath();
+         ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+         ctx.strokeStyle = this.border.color;
+         ctx.lineWidth = this.border.w;
+         ctx.stroke();
+      }
 
       super.render(ctx, input, time);
    }

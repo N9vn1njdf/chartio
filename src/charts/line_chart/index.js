@@ -19,11 +19,15 @@ var defaultTheme = {
    map_color1: 'rgba(205, 211, 236, 0.4)',
    map_color2: 'rgba(212, 220, 244, 0.28)',
    map_edge_width: 4,
+   font_family: 'Arial',
    text_color1: '#99a4ac',
    text_size1: 12.5,
    text_color2: '#99a4ac',
    text_size2: 12,
-   line_color: '#f2f4f5',
+   text_color3: '#000',
+   text_size3: 14,
+   line_color1: '#f2f4f5',
+   line_color2: '#d2d2d2',
    lines_count: 5,
    animation_duration_1: 260,
    animation_duration_2: 260,
@@ -92,7 +96,7 @@ class LineChart {
    }
 
    setData(data) {
-      this.map.setData({columns: data.columns, colors: data.colors});
+      this.map.setData({columns: data.columns, colors: data.colors, names: data.names});
    }
 
    setTheme(theme) {
