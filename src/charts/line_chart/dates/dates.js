@@ -3,11 +3,16 @@ import { Fade } from 'animations'
 
 export default class Dates {
 
-   constructor({themeObserver}) {
+   constructor({localeObserver, themeObserver}) {
       this.dates = [];
       this.hidden_levels = [];
 
       this.element = new Position();
+
+      localeObserver.subscribe(locale => {         
+         this.locale = locale;
+         this.updateAxis();
+      })
       
       themeObserver.subscribe(theme => {
          if (this.element) {
@@ -21,15 +26,17 @@ export default class Dates {
       })
    }
 
-   update({offset, scale, dates_column, locale}) {
+   update({offset, scale, dates_column}) {
       this.element.x = offset + 20;
       this.prev_scale = !this.scale ? scale : this.scale;
       this.scale = scale;
       this.dates = dates_column;
-      this.locale = locale;
       
       this.calc_hidden_levels(true);
-      this.updateAxis();
+
+      if (this.locale) {
+         this.updateAxis();
+      }
    }
 
    get item_width() {

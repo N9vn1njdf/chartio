@@ -3,10 +3,8 @@ import { Position } from 'elements'
 import Main from './main'
 import Dates from './dates'
 import Map from './map'
-import localization from './localization'
+import Checkboxes from './ckeckboxes.js'
 
-// Язык
-let locale_code = 'ru';
 // Размер миникарты
 var map_height = 50;
 // Размер линии дат
@@ -37,8 +35,23 @@ var defaultTheme = {
 
 class LineChart {
 
-   constructor(id, width, height, theme) {
+   static get ru() {
+      return {
+         month: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+         day: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+      }
+   }
 
+   static get en() {
+      return {
+         month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      }
+   }
+
+   constructor(id, width, height, {locale, theme}) {
+      this.id = id;
+
+      var localeObserver = this.localeObserver = new Observer();
       var themeObserver = this.themeObserver = new Observer();
       var hiddenColumnsObserver = this.hiddenColumnsObserver = new Observer();
 
@@ -46,23 +59,29 @@ class LineChart {
       var main_height = height - map_height - date_height;
 
       // Создаем миникарту
-      this.map = new Map({width, map_height, main_height, main_padding_top, localization, locale_code, themeObserver, hiddenColumnsObserver});
+      this.map = new Map({width, map_height, main_height, main_padding_top, localeObserver, themeObserver, hiddenColumnsObserver});
 
       // Создаем индиктор дат
-      this.dates = new Dates({animation_duration: 280, themeObserver});
+      this.dates = new Dates({animation_duration: 280, localeObserver, themeObserver});
       
       // Создаем график
-      this.main = new Main({width, height: main_height, themeObserver, hiddenColumnsObserver});
+      this.main = new Main({width, height: main_height, localeObserver, themeObserver, hiddenColumnsObserver});
 
       // Слушаем события миникарты и обновляем график и даты
       this.map.on('update', (data) => this.main.update(data))
       this.map.on('update', (data) => this.dates.update(data))
 
+      let canvas = document.createElement('canvas');
+      let div = document.getElementById(id, hiddenColumnsObserver);
+      div.appendChild(canvas);
+
+      this.checboxes = new Checkboxes(id)
+
       this.scaffold = new Scaffold({
-         id: id,
-         width: width,
-         height: height,
-         background: theme.background,
+         canvas,
+         width,
+         height,
+         background: theme ? theme.background : defaultTheme.background,
          children: [
             new Position({
                children: [
@@ -85,18 +104,12 @@ class LineChart {
       });
 
       this.setTheme(theme || defaultTheme)
-   }
-
-   hideColumn(index) {
-      this.hiddenColumnsObserver.broadcast(['hide', index]);
-   }
-
-   showColumn(index) {
-      this.hiddenColumnsObserver.broadcast(['show', index]);
+      this.setLocale(locale || LineChart.en)
    }
 
    setData(data) {
       this.map.setData({columns: data.columns, colors: data.colors, names: data.names});
+      this.checboxes.setData({columns: data.columns, colors: data.colors, names: data.names});
    }
 
    setTheme(theme) {
@@ -108,6 +121,10 @@ class LineChart {
       
       this.scaffold.background = theme.background;
       this.themeObserver.broadcast(theme)
+   }
+
+   setLocale(locale) {
+      this.localeObserver.broadcast(locale)
    }
 }
 

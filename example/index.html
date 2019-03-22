@@ -15,17 +15,7 @@
 
          // Темы
          var themes = {
-            day: {
-               // background: '#fff',
-               // map_color1: 'rgba(205, 211, 236, 0.4)',
-               // map_color2: 'rgba(212, 220, 244, 0.28)',
-               // map_edge_width: 6,
-               // lines_count: 5,
-               // text_color1: '#858991',
-               // text_size1: 12.5,
-               // text_color2: '#858991',
-               // text_size2: 12,
-            },
+            day: {},
             night: {
                background: '#1e2a38',
                map_color1: 'rgba(205, 211, 236, 0.1)',
@@ -38,6 +28,7 @@
                text_size1: 12.5,
                text_color2: 'red',
                text_size2: 12,
+               text_color3: '#fff'
             },
          }
 
@@ -45,32 +36,20 @@
          var charts = {};
 
          document.addEventListener('DOMContentLoaded', function(){
-            createChart('chart1', json, 'day');
-            // createChart('chart2', json, 'night');
+            createChart('chart1', json);
          });
 
          // Создать график
-         function createChart(id, data, theme_name) {
-            var chart = new LineChart(id, 500, 460, themes[theme_name]);
+         function createChart(id, data,) {
+            var chart = new LineChart(id, 500, 460, {locale: LineChart.ru});
             charts[id] = chart;
 
-            for (let i = 1; i < data.columns.length; i++) {               
-               var checkbox = document.getElementById(id + '_column'+(i));
-               checkbox.addEventListener('change', (e) => toggleColumn(e, id));
-            }
+            // for (let i = 1; i < data.columns.length; i++) {               
+            //    var checkbox = document.getElementById(id + '_column'+(i));
+            //    checkbox.addEventListener('change', (e) => toggleColumn(e, id));
+            // }
 
             chart.setData(data);
-         }
-
-         // Переключить
-         function toggleColumn(event, id) {
-            let index = parseInt(event.target.getAttribute('column'));
-
-            if (event.target.checked) {
-               charts[id].showColumn(index);
-            } else {
-               charts[id].hideColumn(index);
-            }
          }
 
          // Изменить тему на всех графиках
@@ -96,33 +75,13 @@
       </style>
    </head>
    <body>
-      <div>
-         <canvas id="chart1"></canvas>
-         <div>
-            <label class="container">One
-               <input id="chart1_column1" column="0" type="checkbox" checked>
-               <span class="checkmark"></span>
-            </label>
-            <label class="container">One
-               <input id="chart1_column2" column="1" type="checkbox" checked>
-               <span class="checkmark"></span>
-            </label>
-         </div>
-      </div>
+      <div id="chart1"></div>
 
-      <div>
-         <canvas id="chart2"></canvas>
-         <div>
-            <label class="container">One
-               <input id="chart2_column1" column="0" type="checkbox" checked>
-               <span class="checkmark"></span>
-            </label>
-            <label class="container">One
-               <input id="chart2_column2" column="1" type="checkbox" checked>
-               <span class="checkmark"></span>
-            </label>
-         </div>
-      </div>
+
+       <div>
+         <input class="styled-checkbox" id="styled-checkbox-1" type="checkbox" value="value1">
+         <label for="styled-checkbox-1">Checkbox</label>
+       </div>
 
       <div>
          <button onclick="setTheme('day')">Swith to day mode</button>

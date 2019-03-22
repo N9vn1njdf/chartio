@@ -2,8 +2,8 @@ import Input from './input.js';
 
 export default class Scaffold {
 
-   constructor({id, width, height, background, children}) {
-      this.canvas = document.getElementById(id);
+   constructor({canvas, width, height, background, children}) {
+      this.canvas = canvas;
       this.canvas.width = width;
       this.canvas.height = height;
       this.canvas.style.background = background || '#fff';

@@ -5,7 +5,7 @@ import Navigator from './navigator.js'
 
 export default class Map extends Event {
 
-   constructor({width, map_height, main_height, main_padding_top, localization, locale_code, themeObserver, hiddenColumnsObserver}) {
+   constructor({width, map_height, main_height, main_padding_top, localeObserver, themeObserver, hiddenColumnsObserver}) {
       super();
 
       this.width = width;
@@ -15,8 +15,6 @@ export default class Map extends Event {
 
       this.main_height = main_height;
       this.main_padding_top = main_padding_top || 40;
-      this.localization = localization;
-      this.locale_code = locale_code;
 
       this.dates_column = [];
       this.columns = [];
@@ -26,6 +24,11 @@ export default class Map extends Event {
       this.main_scale_y = 1;
       this.map_scale_y = 1;
       this.duration = 200
+
+      localeObserver.subscribe(locale => {
+         this.locale = locale;
+         this.update();
+      })
 
       themeObserver.subscribe(theme => {
          this.duration = theme.animation_duration_4;
@@ -93,10 +96,6 @@ export default class Map extends Event {
       };
    }
 
-   get locale() {
-      return this.localization[this.locale_code];
-   }
-
    get update_data() {
       return {
          offset: this.main_offset,
@@ -105,8 +104,6 @@ export default class Map extends Event {
          columns: this.columns,
          colors: this.colors,
          names: this.names,
-         locale: this.locale,
-         locale_code: this.locale_code,
       };
    }
 

@@ -2,10 +2,16 @@ import { Rectangle, Position, Circle } from 'elements'
 
 export default class Hover {
 
-   constructor({width, height, themeObserver, hiddenColumnsObserver}) {
+   constructor({width, height, localeObserver, themeObserver, hiddenColumnsObserver}) {
       this.width = width;
       this.height = height;
       this.prev_input = {};
+      this.hidden_columns = [];
+
+      localeObserver.subscribe(locale => {         
+         this.locale = locale;
+         this.updatePointers();
+      })
 
       themeObserver.subscribe(theme => {
          this.background = theme.background;
@@ -23,8 +29,20 @@ export default class Hover {
             'font-family': theme.font_family,
          });
 
-         if (this.scale) {
-            this.updatePointers();
+         this.updatePointers();
+      })
+
+      hiddenColumnsObserver.subscribe(([act, index]) => {         
+         if (act == 'hide' && this.visible_columns.length > 1) {
+            this.hidden_columns.push(index);
+         }
+
+         if (act == 'show') {
+            for(let i in this.hidden_columns) {
+               if (this.hidden_columns.includes(index)) {
+                  this.hidden_columns.splice(i, 1);
+               }
+            }
          }
       })
       
@@ -41,8 +59,23 @@ export default class Hover {
       })
       
       this.element.on('move', (input, element) => this.onMove(input, element));
+      this.element.on('leave', (input, element) => {
+         this.line.alpha = 0;
+         this.hideInfo();
+         this.pointers.children.forEach(point => point.alpha = 0)
+      });
 
       this.createInfo();
+   }
+
+   get visible_columns() {
+      var result = [];
+      for (let i = 0; i < this.columns.length; i++) {
+         if (!this.hidden_columns.includes(i)) {
+            result.push(i);
+         }
+      }
+      return result;
    }
 
    updateDiv(element, styles) {
@@ -51,11 +84,12 @@ export default class Hover {
       }
    }
 
-   update({offset, scale, columns, colors, names}) {
+   update({offset, scale, columns, dates_column, colors, names}) {
       this.element.x = offset;
       this.prev_scale = this.scale;
       this.scale = scale;
       this.columns = columns;
+      this.dates = dates_column;
       this.colors = colors;
       this.names = names;
 
@@ -63,6 +97,10 @@ export default class Hover {
    }
 
    updatePointers() {
+      if (!this.scale) {
+         return;
+      }
+
       this.pointers.children = this.getColumnsGroup();
       this.element.w = (this.columns[0].length-2)*this.scale.x;
    }
@@ -76,17 +114,23 @@ export default class Hover {
 
       let x = -this.element.x + input.x;
       this.line.x = x;
+      this.line.alpha = 1;
       let new_visible = false;
 
       let values = [];
+      let index;
 
       this.pointers.children.forEach(point => {
+         if (this.hidden_columns.includes(point.column_index)) {
+            return;
+         }
          point.alpha = 0;
          
          if (input.x > point.x - point.r && input.x < point.x + point.r) {
             new_visible = true;
             point.alpha = 1;            
             values[point.column_index] = point.value;
+            index = point.index;
          }
       });
 
@@ -94,7 +138,7 @@ export default class Hover {
          this.visible = new_visible;
 
          if (new_visible) {
-            this.showInfo(values);
+            this.showInfo(values, index);
          } else {
             this.hideInfo();
          }
@@ -115,6 +159,7 @@ export default class Hover {
          background: this.background,
          'box-shadow': '0px 0px 2px rgba(0, 0, 0, 0.42)',
          'border-radius': '6px',
+         'display': 'none'
       });
 
       this.date_text = document.createElement('div');
@@ -134,6 +179,11 @@ export default class Hover {
    }
 
    createColumnInfo(index, value) {
+      index = parseInt(index);
+      if (this.hidden_columns.includes(index)) {
+         return;
+      }
+
       let name = this.names[this.columns[index][0]];
       let color = this.colors[this.columns[index][0]];
 
@@ -165,20 +215,28 @@ export default class Hover {
       this.div_columns.appendChild(div);
    }
 
-   showInfo(data) {
+   showInfo(data, index) {
       this.div_columns.innerHTML = null;
 
       for(let i in data) {
          let value = data[i];
          this.createColumnInfo(i, value);
       }
-      this.date_text.innerHTML = 'Sat, Feb 24'
+      this.date_text.innerHTML = this.getDateByIndex(index)
       this.div.style.display = 'block';
    }
 
    hideInfo() {
-      this.date_text.innerHTML = '213'
       this.div.style.display = 'none';
+   }
+
+   getDateByIndex(index) {
+      let date = new Date(this.dates[index]);
+      let day = this.locale.day[date.getDay()]
+      let d = date.getDate()
+      let m = this.locale.month[date.getMonth()];
+
+      return `${day}, ${m} ${d}`
    }
 
    getColumnsGroup() {
@@ -199,6 +257,7 @@ export default class Hover {
 
             rect.column_index = c_i;
             rect.value = column[i];
+            rect.index = i;
 
             children.push(rect);
          }
