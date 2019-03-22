@@ -10,8 +10,8 @@ export default class Map extends Event {
 
       this.width = width;
       this.map_height = map_height;
-      this.padding_top = 5;
-      this.padding_bottom = 5;
+      this.padding_top = 0;
+      this.padding_bottom = 0;
 
       this.main_height = main_height;
       this.main_padding_top = main_padding_top || 40;
@@ -31,7 +31,11 @@ export default class Map extends Event {
       })
 
       themeObserver.subscribe(theme => {
+         this.padding_top = theme.map_padding_top;
+         this.padding_bottom = theme.map_padding_bottom;
+
          this.duration = theme.animation_duration_4;
+         this.caclMapYScale();
          this.update();
       })
 
@@ -72,8 +76,6 @@ export default class Map extends Event {
          w: width,
          h: map_height,
          children: [
-            new Rectangle({w: 1000, h: this.padding_top, color: 'rgba(230, 63, 54, 0.31)'}),
-            new Rectangle({w: 1000, h: this.padding_bottom, y: map_height-this.padding_bottom, color: 'rgba(230, 63, 54, 0.31)'}),
             this.data_element,
             this.navigator.element,
          ]

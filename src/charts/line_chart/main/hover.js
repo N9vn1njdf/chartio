@@ -2,7 +2,8 @@ import { Rectangle, Position, Circle } from 'elements'
 
 export default class Hover {
 
-   constructor({width, height, localeObserver, themeObserver, hiddenColumnsObserver}) {
+   constructor({canvas, width, height, localeObserver, themeObserver, hiddenColumnsObserver}) {
+      this.canvas = canvas;
       this.width = width;
       this.height = height;
       this.prev_input = {};
@@ -100,7 +101,6 @@ export default class Hover {
       if (!this.scale) {
          return;
       }
-
       this.pointers.children = this.getColumnsGroup();
       this.element.w = (this.columns[0].length-2)*this.scale.x;
    }
@@ -128,7 +128,7 @@ export default class Hover {
          
          if (input.x > point.x - point.r && input.x < point.x + point.r) {
             new_visible = true;
-            point.alpha = 1;            
+            point.alpha = 1;
             values[point.column_index] = point.value;
             index = point.index;
          }
@@ -145,8 +145,10 @@ export default class Hover {
       }
 
       if (this.visible) {
-         this.div.style.top = (input.y < 100 ? 0 : input.y - 100) + 'px';
-         this.div.style.left = (input.x + 20) + 'px';
+         let client_rect = this.canvas.getBoundingClientRect();
+         let y = client_rect.top + input.y;
+         this.div.style.top = (y < 100 ? 0 : y - 100) + 'px';
+         this.div.style.left = (client_rect.left + input.x + 20) + 'px';
       }
    }
 
@@ -154,7 +156,7 @@ export default class Hover {
       this.div = document.createElement('div');
       this.updateDiv(this.div, {
          position: 'absolute',
-         width: '120px',
+         width: '110px',
          'padding-bottom': '8px',
          background: this.background,
          'box-shadow': '0px 0px 2px rgba(0, 0, 0, 0.42)',
@@ -172,7 +174,7 @@ export default class Hover {
       this.div_columns = document.createElement('div');
       this.div.appendChild(this.div_columns);
       this.updateDiv(this.div_columns, {
-         margin: '10px 14px',
+         margin: '-4px 14px',
       });
 
       document.body.appendChild(this.div);
@@ -190,7 +192,7 @@ export default class Hover {
       let div = document.createElement('div');
       this.updateDiv(div, {
          color,
-         float: 'left',
+         float: index%2 ? 'right' : 'left',
          'font-size': (this.font_size-2) + 'px',
          'font-family': this.font_family,
          'margin-right': index%2 ? 0 : '10px'

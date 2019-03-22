@@ -4,7 +4,7 @@ module.exports = {
   entry: { main: './src/index.js' },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'main.js'
+    filename: 'chart.js'
   },
   watch: true,
   watchOptions: {

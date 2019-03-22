@@ -18,6 +18,8 @@ export default class YAxis {
          this.step = (this.height-30)/this.lines_count;
          this.color = this.bottom_text.color = theme.text_color1;
          this.font_size = this.bottom_text.size = theme.text_size1;
+         this.font_family = this.bottom_text.fontFamily = theme.font_family;
+
          this.duration = theme.animation_duration_2;
 
          if (this.scale) {
@@ -29,6 +31,7 @@ export default class YAxis {
          y: this.height - 15,
          text: 0,
          size: this.font_size,
+         fontFamily: this.font_family,
          color: this.color
       });
 
@@ -112,6 +115,7 @@ export default class YAxis {
                y: this.height-(i*this.step)-15,
                text: data[i-1],
                size: this.font_size,
+               fontFamily: this.font_family,
                color: this.color
             }),
             offset: (i*m)+offset,

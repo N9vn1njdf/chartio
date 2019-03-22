@@ -8,6 +8,10 @@ module.exports = {
     publicPath: '/dist/',
     filename: 'build.js'
   },
+  watch: true,
+  watchOptions: {
+    poll: true
+  },
   module: {
     rules: [
       {
@@ -38,9 +42,6 @@ module.exports = {
         loader: 'vue-loader',
         options: {
           loaders: {
-            // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-            // the "scss" and "sass" values for the lang attribute to the right configs here.
-            // other preprocessors should work out of the box, no loader config like this necessary.
             'scss': [
               'vue-style-loader',
               'css-loader',
@@ -60,18 +61,12 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/
       },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]?[hash]'
-        }
-      }
     ]
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      chart: path.resolve(__dirname, '../src/index.js'),
     },
     extensions: ['*', '.js', '.vue', '.json']
   },

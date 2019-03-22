@@ -11,13 +11,14 @@ export default class Dates {
 
       localeObserver.subscribe(locale => {         
          this.locale = locale;
-         this.updateAxis();
+         this.updateAxis(true);
       })
       
       themeObserver.subscribe(theme => {
          if (this.element) {
             this.color = theme.text_color2;
             this.font_size = theme.text_size2;
+            this.font_family = theme.font_family
             this.duration = theme.animation_duration_3;
 
             this.element.children = [];
@@ -33,18 +34,19 @@ export default class Dates {
       this.dates = dates_column;
       
       this.calc_hidden_levels(true);
-
-      if (this.locale) {
-         this.updateAxis();
-      }
+      this.updateAxis();
    }
 
    get item_width() {
       return this.font_size*5;
    }
 
-   updateAxis() {
-      if (this.element.children.length > 0) {
+   updateAxis(force = false) {
+      if (!this.locale && !force) {
+         return
+      }
+
+      if (this.element.children.length > 0 && !force) {
          this.animate();
          return;
       }
@@ -61,7 +63,7 @@ export default class Dates {
             x: (i-1) * this.scale.x + (i == 1 ? 0 : -20) + (i+1 == this.dates.length ? -20 : 0),
             w: this.item_width,
             children: [
-               new Text({text: `${m} ${d}`, size: this.font_size, color: this.color, align: 'center'})
+               new Text({text: `${m} ${d}`, size: this.font_size, fontFamily: this.font_family, color: this.color, align: 'center'})
             ]
          });
          

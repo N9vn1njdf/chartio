@@ -1,7 +1,7 @@
 import { Scaffold, Observer } from 'core'
 import { Position } from 'elements'
 import Main from './main'
-import Dates from './dates'
+import Dates from './dates.js'
 import Map from './map'
 import Checkboxes from './ckeckboxes.js'
 
@@ -17,6 +17,8 @@ var defaultTheme = {
    map_color1: 'rgba(205, 211, 236, 0.4)',
    map_color2: 'rgba(212, 220, 244, 0.28)',
    map_edge_width: 4,
+   map_padding_top: 5,
+   map_padding_bottom: 5,
    font_family: 'Arial',
    text_color1: '#99a4ac',
    text_size1: 12.5,
@@ -44,12 +46,15 @@ class LineChart {
 
    static get en() {
       return {
-         month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+         month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+         day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
       }
    }
 
    constructor(id, width, height, {locale, theme}) {
-      this.id = id;
+      let canvas = document.createElement('canvas');
+      let div = document.getElementById(id, hiddenColumnsObserver);
+      div.appendChild(canvas);
 
       var localeObserver = this.localeObserver = new Observer();
       var themeObserver = this.themeObserver = new Observer();
@@ -65,17 +70,13 @@ class LineChart {
       this.dates = new Dates({animation_duration: 280, localeObserver, themeObserver});
       
       // Создаем график
-      this.main = new Main({width, height: main_height, localeObserver, themeObserver, hiddenColumnsObserver});
+      this.main = new Main({canvas, width, height: main_height, localeObserver, themeObserver, hiddenColumnsObserver});
 
       // Слушаем события миникарты и обновляем график и даты
       this.map.on('update', (data) => this.main.update(data))
       this.map.on('update', (data) => this.dates.update(data))
 
-      let canvas = document.createElement('canvas');
-      let div = document.getElementById(id, hiddenColumnsObserver);
-      div.appendChild(canvas);
-
-      this.checboxes = new Checkboxes(id)
+      this.checboxes = new Checkboxes(id, hiddenColumnsObserver)
 
       this.scaffold = new Scaffold({
          canvas,
@@ -123,7 +124,7 @@ class LineChart {
       this.themeObserver.broadcast(theme)
    }
 
-   setLocale(locale) {
+   setLocale(locale) {      
       this.localeObserver.broadcast(locale)
    }
 }
