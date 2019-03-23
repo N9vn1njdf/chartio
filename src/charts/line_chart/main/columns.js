@@ -12,7 +12,7 @@ export default class Columns {
          this.duration = theme.animation_duration_4;
       })
       
-      hiddenColumnsObserver.subscribe(([act, index]) => {         
+      hiddenColumnsObserver.subscribe(([act, index]) => {
          if (act == 'hide' && this.visible_columns.length > 1) {
             this.hidden_columns.push(index);
             this.hideColumn(index);
@@ -37,7 +37,6 @@ export default class Columns {
       this.lines = new Rectangle()
 
       this.element = new Rectangle({
-         // color: 'rgba(0,0,0,0.5)',
          h: height,
          children: [
             this.pointers,
@@ -56,15 +55,6 @@ export default class Columns {
       return result;
    }
 
-   get running() {
-      for(let i in this.pointers.children) {
-         if (this.pointers.children[i].running) {
-            return true;
-         }
-      }
-      return false;
-   }
-
    update({offset, scale, columns, colors}) {
       this.element.x = offset;
       this.prev_scale = this.scale;
@@ -77,15 +67,16 @@ export default class Columns {
    }
 
    updatePointers() {
-      if (this.pointers.children.length > 0) {
-         for (let i = 0; i < this.pointers.children.length; i++) {
-            this.pointers.children[i].child.x = this.pointers.children[i].child.index * this.scale.x;
-         }
-         return this.animateDirection();
+      if (this.pointers.children.length == 0) {
+         this.pointers.children = this.getColumnsGroup();
+         this.element.w = (this.columns[0].length-2)*this.scale.x;
+         return 
       }
 
-      this.pointers.children = this.getColumnsGroup();
-      this.element.w = (this.columns[0].length-2)*this.scale.x;
+      for (let i = 0; i < this.pointers.children.length; i++) {
+         this.pointers.children[i].child.x = this.pointers.children[i].child.index * this.scale.x;
+      }
+      this.animateDirection();
    }
 
    updateLines() {
@@ -106,11 +97,11 @@ export default class Columns {
    }
 
    animateDirection() {
-      if (this.running || !this.prev_scale) {         
+      if (this.pointers.children[0].running) {
          return;
       }
-
-      if (this.prev_scale.y < this.scale.y) {         
+      
+      if (this.prev_scale.y < this.scale.y) {
          this.animateColumns();
       }
       
@@ -120,7 +111,7 @@ export default class Columns {
    }
 
    animateColumns() {
-      this.pointers.children.forEach(element => {         
+      this.pointers.children.forEach(element => {
          let offset = (this.height - element.column_value * this.scale.y);
 
          element.completed = false
@@ -130,9 +121,9 @@ export default class Columns {
    }
 
    hideColumn(index) {
-      this.pointers.children.forEach(element => {         
+      this.pointers.children.forEach(element => {
          if (element.column_index !== index) {
-            return;            
+            return;
          }
 
          let offset = (this.height - element.column_value * this.scale.y);
@@ -145,9 +136,9 @@ export default class Columns {
    }
 
    showColumn(index) {
-      this.pointers.children.forEach(element => {         
+      this.pointers.children.forEach(element => {
          if (element.column_index !== index) {
-            return;            
+            return;
          }
 
          let offset = (this.height - element.column_value * this.scale.y);
@@ -166,7 +157,7 @@ export default class Columns {
          let column = this.columns[c_i];
          
          for (let i = 1; i < column.length; i++) {
-            let y = this.height - column[i] * this.scale.y;
+            let y = this.height - column[i] * this.scale.y// + 600;
             let line = null;
          
             if (i < column.length-1) {

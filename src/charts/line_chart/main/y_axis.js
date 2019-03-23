@@ -61,7 +61,8 @@ export default class YAxis {
    createLines() {
       this.data = [];
       for (let i = 1; i <= this.lines_count; i++) {
-         this.data.push(parseInt(i*this.step/this.scale.y));
+         this.data.push(parseInt(
+            (i*this.step/*+600*/)/this.scale.y));
       }
       this.lines.top.children = this.getLinesGroup(0, 0, this.data);
    }

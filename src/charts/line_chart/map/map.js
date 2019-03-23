@@ -1,5 +1,5 @@
 import { Event } from 'core'
-import { Circle, Rectangle, Position } from 'elements'
+import { Circle, Line, Rectangle, Position } from 'elements'
 import { Slide } from 'animations'
 import Navigator from './navigator.js'
 
@@ -27,7 +27,8 @@ export default class Map extends Event {
 
       localeObserver.subscribe(locale => {
          this.locale = locale;
-         this.update();
+         this.updatePointers();
+         this.updateLines();
       })
 
       themeObserver.subscribe(theme => {
@@ -36,7 +37,8 @@ export default class Map extends Event {
 
          this.duration = theme.animation_duration_4;
          this.caclMapYScale();
-         this.update();
+         this.updatePointers();
+         this.updateLines();
       })
 
       hiddenColumnsObserver.subscribe(([act, index]) => {
@@ -69,14 +71,16 @@ export default class Map extends Event {
       this.navigator.on('offset', () => this.emitUpdate());
       this.navigator.on('scaling', () => this.emitUpdate());
 
-      this.data_element = new Position();
-      
+      this.pointers = new Position();
+      this.lines = new Rectangle()
+
       this.element = new Rectangle({
          clip: true,
          w: width,
          h: map_height,
          children: [
-            this.data_element,
+            this.pointers,
+            this.lines,
             this.navigator.element,
          ]
       });      
@@ -84,6 +88,7 @@ export default class Map extends Event {
 
    emitUpdate() {
       this.caclMainYScale();
+      this.updateLines();
       this.emit('update', this.update_data);
    }
 
@@ -128,7 +133,8 @@ export default class Map extends Event {
       this.names = names;
 
       this.caclMapYScale();
-      this.update();
+      this.updatePointers();
+      this.updateLines();
       this.emitUpdate();
    }
 
@@ -144,7 +150,7 @@ export default class Map extends Event {
    }
 
    hideColumn(index) {
-      this.data_element.children.forEach(element => {
+      this.pointers.children.forEach(element => {
          if (element.column_index == index) {
             element.toAlpha(0);
          }
@@ -168,7 +174,7 @@ export default class Map extends Event {
    }
 
    showColumn(index) {
-      this.data_element.children.forEach(element => {
+      this.pointers.children.forEach(element => {
          if (element.column_index == index) {
             element.toAlpha(1);
          }
@@ -177,23 +183,49 @@ export default class Map extends Event {
          element.completed = false;
          element.forward()
       })
+      
    }
 
-   update() {
+   updateLines() {      
+      let children = [];
+
+      for (let i = 0; i < this.pointers.children.length; i++) {
+         const element = this.pointers.children[i];
+         const element2 = this.pointers.children[i+1] ? this.pointers.children[i+1] : null;
+         
+         if (element2 && element.column_index == element2.column_index) {
+            let line = element.child.children[0]
+            line.x2 = element2.child.x - element2.child.r/2
+            line.y2 = element2.child.y + element2.child.r/2            
+         }
+      }
+
+      this.lines.children = children;
+   }
+
+
+   updatePointers() {
       var children = [];
       
       for (let c_i = 0; c_i < this.columns.length; c_i++) {
          let column = this.columns[c_i];
          
          for (let i = 1; i < column.length; i++) {
+            let line = null;
+
+            if (i < column.length-1) {
+               line = new Line({color: this.colors[column[0]], w: 2});
+            }
+            
             let rect = new Circle({
                x: (i-1) * this.scale.x,
                y: this.map_height - column[i] * this.scale.y + this.min_y * this.scale.y - this.padding_bottom,
-               r: 3,
+               r: 0,
                color: this.colors[column[0]],
+               children: line ? [line] : []
             });
             
-            let child = new Slide({child: rect, duration: this.duration});
+            let child = new Slide({child: rect, duration: this.duration, onProgress: () => this.updateLines()});
             child.column_index = c_i;
             child.column_value = column[i];
 
@@ -201,7 +233,7 @@ export default class Map extends Event {
          }
       };
       
-      this.data_element.children = children;
+      this.pointers.children = children;
    }
 
    // Вычисляем Y масштаб для миникарты
@@ -232,9 +264,10 @@ export default class Map extends Event {
          let column = this.columns[c];
          
          for (let i = 1; i < column.length; i++) {
-            let x = (i-1) * this.main_scale.x;
+            let s = this.navigator.width/3;
+            let item_x = (i-1) * this.scale.x;
             
-            if (x > -this.main_offset - 50 && x < -this.main_offset + this.width + 50) {
+            if (this.navigator.offset < item_x + s && this.navigator.offset + this.navigator.width > item_x - s) {
                visible_items.push(this.main_height - column[i]);
             }
          }
@@ -243,6 +276,8 @@ export default class Map extends Event {
       var min_max = this.getMinMaxY(visible_items);
       var diff = this.main_height - min_max.min;
       this.main_scale_y = (this.main_height-this.main_padding_top)/diff;
+
+      // this.main_scale_y +=2.6
    }
 
    getMinMaxY(items) {
