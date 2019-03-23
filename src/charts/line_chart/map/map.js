@@ -5,7 +5,7 @@ import Navigator from './navigator.js'
 
 export default class Map extends Event {
 
-   constructor({width, map_height, main_height, main_padding_top, localeObserver, themeObserver, hiddenColumnsObserver}) {
+   constructor({width, map_height, main_height, localeObserver, themeObserver, hiddenColumnsObserver}) {
       super();
 
       this.width = width;
@@ -14,7 +14,8 @@ export default class Map extends Event {
       this.padding_bottom = 0;
 
       this.main_height = main_height;
-      this.main_padding_top = main_padding_top || 40;
+      this.main_padding_top = 0;
+      this.main_padding_bottom = 0;
 
       this.dates_column = [];
       this.columns = [];
@@ -32,6 +33,8 @@ export default class Map extends Event {
       })
 
       themeObserver.subscribe(theme => {
+         this.main_padding_top = theme.main_padding_top;
+         this.main_padding_bottom = theme.main_padding_bottom;
          this.padding_top = theme.map_padding_top;
          this.padding_bottom = theme.map_padding_bottom;
 
@@ -93,13 +96,16 @@ export default class Map extends Event {
    }
 
    get main_offset() {
-      return -this.navigator.offset * ((this.scale.x * this.width / this.navigator.width) / this.scale.x)
+      return {
+         x: -this.navigator.offset * ((this.scale.x * this.width / this.navigator.width) / this.scale.x),
+         y: this.main_offset_y || 0
+      }
    }
 
    get main_scale() {
       return {
          x: this.scale.x * this.width / this.navigator.width,
-         y: this.main_scale_y
+         y: this.main_scale_y,
       };
    }
 
@@ -155,13 +161,7 @@ export default class Map extends Event {
             element.toAlpha(0);
          }
          
-         let new_y = 0;
-
-         if (this.visible_columns.length == 0) {
-            new_y = -((this.map_height - this.padding_bottom - this.padding_top)/8)
-         } else {
-            new_y = this.map_height - element.column_value * this.scale.y + this.min_y * this.scale.y - this.padding_bottom
-         }
+         let new_y = this.map_height - element.column_value * this.scale.y + this.min_y * this.scale.y - this.padding_bottom;
 
          if (new_y < 0 && element.column_index !== index) {
             new_y = -new_y
@@ -260,24 +260,22 @@ export default class Map extends Event {
          if (this.hidden_columns.includes(c)) {
             continue;
          }
-
-         let column = this.columns[c];
          
-         for (let i = 1; i < column.length; i++) {
-            let s = this.navigator.width/3;
+         for (let i = 1; i < this.columns[c].length; i++) {
+            let s = 70;
             let item_x = (i-1) * this.scale.x;
-            
+
             if (this.navigator.offset < item_x + s && this.navigator.offset + this.navigator.width > item_x - s) {
-               visible_items.push(this.main_height - column[i]);
+               visible_items.push(this.columns[c][i]);
             }
          }
       }
 
       var min_max = this.getMinMaxY(visible_items);
-      var diff = this.main_height - min_max.min;
-      this.main_scale_y = (this.main_height-this.main_padding_top)/diff;
-
-      // this.main_scale_y +=2.6
+      var diff = min_max.max - min_max.min;
+      this.main_scale_y = (this.main_height-this.main_padding_top-this.main_padding_bottom)/diff;
+      
+      this.main_offset_y = this.main_scale_y * min_max.min;
    }
 
    getMinMaxY(items) {

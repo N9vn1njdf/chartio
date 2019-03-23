@@ -9,10 +9,10 @@ import Checkboxes from './ckeckboxes.js'
 var map_height = 50;
 // Размер линии дат
 var date_height = 35;
-// Максимальный отступ сверху для графика
-var main_padding_top = 40;
 
 var defaultTheme = {
+   main_padding_top: 40,
+   main_padding_bottom: 40,
    background: '#fff',
    map_color1: 'rgba(205, 211, 236, 0.4)',
    map_color2: 'rgba(212, 220, 244, 0.28)',
@@ -64,7 +64,7 @@ class LineChart {
       var main_height = height - map_height - date_height;
 
       // Создаем миникарту
-      this.map = new Map({width, map_height, main_height, main_padding_top, localeObserver, themeObserver, hiddenColumnsObserver});
+      this.map = new Map({width, map_height, main_height, localeObserver, themeObserver, hiddenColumnsObserver});
 
       // Создаем индиктор дат
       this.dates = new Dates({animation_duration: 280, localeObserver, themeObserver});

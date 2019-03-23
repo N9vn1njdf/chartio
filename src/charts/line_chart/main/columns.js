@@ -8,7 +8,12 @@ export default class Columns {
       this.height = height;
       this.hidden_columns = [];
 
+      this.padding_top = 0;
+      this.padding_bottom = 0;
+
       themeObserver.subscribe(theme => {
+         this.padding_top = theme.main_padding_top;
+         this.padding_bottom = theme.main_padding_bottom;
          this.duration = theme.animation_duration_4;
       })
       
@@ -56,7 +61,8 @@ export default class Columns {
    }
 
    update({offset, scale, columns, colors}) {
-      this.element.x = offset;
+      this.element.x = offset.x;
+      this.offset = offset;
       this.prev_scale = this.scale;
       this.scale = scale;
       this.columns = columns;
@@ -112,7 +118,7 @@ export default class Columns {
 
    animateColumns() {
       this.pointers.children.forEach(element => {
-         let offset = (this.height - element.column_value * this.scale.y);
+         let offset = (this.height - element.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
 
          element.completed = false
          element.offset = -(element.child.y - offset);
@@ -126,7 +132,7 @@ export default class Columns {
             return;
          }
 
-         let offset = (this.height - element.column_value * this.scale.y);
+         let offset = (this.height - element.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
 
          element.completed = false
          element.offset = -(element.child.y - offset)
@@ -141,7 +147,7 @@ export default class Columns {
             return;
          }
 
-         let offset = (this.height - element.column_value * this.scale.y);
+         let offset = (this.height - element.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
 
          element.completed = false
          element.offset = -(element.child.y - offset)
@@ -157,7 +163,7 @@ export default class Columns {
          let column = this.columns[c_i];
          
          for (let i = 1; i < column.length; i++) {
-            let y = this.height - column[i] * this.scale.y// + 600;
+            let y = (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom;
             let line = null;
          
             if (i < column.length-1) {

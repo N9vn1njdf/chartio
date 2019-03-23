@@ -28,7 +28,7 @@ export default class Dates {
    }
 
    update({offset, scale, dates_column}) {
-      this.element.x = offset + 20;
+      this.element.x = offset.x + 20;
       this.prev_scale = !this.scale ? scale : this.scale;
       this.scale = scale;
       this.dates = dates_column;

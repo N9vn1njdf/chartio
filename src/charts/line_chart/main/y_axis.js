@@ -13,7 +13,12 @@ export default class YAxis {
          bottom: new Position({w: width}),
       };
 
-      themeObserver.subscribe(theme => {         
+      this.padding_top = 0;
+      this.padding_bottom = 0;
+
+      themeObserver.subscribe(theme => {
+         this.padding_top = theme.main_padding_top;
+         this.padding_bottom = theme.main_padding_bottom;
          this.lines_count = theme.lines_count;
          this.step = (this.height-30)/this.lines_count;
          this.color = this.bottom_text.color = theme.text_color1;
@@ -44,8 +49,9 @@ export default class YAxis {
       });
    }
 
-   update({scale, columns}) {
+   update({offset, scale, columns}) {
       this.element.x = 0;
+      this.offset = offset;
       this.prev_scale = this.scale;
       this.scale = scale;
       this.columns = columns;
@@ -58,11 +64,14 @@ export default class YAxis {
       }
    }
 
+   calc(i) {
+      return parseInt((i*this.step+this.offset.y-this.padding_bottom)/this.scale.y);
+   }
+
    createLines() {
       this.data = [];
       for (let i = 1; i <= this.lines_count; i++) {
-         this.data.push(parseInt(
-            (i*this.step/*+600*/)/this.scale.y));
+         this.data.push(this.calc(i));
       }
       this.lines.top.children = this.getLinesGroup(0, 0, this.data);
    }
@@ -82,7 +91,7 @@ export default class YAxis {
 
       this.data = [];
       for (let i = 1; i <= this.lines_count; i++) {
-         this.data.push(parseInt(i*this.step/this.scale.y));
+         this.data.push(this.calc(i));
       }
    }
 
@@ -91,7 +100,7 @@ export default class YAxis {
       
       let data = []
       for (let i = 1; i <= this.lines_count; i++) {
-         data.push(parseInt(i*this.step/this.scale.y));
+         data.push(this.calc(i));
       }
 
       this.lines[from].children = this.getLinesGroup(-120, -120, to == 'top' ? this.data : data);

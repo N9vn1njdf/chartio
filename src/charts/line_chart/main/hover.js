@@ -14,7 +14,12 @@ export default class Hover {
          this.updatePointers();
       })
 
+      this.padding_top = 0;
+      this.padding_bottom = 0;
+
       themeObserver.subscribe(theme => {
+         this.padding_top = theme.main_padding_top;
+         this.padding_bottom = theme.main_padding_bottom;
          this.background = theme.background;
          this.line.color = theme.line_color2;
          this.font_size = theme.text_size3;
@@ -86,7 +91,8 @@ export default class Hover {
    }
 
    update({offset, scale, columns, dates_column, colors, names}) {
-      this.element.x = offset;
+      this.element.x = offset.x;
+      this.offset = offset;
       this.prev_scale = this.scale;
       this.scale = scale;
       this.columns = columns;
@@ -251,7 +257,7 @@ export default class Hover {
             let rect = new Circle({
                alpha: 0,
                x: (i-1) * this.scale.x,
-               y: this.height - column[i] * this.scale.y,
+               y: (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom,
                r: 5,
                border: {w: 2.5, color: this.colors[column[0]]},
                color: this.background

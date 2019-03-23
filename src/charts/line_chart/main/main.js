@@ -26,7 +26,7 @@ export default class Main {
    }
 
    update({offset, scale, columns, dates_column, colors, names}) {
-      this.y_axis.update({scale, columns});
+      this.y_axis.update({offset, scale, columns});
       this.lines.update({scale, columns});
       this.columns.update({offset, scale, columns, colors});
       this.hover.update({offset, scale, columns, dates_column, colors, names});
