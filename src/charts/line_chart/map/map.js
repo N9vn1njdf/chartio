@@ -156,7 +156,6 @@ export default class Map extends Event {
    hideColumn(index) {
       this.pointers.children.forEach(lines_group => {
          lines_group.children.forEach(slide => {
-
             if (slide.column_index == index) {
                slide.toAlpha(0);
             }

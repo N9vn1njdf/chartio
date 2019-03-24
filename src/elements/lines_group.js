@@ -58,10 +58,6 @@ export default class LinesGroup {
          return;
       }
 
-      if (ctx.globalAlpha !== this.alpha) {
-         ctx.globalAlpha = this.alpha;
-      }
-
       if (ctx.strokeStyle !== this.color) {
          ctx.strokeStyle = this.color;
       }

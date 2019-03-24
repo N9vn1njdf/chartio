@@ -92,7 +92,7 @@ export default class Rectangle extends Element {
 
       if (this.alpha > 0) {
          if (ctx.globalAlpha !== this.alpha) {
-            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.alpha;
          }
 
          if (ctx.fillStyle !== this.color) {

@@ -82,12 +82,6 @@ export default class Animation {
 
    get needUpdate() {
       return this.running
-      // this._children.forEach((element) => {
-      //    if (element.needUpdate()) {
-      //       return true;
-      //    }
-      // })
-      // return false
    }
 
    render(ctx, input, time) {
