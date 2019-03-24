@@ -76,7 +76,7 @@ class LineChart {
       this.map.on('update', (data) => this.main.update(data))
       this.map.on('update', (data) => this.dates.update(data))
 
-      this.checboxes = new Checkboxes(id, hiddenColumnsObserver)
+      this.checboxes = new Checkboxes(id, themeObserver, hiddenColumnsObserver)
 
       let map_y = height-map_height;
       let dates_y = main_height + date_height/4;
@@ -121,7 +121,7 @@ class LineChart {
    setData(data) {
       this.map.setData({columns: data.columns, colors: data.colors, names: data.names});
       this.checboxes.setData({columns: data.columns, colors: data.colors, names: data.names});
-      this.scaffold.update();
+      this.scaffold.update(500);
    }
 
    setTheme(theme) {
@@ -131,9 +131,9 @@ class LineChart {
          }
       }
       
-      this.scaffold.background = theme.background;
       this.themeObserver.broadcast(theme)
       this.scaffold.update();
+      setTimeout(() => this.scaffold.background = theme.background, 100);
    }
 
    setLocale(locale) {      

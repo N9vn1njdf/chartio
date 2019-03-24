@@ -62,14 +62,10 @@ export default class Hover {
             this.pointers,
          ]
       })
+
+      canvas.addEventListener('mouseout', () => this.hideInfo())
       
       this.element.on('move', (input, element) => this.onMove(input));
-      this.element.on('leave', (input, element) => {
-         this.line.alpha = 0;
-         this.hideInfo();
-         this.pointers.children.forEach(point => point.alpha = 0)
-      });
-
       this.createInfo();
    }
 

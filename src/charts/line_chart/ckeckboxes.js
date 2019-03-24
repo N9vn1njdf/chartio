@@ -36,11 +36,15 @@ let css = `
 }`
 
 export default class Checkboxes {
-  constructor(id, hiddenColumnsObserver) {
+  constructor(id, themeObserver, hiddenColumnsObserver) {
     this.id = id;
     this.hidden_columns = [];
     this.hiddenColumnsObserver = hiddenColumnsObserver;
     
+    themeObserver.subscribe(theme => {
+      // доработать смену тем
+    })
+
     let div = document.getElementById(id);
     this.ui = document.createElement('div');
     div.appendChild(this.ui);
