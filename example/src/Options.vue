@@ -79,7 +79,7 @@
 
       <div class="form-group">
          <label>Lines count</label>
-         <input type="number" class="form-control form-control-sm" v-model="themes.custom.lines_count">
+         <input type="number" class="form-control form-control-sm" min="3" v-model="themes.custom.lines_count">
       </div>
 
       <div class="form-group">
@@ -178,7 +178,7 @@ export default {
                text_size3: 14,
                line_color1: 'rgba(255, 255, 255, 0.1)',
                line_color2: 'rgba(255, 255, 255, 0.1)',
-               lines_count: 5,
+               lines_count: 6,
                animation_duration_1: 260,
                animation_duration_2: 260,
                animation_duration_3: 200,

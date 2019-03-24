@@ -28,7 +28,7 @@ var defaultTheme = {
    text_size3: 14,
    line_color1: '#f2f4f5',
    line_color2: '#d2d2d2',
-   lines_count: 5,
+   lines_count: 6,
    animation_duration_1: 260,
    animation_duration_2: 260,
    animation_duration_3: 200,
