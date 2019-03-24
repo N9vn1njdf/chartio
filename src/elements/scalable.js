@@ -5,7 +5,7 @@ import Rectangle from './rectangle.js'
 
 export default class Scalable extends Element {
 
-   constructor({child, axisX, axisY, onScaling, edgeColor, edgeWidth}) {
+   constructor({child, axisX, axisY, width, onScaling, edgeColor, edgeWidth}) {
       super({x: child.x, y: child.y, w: child.w, h: child.h});
 
       child.x = 0;
@@ -14,6 +14,8 @@ export default class Scalable extends Element {
 
       this.axisX = axisX || false;
       this.axisY = axisY || false;
+
+      this.width = width;  // максимальная ширина по которой возможно масштабирование
 
       if (onScaling) {
          this.on('scaling', onScaling);
@@ -37,7 +39,7 @@ export default class Scalable extends Element {
    }
 
    set edgeWidth(value) {
-      this._edgeWidth = value;
+      this._edgeWidth = (value) >> 0;
       this.children = this._getChildren();
    }
    
@@ -89,9 +91,17 @@ export default class Scalable extends Element {
          this.left._inputOffset = null;
          return;
       }
-
+      
       if (!this.left._inputOffset) {
          this.left._inputOffset = {x: input.x - this._x, y: input.y - this._y, w: this.w + this._x};
+      }
+
+      if (this.x-this.edgeWidth <= 0) {
+         this.x = this.edgeWidth - this.left._inputOffset.x;
+         
+         if (input.direction.x != 'right') {
+            return;
+         }
       }
 
       let newX = input.x - this.left._inputOffset.x;
@@ -99,7 +109,7 @@ export default class Scalable extends Element {
       this.w = this.left._inputOffset.w - newX;
       this.right.x = this.w;      
       this.x = newX;
-
+      
       this.emit('scaling');
    }
    
@@ -110,13 +120,21 @@ export default class Scalable extends Element {
          return;
       }
 
+      if (this.right.x+this.edgeWidth >= this.width) {
+         this.right.x = this.w;
+
+         if (input.direction.x != 'left') {
+            return;
+         }
+      }
+
       if (!this.right._inputOffset) {
          this.right._inputOffset = {x: input.x - this.w, y: input.y - this._y, w: this.w + this._x};
       }
       
       this.w = input.x - this.right._inputOffset.x;
-      this.right.x = this.w;
-
+      this.right.x = this.w;      
+      
       this.emit('scaling');
    }
 

@@ -26,24 +26,32 @@ export default class Circle extends Element {
    }
 
    isHover({x, y}) {
+      if (this.r == 0) {
+         return false;
+      }
       return x < this.x + this.r && x > this.x - this.r && y < this.y + this.r && y > this.y - this.r;
    }
 
    render(ctx, input, time) {
-      ctx.globalAlpha = this.alpha;
+      if (this.r > 0 && this.alpha > 0) {
+         ctx.globalAlpha = this.alpha;
 
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
-
-      ctx.fillStyle = this.color;
-      ctx.fill();
-      
-      if (this.border) {
          ctx.beginPath();
          ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
-         ctx.strokeStyle = this.border.color;
-         ctx.lineWidth = this.border.w;
-         ctx.stroke();
+         
+         if (ctx.fillStyle !== this.color) {
+            ctx.fillStyle = this.color;
+         }
+
+         ctx.fill();
+         
+         if (this.border) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+            ctx.strokeStyle = this.border.color;
+            ctx.lineWidth = this.border.w;
+            ctx.stroke();
+         }
       }
 
       super.render(ctx, input, time);

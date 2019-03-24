@@ -1,4 +1,4 @@
-import { Line, Position } from 'elements'
+import { LinesGroup, Line, Position } from 'elements'
 import { FadeSlide } from 'animations'
 
 export default class Lines {
@@ -8,25 +8,36 @@ export default class Lines {
       this.height = height;
 
       this.lines = {
-         top: new Position({w: width}),
-         bottom: new Position({w: width}),
+         top: new LinesGroup({
+            lineWidth: 2,
+            color: this.color,
+         }),
+         bottom: new LinesGroup({
+            lineWidth: 2,
+            color: this.color,
+         }),
+         fixed: new LinesGroup({
+            lineWidth: 2,
+            color: this.color,
+            children: [
+               new Line({x2: this.width, y: this.height})
+            ]
+         }),
       };
 
       themeObserver.subscribe(theme => {
          this.lines_count = theme.lines_count;
          this.step = (this.height-30)/this.lines_count;
-         this.color = this.bottom_line.color = theme.line_color1;         
+         this.color = this.lines.top.color = this.lines.bottom.color = this.lines.fixed.color = theme.line_color1;         
          this.duration = theme.animation_duration_1;
          this.lines.top.children = this.getLinesGroup(0, 0, 0);
       })
-
-      this.bottom_line = new Line({x: 0, y: this.height, color: this.color});
       
       this.element = new Position({
          children: [
             this.lines.top,
             this.lines.bottom,
-            this.bottom_line
+            this.lines.fixed
          ]
       });
    }
@@ -78,7 +89,7 @@ export default class Lines {
       
       for (let i = 1; i <= this.lines_count; i++) {
          let child = new FadeSlide({
-            child: new Line({x: 0, y: y + this.height-(i*this.step), color: this.color}),
+            child: new Line({x: 0, x2: this.width, y: y + this.height-(i*this.step), color: this.color}),
             offset: (i*m)+offset,
             duration: this.duration,
          });

@@ -43,33 +43,41 @@ export default class Rectangle extends Element {
          ctx.clip();
       }
 
-      ctx.globalAlpha = this.alpha;
-      ctx.fillStyle = this.color;
-      ctx.fillRect(this.x, this.y, this.w, this.h);
+      if (this.alpha > 0) {
+         if (ctx.globalAlpha !== this.alpha) {
+            ctx.fillStyle = this.color;
+         }
 
-      if (this.borderTop) {
-         ctx.strokeStyle = this.borderTop.color;
-         ctx.lineWidth = this.borderTop.width;
+         if (ctx.fillStyle !== this.color) {
+            ctx.fillStyle = this.color;
+         }
 
-         var y = this.borderTop.inside ? this.y + this.borderTop.width/2 : this.y;
-         
-         ctx.beginPath();
-         ctx.moveTo(this.x, y);
-         ctx.lineTo(this.x + this.w, y);
-         ctx.stroke();
-         ctx.closePath();
-      }
+         ctx.fillRect(this.x, this.y, this.w, this.h);
 
-      if (this.borderBottom) {
-         ctx.strokeStyle = this.borderBottom.color;
-         ctx.lineWidth = this.borderBottom.width;
+         if (this.borderTop) {
+            ctx.strokeStyle = this.borderTop.color;
+            ctx.lineWidth = this.borderTop.width;
 
-         var y = this.borderBottom.inside ? this.y + this.h - this.borderTop.width/2 : this.y + this.h;
-         
-         ctx.beginPath();
-         ctx.moveTo(this.x, y);
-         ctx.lineTo(this.x + this.w, y);
-         ctx.stroke();
+            var y = this.borderTop.inside ? this.y + this.borderTop.width/2 : this.y;
+            
+            ctx.beginPath();
+            ctx.moveTo(this.x, y);
+            ctx.lineTo(this.x + this.w, y);
+            ctx.stroke();
+            ctx.closePath();
+         }
+
+         if (this.borderBottom) {
+            ctx.strokeStyle = this.borderBottom.color;
+            ctx.lineWidth = this.borderBottom.width;
+
+            var y = this.borderBottom.inside ? this.y + this.h - this.borderTop.width/2 : this.y + this.h;
+            
+            ctx.beginPath();
+            ctx.moveTo(this.x, y);
+            ctx.lineTo(this.x + this.w, y);
+            ctx.stroke();
+         }
       }
 
       super.render(ctx, input, time);

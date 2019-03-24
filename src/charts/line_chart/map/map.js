@@ -1,5 +1,5 @@
 import { Event } from 'core'
-import { Circle, Line, Rectangle, Position } from 'elements'
+import { LinesGroup, Line, Rectangle, Position } from 'elements'
 import { Slide } from 'animations'
 import Navigator from './navigator.js'
 
@@ -28,8 +28,7 @@ export default class Map extends Event {
 
       localeObserver.subscribe(locale => {
          this.locale = locale;
-         this.updatePointers();
-         this.updateLines();
+         this.createLines();
       })
 
       themeObserver.subscribe(theme => {
@@ -40,8 +39,11 @@ export default class Map extends Event {
 
          this.duration = theme.animation_duration_4;
          this.caclMapYScale();
-         this.updatePointers();
-         this.updateLines();
+         this.createLines();
+         
+         if (this.columns.length > 0) {
+            this.emitUpdate();
+         }
       })
 
       hiddenColumnsObserver.subscribe(([act, index]) => {
@@ -70,12 +72,11 @@ export default class Map extends Event {
          }
       })
 
-      this.navigator = new Navigator({width: width, height: map_height, themeObserver});
+      this.navigator = new Navigator({width, height: map_height, themeObserver});
       this.navigator.on('offset', () => this.emitUpdate());
       this.navigator.on('scaling', () => this.emitUpdate());
 
       this.pointers = new Position();
-      this.lines = new Rectangle()
 
       this.element = new Rectangle({
          clip: true,
@@ -83,7 +84,6 @@ export default class Map extends Event {
          h: map_height,
          children: [
             this.pointers,
-            this.lines,
             this.navigator.element,
          ]
       });      
@@ -91,7 +91,6 @@ export default class Map extends Event {
 
    emitUpdate() {
       this.caclMainYScale();
-      this.updateLines();
       this.emit('update', this.update_data);
    }
 
@@ -139,8 +138,7 @@ export default class Map extends Event {
       this.names = names;
 
       this.caclMapYScale();
-      this.updatePointers();
-      this.updateLines();
+      this.createLines();
       this.emitUpdate();
    }
 
@@ -156,81 +154,94 @@ export default class Map extends Event {
    }
 
    hideColumn(index) {
-      this.pointers.children.forEach(element => {
-         if (element.column_index == index) {
-            element.toAlpha(0);
-         }
-         
-         let new_y = this.map_height - element.column_value * this.scale.y + this.min_y * this.scale.y - this.padding_bottom;
+      this.pointers.children.forEach(lines_group => {
+         lines_group.children.forEach(slide => {
 
-         if (new_y < 0 && element.column_index !== index) {
-            new_y = -new_y
-         }
+            if (slide.column_index == index) {
+               slide.toAlpha(0);
+            }
+            
+            let new_y = this.map_height - slide.column_value * this.scale.y + this.min_y * this.scale.y - this.padding_bottom;
+            if (new_y < 0 && slide.column_index !== index) {
+               new_y = -new_y
+            }
 
-         element.completed = false;
-         element.offset = -(element.child._y - new_y);
-         element.forward()
+            slide.completed = false;
+            slide.offset = -(slide.child._y - new_y);
+            slide.forward()
+         });
       })
    }
 
    showColumn(index) {
-      this.pointers.children.forEach(element => {
-         if (element.column_index == index) {
-            element.toAlpha(1);
-         }
+      this.pointers.children.forEach(lines_group => {
+         lines_group.children.forEach(slide => {
+            if (slide.column_index == index) {
+               slide.toAlpha(1);
+            }
 
-         element.offset = -element.offset;
-         element.completed = false;
-         element.forward()
+            slide.offset = -slide.offset;
+            slide.completed = false;
+            slide.forward()
+         })
       })
-      
    }
 
-   updateLines() {      
-      let children = [];
+   updateLines() {
+      this.pointers.children.forEach(lines_group => {
+         for (let i = 0; i < lines_group.children.length; i++) {
+            const slide = lines_group.children[i];
+            const slide2 = lines_group.children[i+1];
 
-      for (let i = 0; i < this.pointers.children.length; i++) {
-         const element = this.pointers.children[i];
-         const element2 = this.pointers.children[i+1] ? this.pointers.children[i+1] : null;
-         
-         if (element2 && element.column_index == element2.column_index) {
-            let line = element.child.children[0]
-            line.x2 = element2.child.x - element2.child.r/2
-            line.y2 = element2.child.y + element2.child.r/2            
+            if (!slide2) {
+               continue;
+            }
+
+            if (slide.column_index == slide2.column_index) {               
+               slide.child._x2 = slide2.child._x
+               slide.child._y2 = slide2.child._y
+            }
          }
-      }
-
-      this.lines.children = children;
+      })
    }
 
-
-   updatePointers() {
+   createLines() {
       var children = [];
       
       for (let c_i = 0; c_i < this.columns.length; c_i++) {
          let column = this.columns[c_i];
-         
-         for (let i = 1; i < column.length; i++) {
-            let line = null;
 
-            if (i < column.length-1) {
-               line = new Line({color: this.colors[column[0]], w: 2});
+         let group = new LinesGroup({lineWidth: 2, color: this.colors[column[0]]});
+         let lines = [];
+
+         for (let i = 1; i < column.length; i++) {
+            if (i > column.length-1) {
+               break;
             }
-            
-            let rect = new Circle({
-               x: (i-1) * this.scale.x,
-               y: this.map_height - column[i] * this.scale.y + this.min_y * this.scale.y - this.padding_bottom,
-               r: 0,
-               color: this.colors[column[0]],
-               children: line ? [line] : []
+
+            let y = column[i] * this.scale.y;
+            let y2 = column[i+1] * this.scale.y;
+            let offset = this.map_height + this.min_y * this.scale.y - this.padding_bottom;
+
+            let child = new Slide({
+               child: new Line({
+                  x: (i-1) * this.scale.x,
+                  x2: i * this.scale.x,
+                  y: offset - y,
+                  y2: offset - y2,
+               }),
+               duration: this.duration,
+               onProgress: () => this.updateLines()
             });
-            
-            let child = new Slide({child: rect, duration: this.duration, onProgress: () => this.updateLines()});
+
             child.column_index = c_i;
             child.column_value = column[i];
 
-            children.push(child);
+            lines.push(child);
          }
+         
+         group.children = lines;
+         children.push(group);
       };
       
       this.pointers.children = children;

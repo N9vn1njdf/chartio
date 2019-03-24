@@ -65,7 +65,15 @@ export default class YAxis {
    }
 
    calc(i) {
-      return parseInt((i*this.step+this.offset.y-this.padding_bottom)/this.scale.y);
+      i = (i*this.step+this.offset.y-this.padding_bottom)/this.scale.y;
+
+      if (i > 1000000) {
+         return ((i/1000000) >> 0)+'М'
+      }
+      if (i > 1000) {
+         return ((i/1000) >> 0)+'К'
+      }
+      return (i) >> 0;
    }
 
    createLines() {

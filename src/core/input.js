@@ -26,6 +26,8 @@ export default class Input {
          }
       });
       document.addEventListener('mouseup', function(e) {
+         _this.el = null;
+
          if (e.target == canvas) {
             _this.down = false;
             _this.event_down = null;
@@ -47,5 +49,34 @@ export default class Input {
             _this.down = false;
          }
       });
+   }
+
+   get x() {
+      return this._x;
+   }
+
+   set x(value) {
+      if (this._x && this._prev_x != this._x) {
+         this._prev_x = this._x;
+      }
+      this._x = value;
+   }
+
+   get direction() {
+      let x = 'unknow';
+
+      if (!this._prev_x || !this._x) {
+         return {x};
+      }
+
+      if (this._prev_x > this._x) {
+         x = 'left';
+      }
+
+      if (this._prev_x < this._x) {
+         x = 'right';
+      }
+
+      return {x}
    }
 }

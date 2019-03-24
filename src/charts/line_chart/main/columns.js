@@ -1,4 +1,4 @@
-import { Text, Line, Circle, Rectangle } from 'elements'
+import { Line, LinesGroup, Rectangle } from 'elements'
 import { Slide } from 'animations'
 
 export default class Columns {
@@ -8,13 +8,16 @@ export default class Columns {
       this.height = height;
       this.hidden_columns = [];
 
-      this.padding_top = 0;
       this.padding_bottom = 0;
 
       themeObserver.subscribe(theme => {
-         this.padding_top = theme.main_padding_top;
          this.padding_bottom = theme.main_padding_bottom;
          this.duration = theme.animation_duration_4;
+
+         if (this.scale) {
+            this.pointers.children = this.getColumnsGroup();
+            this.updateLines();
+         }
       })
       
       hiddenColumnsObserver.subscribe(([act, index]) => {
@@ -39,13 +42,11 @@ export default class Columns {
       })
 
       this.pointers = new Rectangle()
-      this.lines = new Rectangle()
 
       this.element = new Rectangle({
          h: height,
          children: [
             this.pointers,
-            this.lines,
          ]
       })
    }
@@ -79,106 +80,131 @@ export default class Columns {
          return 
       }
 
-      for (let i = 0; i < this.pointers.children.length; i++) {
-         this.pointers.children[i].child.x = this.pointers.children[i].child.index * this.scale.x;
-      }
+      this.pointers.children.forEach(lines_group => {
+         lines_group.children.forEach(slide => {
+            slide.child.x = slide.index * this.scale.x;
+         });
+      });
+
       this.animateDirection();
    }
 
    updateLines() {
-      let children = [];
+      this.pointers.children.forEach(lines_group => {
+         for (let i = 0; i < lines_group.children.length; i++) {
+            const slide = lines_group.children[i];
+            const slide2 = lines_group.children[i+1];
 
-      for (let i = 0; i < this.pointers.children.length; i++) {
-         const element = this.pointers.children[i];
-         const element2 = this.pointers.children[i+1] ? this.pointers.children[i+1] : null;
-         
-         if (element2 && element.column_index == element2.column_index) {
-            let line = element.child.children[0]
-            line.x2 = element2.child.x - element2.child.r/2
-            line.y2 = element2.child.y + element2.child.r/2
+            if (!slide2) {
+               slide.child._x2 = slide.child._x;
+               continue;
+            }
+
+            if (slide2 && slide.column_index == slide2.column_index) {                     
+               slide.child._x2 = slide2.child._x
+               slide.child._y2 = slide2.child._y
+            }
          }
-      }
-
-      this.lines.children = children;
+      });
    }
 
    animateDirection() {
       if (this.pointers.children[0].running) {
          return;
       }
-      
-      if (this.prev_scale.y < this.scale.y) {
-         this.animateColumns();
-      }
-      
-      if (this.prev_scale.y > this.scale.y) {
+      if (this.prev_scale.y !== this.scale.y) {
          this.animateColumns();
       }
    }
 
    animateColumns() {
-      this.pointers.children.forEach(element => {
-         let offset = (this.height - element.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
+      this.pointers.children.forEach(lines_group => {
+         lines_group.children.forEach(slide => {
+            let offset = (this.height - slide.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
 
-         element.completed = false
-         element.offset = -(element.child.y - offset);
-         element.forward()
+            slide.completed = false
+            slide.offset = -(slide.child.y - offset);
+            slide.forward()
+         });
       });
    }
 
    hideColumn(index) {
-      this.pointers.children.forEach(element => {
-         if (element.column_index !== index) {
-            return;
-         }
+      this.pointers.children.forEach(lines_group => {
+         lines_group.children.forEach(slide => {
+            if (slide.column_index !== index) {
+               return;
+            }
 
-         let offset = (this.height - element.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
+            let offset = (this.height - slide.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
 
-         element.completed = false
-         element.offset = -(element.child.y - offset)
-         element.toAlpha(0)
-         element.forward()
+            slide.completed = false
+            slide.offset = -(slide.child.y - offset)
+            slide.toAlpha(0)
+            slide.forward()
+         });
       });
    }
 
    showColumn(index) {
-      this.pointers.children.forEach(element => {
-         if (element.column_index !== index) {
-            return;
-         }
+      this.pointers.children.forEach(lines_group => {
+         lines_group.children.forEach(slide => {
 
-         let offset = (this.height - element.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
+            if (slide.column_index !== index) {
+               return;
+            }
 
-         element.completed = false
-         element.offset = -(element.child.y - offset)
-         element.toAlpha(1)
-         element.forward()
+            let offset = (this.height - slide.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
+
+            slide.completed = false
+            slide.offset = -(slide.child.y - offset)
+            slide.toAlpha(1)
+            slide.forward()
+         });
       });
    }
 
-   getColumnsGroup() {
+   getColumnsGroup() {      
       var children = [];
       
       for (let c_i = 0; c_i < this.columns.length; c_i++) {
          let column = this.columns[c_i];
-         
+
+         let group = new LinesGroup({lineWidth: 2, color: this.colors[column[0]]});
+         let lines = [];
+
          for (let i = 1; i < column.length; i++) {
-            let y = (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom;
-            let line = null;
-         
-            if (i < column.length-1) {
-               line = new Line({color: this.colors[column[0]], w: 2});
+            if (i > column.length-1) {
+               break;
             }
 
-            let rect = new Circle({x: (i-1) * this.scale.x, y, r: 0, children: line ? [line] : []});
-            rect.index = i-1;
+            let y = column[i] * this.scale.y;
+            let y2 = column[i+1] * this.scale.y;
+            let offset = this.height + this.offset.y - this.padding_bottom;
+            
+            let child = new Slide({
+               child: new Line({
+                  x: (i-1) * this.scale.x,
+                  x2: i * this.scale.x,
+                  y: offset - y,
+                  y2: offset - y2,
+                  color: this.colors[column[0]],
+                  w: 2,
+   
+               }),
+               duration: this.duration,
+               onProgress: () => this.updateLines()
+            });
 
-            let child = new Slide({child: rect, duration: this.duration, onProgress: () => this.updateLines()});
             child.column_index = c_i;
             child.column_value = column[i];
+            child.index = i-1;
 
-            children.push(child);
+            lines.push(child);
          }
+
+         group.children = lines;
+         children.push(group);
       }
 
       return children;

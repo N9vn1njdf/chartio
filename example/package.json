@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
     "v-click-outside": "^2.0.2",
     "vue": "^2.5.11",
+    "vue-axios": "^2.1.4",
     "vue-color": "^2.7.0"
   },
   "browserslist": [

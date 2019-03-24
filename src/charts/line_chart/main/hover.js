@@ -8,17 +8,16 @@ export default class Hover {
       this.height = height;
       this.prev_input = {};
       this.hidden_columns = [];
+      this.r = 0;
 
       localeObserver.subscribe(locale => {         
          this.locale = locale;
          this.updatePointers();
       })
 
-      this.padding_top = 0;
       this.padding_bottom = 0;
 
       themeObserver.subscribe(theme => {
-         this.padding_top = theme.main_padding_top;
          this.padding_bottom = theme.main_padding_bottom;
          this.background = theme.background;
          this.line.color = theme.line_color2;
@@ -64,7 +63,7 @@ export default class Hover {
          ]
       })
       
-      this.element.on('move', (input, element) => this.onMove(input, element));
+      this.element.on('move', (input, element) => this.onMove(input));
       this.element.on('leave', (input, element) => {
          this.line.alpha = 0;
          this.hideInfo();
@@ -107,11 +106,16 @@ export default class Hover {
       if (!this.scale) {
          return;
       }
+      this.r = 2+(this.scale.x/10);
+      if (this.r > 5) {
+         this.r = 5;
+      }
+      
       this.pointers.children = this.getColumnsGroup();
       this.element.w = (this.columns[0].length-2)*this.scale.x;
    }
 
-   onMove(input, element) {
+   onMove(input) {
       if (input.x == this.prev_input.x && input.y == this.prev_input.y) {
          return;
       }
@@ -125,18 +129,22 @@ export default class Hover {
 
       let values = [];
       let index;
-
-      this.pointers.children.forEach(point => {
+      
+      this.pointers.children.forEach(point => {         
          if (this.hidden_columns.includes(point.column_index)) {
             return;
          }
-         point.alpha = 0;
-         
-         if (input.x > point.x - point.r && input.x < point.x + point.r) {
+
+         let x = this.element.x + point._x;
+
+         if (input.x > x - point.r && input.x < x + point.r) {            
             new_visible = true;
             point.alpha = 1;
             values[point.column_index] = point.value;
             index = point.index;
+
+         } else {
+            point.alpha = 0;
          }
       });
 
@@ -151,10 +159,10 @@ export default class Hover {
       }
 
       if (this.visible) {
-         let client_rect = this.canvas.getBoundingClientRect();
-         let y = client_rect.top + input.y;
+         let y = this.canvas.offsetTop + input.y;
+         
          this.div.style.top = (y < 100 ? 0 : y - 100) + 'px';
-         this.div.style.left = (client_rect.left + input.x + 20) + 'px';
+         this.div.style.left = (this.canvas.offsetLeft + input.x + 220) + 'px';
       }
    }
 
@@ -162,7 +170,6 @@ export default class Hover {
       this.div = document.createElement('div');
       this.updateDiv(this.div, {
          position: 'absolute',
-         width: '110px',
          'padding-bottom': '8px',
          background: this.background,
          'box-shadow': '0px 0px 2px rgba(0, 0, 0, 0.42)',
@@ -187,7 +194,7 @@ export default class Hover {
    }
 
    createColumnInfo(index, value) {
-      index = parseInt(index);
+      index = (index) >> 0;
       if (this.hidden_columns.includes(index)) {
          return;
       }
@@ -201,7 +208,7 @@ export default class Hover {
          float: index%2 ? 'right' : 'left',
          'font-size': (this.font_size-2) + 'px',
          'font-family': this.font_family,
-         'margin-right': index%2 ? 0 : '10px'
+         'margin-right': '10px'
       });
       
       let count = document.createElement('div');
@@ -231,7 +238,7 @@ export default class Hover {
          this.createColumnInfo(i, value);
       }
       this.date_text.innerHTML = this.getDateByIndex(index)
-      this.div.style.display = 'block';
+      this.div.style.display = 'table';
    }
 
    hideInfo() {
@@ -258,8 +265,8 @@ export default class Hover {
                alpha: 0,
                x: (i-1) * this.scale.x,
                y: (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom,
-               r: 5,
-               border: {w: 2.5, color: this.colors[column[0]]},
+               r: this.r,
+               border: {w: this.r/2, color: this.colors[column[0]]},
                color: this.background
             });
 

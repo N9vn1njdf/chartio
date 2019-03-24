@@ -22,6 +22,7 @@ export default class Navigator extends Event {
 
       this.scalable = new Scalable({
          axisX: true,
+         width: width,
          onScaling: () => this.onScaling(),
          child: new Rectangle({
             w: navigator_width,

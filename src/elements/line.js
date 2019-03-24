@@ -1,43 +1,81 @@
 import Element from './element.js'
 
+// Элемент должен быть помещен в LinesGroup для отрисовки
 export default class Line extends Element {
 
-   constructor({x, y, x2, y2, w, color}) {
+   constructor({x, y, x2, y2}) {
       super(arguments[0]);
       
       this.x2 = x2 || 0;
       this.y2 = y2 || y;
-      this.w = w || 1;
    }
 
    get x2() {
-      if (this.parent != null && this.parent.w) {         
-         return this._x2 + this.parent.w;
+      if (this.parent != null) {         
+         return this._x2 + this.parent.x;
       }
       return this._x2;
    }
 
    set x2(value) {
-      return this._x2 = value;
+      return this._x2 = value + .5
+   }
+
+   get y2() {
+      if (this.parent != null) {
+         return this._y2 + this.parent.y;
+      }
+      return this._y2;
+   }
+
+   set y2(value) {
+      return this._y2 = value + .5
+   }
+
+   get x() {
+      if (this.parent != null) {
+         return this._x + this.parent.x;
+      }
+      return this._x;
+   }
+
+   set x(value) {
+      return this._x = value + .5;
+   }
+
+   get y() {
+      if (this.parent != null) {
+         return this._y + this.parent.y;
+      }
+      return this._y;
+   }
+
+   set y(value) {
+      return this._y = value + .5;
+   }
+
+   get color() {
+      return this.parent.color
+   }
+
+   set color(value) {
+      
    }
 
    render(ctx, input, time) {
-      ctx.globalAlpha = this.alpha;
+      if (this.alpha == 0 || !this.color || this.color == 'transparent') {
+         return;
+      }
 
-      ctx.strokeStyle = this.color;
-      ctx.lineWidth = this.w;
-      
-      // if (this.color == 'red') {
-      //    console.log(this);
-      // throw this.y;
-      // }
-      
+      if (ctx.globalAlpha !== this.alpha) {
+         ctx.globalAlpha = this.alpha;
+      }
+
       ctx.beginPath();
-      ctx.moveTo(this.x + 0.5, this.y + 0.5);
-      ctx.lineTo(this.x2 + 0.5, this.y2 + 0.5);
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(this.x2, this.y2);
       ctx.stroke();
-      ctx.closePath();
 
-      super.render(ctx, input, time);
+      // super.render(ctx, input, time);
    }
 }

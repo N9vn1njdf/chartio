@@ -68,12 +68,16 @@ export default class Animation {
       this.parent.y = value;
    }
 
-   get w() {
+   get w() {      
       return this.parent.w;
    }
 
    get h() {
       return this.parent.h;
+   }
+
+   get color() {
+      return this.parent.color
    }
 
    render(ctx, input, time) {
