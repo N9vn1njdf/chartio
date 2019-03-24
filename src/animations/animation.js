@@ -53,7 +53,7 @@ export default class Animation {
       return this.parent.x
    }
 
-   set x(value) {      
+   set x(value) {
       this.parent.x = value;
    }
 
@@ -68,7 +68,7 @@ export default class Animation {
       this.parent.y = value;
    }
 
-   get w() {      
+   get w() {
       return this.parent.w;
    }
 
@@ -78,6 +78,16 @@ export default class Animation {
 
    get color() {
       return this.parent.color
+   }
+
+   get needUpdate() {
+      return this.running
+      // this._children.forEach((element) => {
+      //    if (element.needUpdate()) {
+      //       return true;
+      //    }
+      // })
+      // return false
    }
 
    render(ctx, input, time) {
@@ -96,7 +106,7 @@ export default class Animation {
          }
          this.handle(progress, time_fraction);
    
-         if (time_fraction == 1) {            
+         if (time_fraction == 1) {
             this.running = false;
             this.completed = !this.completed;
          }

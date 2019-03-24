@@ -62,6 +62,15 @@ export default class Element extends Event {
    set alpha(value) {
       return this._alpha = value;
    }
+
+   get needUpdate() {
+      for(let i in this._children) {
+         if (this._children[i].needUpdate) {
+            return true;
+         }
+      }
+      return false
+   }
    
    isHover({x, y}) {
       return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
@@ -81,7 +90,7 @@ export default class Element extends Event {
    }
    
    render(ctx, input, time) {
-      this.children.forEach((child) => child.render(ctx, input, time));
+      this._children.forEach((child) => child.render(ctx, input, time));
       
       if (this.isHover(input)) {
          if(!input.el && this.color != 'transparent' && !this.inputIgnore) {

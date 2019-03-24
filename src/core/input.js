@@ -1,7 +1,8 @@
 
 export default class Input {
    
-   constructor(canvas) {
+   constructor(scaffold) {
+      let canvas = scaffold.canvas;
       this.x = null;
       this.y = null;
       this.down = false;
@@ -13,12 +14,15 @@ export default class Input {
       document.addEventListener('mousemove', function(e) {
          _this.el = null;
          if (e.target == canvas) {
+            scaffold.need_update = true;
             _this.x = e.layerX;
             _this.y = e.layerY;
-         } else {
+         } else {            
+            scaffold.need_update = false;
             _this.x = null;
             _this.y = null;
          }
+
       });
       document.addEventListener('mousedown', function(e) {
          if (e.target == canvas) {

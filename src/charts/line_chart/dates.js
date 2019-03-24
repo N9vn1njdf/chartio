@@ -11,7 +11,8 @@ export default class Dates {
 
       localeObserver.subscribe(locale => {         
          this.locale = locale;
-         this.updateAxis(true);
+         this.element.children = [];
+         this.createDates();
       })
       
       themeObserver.subscribe(theme => {
@@ -22,7 +23,7 @@ export default class Dates {
             this.duration = theme.animation_duration_3;
 
             this.element.children = [];
-            this.updateAxis();
+            this.createDates();
          }
       })
    }
@@ -32,36 +33,33 @@ export default class Dates {
       this.prev_scale = this.scale;
       this.scale = scale;
       this.dates = dates_column;
-      
-      this.calc_hidden_levels(true);
-      this.updateAxis();
+
+      if (this.element.children.length == 0) {
+         this.calc_hidden_levels(true);
+         this.createDates();
+      } else {
+         this.animate();
+      }
    }
 
    get item_width() {
       return this.font_size*5;
    }
 
-   updateAxis(force = false) {
-      if (!this.locale && !force) {
+   createDates() {
+      if (!this.locale) {
          return
-      }
-
-      if (this.element.children.length > 0 && !force) {
-         this.animate();
-         return;
       }
 
       var children = [];
       
       for (let i = 1; i < this.dates.length; i++) {
-
-         // Закешировать даты
          let date = new Date(this.dates[i]);
          let d = date.getDate();
          let m = this.locale.month[date.getMonth()];
          
          let rect = new Rectangle({
-            alpha: !this.hidden.includes(i) ? 1 : 0,
+            alpha: !this.hidden.includes(i-1) ? 1 : 0,
             x: (i-1) * this.scale.x + (i == 1 ? 0 : -20) + (i+1 == this.dates.length ? -20 : 0),
             w: this.item_width,
             children: [
@@ -69,7 +67,7 @@ export default class Dates {
             ]
          });
          
-         let child = new Fade({child: rect, duration: this.duration, completed: this.hidden.includes(i)});
+         let child = new Fade({child: rect, duration: this.duration, completed: this.hidden.includes(i-1)});
          children.push(child);
       }
 
@@ -129,6 +127,10 @@ export default class Dates {
                   this.hidden_levels[this.hidden_levels.length-1].push(visible[i]);
                }
             }
+         }
+
+         if ((all_width - visible_width)/this.visible.length <= 1) {
+            this.calc_hidden_levels(true);
          }
          return;
       }

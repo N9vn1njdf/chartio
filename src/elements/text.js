@@ -10,7 +10,7 @@ export default class Text extends Element {
       this.fontFamily = fontFamily || 'Arial';
       this.align = align || 'left';
 
-      this.need_update = true;
+      this.cached = false;
    }
 
    get w() {
@@ -33,15 +33,19 @@ export default class Text extends Element {
       return false;
    }
 
+   // cache(ctx) {
+   //    ctx.restore();
+   // }
+
    render(ctx, input, time) {
       if (!this.isVisible(ctx.width)) {
          return;
       }
 
-      // if (!this.need_update) {
+      // if (this.cached) {
+      //    this.cache(ctx);
       //    return;
       // }
-      // this.need_update = false;
 
       if (ctx.globalAlpha !== this.alpha) {
          ctx.globalAlpha = this.alpha;
@@ -60,5 +64,10 @@ export default class Text extends Element {
       }
 
       ctx.fillText(this.text, this.x, this.y);
+
+
+
+
+      this.cached = true;
    }
 }

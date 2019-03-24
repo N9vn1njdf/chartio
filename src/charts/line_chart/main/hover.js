@@ -263,10 +263,10 @@ export default class Hover {
          for (let i = 1; i < column.length; i++) {
             let rect = new Circle({
                alpha: 0,
-               x: (i-1) * this.scale.x,
-               y: (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom,
+               x: (i-1) * this.scale.x + 1,
+               y: (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom + 1,
                r: this.r,
-               border: {w: this.r/2, color: this.colors[column[0]]},
+               border: {w: this.r/2-.5, color: this.colors[column[0]]},
                color: this.background
             });
 

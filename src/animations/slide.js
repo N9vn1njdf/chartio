@@ -23,7 +23,7 @@ export default class FadeY extends Animation {
    }
 
    curve(time_fraction) {
-      return Math.pow(time_fraction, 0.8)
+      return Math.pow(time_fraction, 1)
    }
 
    start() {      

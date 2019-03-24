@@ -114,6 +114,7 @@ class LineChart {
    setData(data) {
       this.map.setData({columns: data.columns, colors: data.colors, names: data.names});
       this.checboxes.setData({columns: data.columns, colors: data.colors, names: data.names});
+      this.scaffold.update();
    }
 
    setTheme(theme) {
@@ -125,10 +126,12 @@ class LineChart {
       
       this.scaffold.background = theme.background;
       this.themeObserver.broadcast(theme)
+      this.scaffold.update();
    }
 
    setLocale(locale) {      
       this.localeObserver.broadcast(locale)
+      this.scaffold.update();
    }
 }
 

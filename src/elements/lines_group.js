@@ -44,12 +44,21 @@ export default class LinesGroup {
       return this._y = value + .5;
    }
 
+   get needUpdate() {      
+      for(let i in this._children) {
+         if (this._children[i].needUpdate) {
+            return true;
+         }
+      }
+      return false
+   }
+
    render(ctx, input, time) {
       if (this.alpha == 0) {
          return;
       }
 
-      if (ctx.strokeStyle !== this.color) {         
+      if (ctx.strokeStyle !== this.color) {
          ctx.strokeStyle = this.color;
       }
       

@@ -35,6 +35,10 @@ export default class Rectangle extends Element {
    }
 
    renderBorder(ctx) {
+      if (!this.borderTop && !this.borderBottom && !this.borderLeft && !this.borderRight) {
+         return;
+      }
+
       ctx.beginPath();
 
       // top border
@@ -74,19 +78,16 @@ export default class Rectangle extends Element {
    }
 
    render(ctx, input, time) {
-      if (!this.isVisible(ctx.width)) {
-         
-         if (this.borderTop || this.borderBottom || this.borderLeft || this.borderRight) {
-            this.renderBorder(ctx);
-         }
+      if (!this.isVisible(ctx.width) && !this.clip) {
+         this.renderBorder(ctx);
          super.render(ctx, input, time);
          return;
       }
 
       if(this.clip) {
-         ctx.save();
-         ctx.rect(this.x, this.y, this.w, this.h);
-         ctx.clip();
+         // ctx.save();
+         // ctx.rect(this.x, this.y, this.w, this.h);
+         // ctx.clip();
       }
 
       if (this.alpha > 0) {
@@ -100,15 +101,13 @@ export default class Rectangle extends Element {
 
          ctx.fillRect(this.x, this.y, this.w, this.h);
 
-         if (this.borderTop || this.borderBottom || this.borderLeft || this.borderRight) {
-            this.renderBorder(ctx);
-         }
+         this.renderBorder(ctx);
       }
 
       super.render(ctx, input, time);
 
       if(this.clip) {
-         ctx.restore();
+         // ctx.restore();
       }
    }
 }
