@@ -45,6 +45,9 @@ export default class LinesGroup {
    }
 
    render(ctx, input, time) {
+      if (this.alpha == 0) {
+         return;
+      }
 
       if (ctx.strokeStyle !== this.color) {         
          ctx.strokeStyle = this.color;

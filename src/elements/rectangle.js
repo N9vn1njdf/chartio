@@ -34,12 +34,58 @@ export default class Rectangle extends Element {
       }
    }
 
+   renderBorder(ctx) {
+      ctx.beginPath();
+
+      // top border
+      if (this.borderTop) {
+         if (ctx.strokeStyle !== this.borderTop.color) {         
+            ctx.strokeStyle = this.borderTop.color;
+         }
+         
+         if (ctx.lineWidth !== this.borderTop.width) {
+            ctx.lineWidth = this.borderTop.width;
+         }
+
+         var y = this.borderTop.inside ? this.y + this.borderTop.width/2 : this.y;
+         
+         ctx.moveTo(this.x, y);
+         ctx.lineTo(this.x + this.w, y);
+      }
+
+      // bottom border
+      if (this.borderBottom) {
+         if (ctx.strokeStyle !== this.borderBottom.color) {         
+            ctx.strokeStyle = this.borderBottom.color;
+         }
+         
+         if (ctx.lineWidth !== this.borderBottom.width) {
+            ctx.lineWidth = this.borderBottom.width;
+         }
+
+         var y = this.borderBottom.inside ? this.y + this.h - this.borderTop.width/2 : this.y + this.h;
+         
+         ctx.moveTo(this.x, y);
+         ctx.lineTo(this.x + this.w, y);
+      }
+
+      ctx.stroke();
+      ctx.closePath();
+   }
+
    render(ctx, input, time) {
+      if (!this.isVisible(ctx.width)) {
+         
+         if (this.borderTop || this.borderBottom || this.borderLeft || this.borderRight) {
+            this.renderBorder(ctx);
+         }
+         super.render(ctx, input, time);
+         return;
+      }
+
       if(this.clip) {
          ctx.save();
          ctx.rect(this.x, this.y, this.w, this.h);
-         ctx.strokeStyle = 'transparent';
-         ctx.stroke();
          ctx.clip();
       }
 
@@ -54,29 +100,8 @@ export default class Rectangle extends Element {
 
          ctx.fillRect(this.x, this.y, this.w, this.h);
 
-         if (this.borderTop) {
-            ctx.strokeStyle = this.borderTop.color;
-            ctx.lineWidth = this.borderTop.width;
-
-            var y = this.borderTop.inside ? this.y + this.borderTop.width/2 : this.y;
-            
-            ctx.beginPath();
-            ctx.moveTo(this.x, y);
-            ctx.lineTo(this.x + this.w, y);
-            ctx.stroke();
-            ctx.closePath();
-         }
-
-         if (this.borderBottom) {
-            ctx.strokeStyle = this.borderBottom.color;
-            ctx.lineWidth = this.borderBottom.width;
-
-            var y = this.borderBottom.inside ? this.y + this.h - this.borderTop.width/2 : this.y + this.h;
-            
-            ctx.beginPath();
-            ctx.moveTo(this.x, y);
-            ctx.lineTo(this.x + this.w, y);
-            ctx.stroke();
+         if (this.borderTop || this.borderBottom || this.borderLeft || this.borderRight) {
+            this.renderBorder(ctx);
          }
       }
 

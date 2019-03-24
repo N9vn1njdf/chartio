@@ -10,9 +10,14 @@ export default class Position extends Element {
    }
 
    render(ctx, input, time) {
-      if (this.alpha > 0) {
-         ctx.globalAlpha = this.alpha;
-         super.render(ctx, input, time);
+      if (this.alpha == 0) {
+         return;
       }
+
+      if (ctx.globalAlpha !== this.alpha) {
+         ctx.globalAlpha = this.alpha;
+      }
+
+      super.render(ctx, input, time);
    }
 }

@@ -6,7 +6,7 @@ export default class Dates {
    constructor({localeObserver, themeObserver}) {
       this.dates = [];
       this.hidden_levels = [];
-
+      
       this.element = new Position();
 
       localeObserver.subscribe(locale => {         
@@ -29,7 +29,7 @@ export default class Dates {
 
    update({offset, scale, dates_column}) {
       this.element.x = offset.x + 20;
-      this.prev_scale = !this.scale ? scale : this.scale;
+      this.prev_scale = this.scale;
       this.scale = scale;
       this.dates = dates_column;
       
@@ -54,6 +54,8 @@ export default class Dates {
       var children = [];
       
       for (let i = 1; i < this.dates.length; i++) {
+
+         // Закешировать даты
          let date = new Date(this.dates[i]);
          let d = date.getDate();
          let m = this.locale.month[date.getMonth()];
@@ -100,7 +102,7 @@ export default class Dates {
    }
 
    // Возвращает индексы элементов, которые показаны
-   get visible() {
+   get visible() {      
       let result = [];
       for (let i = 0; i < this.dates.length; i++) {
          if (!this.hidden.includes(i)) {

@@ -9,6 +9,8 @@ export default class Text extends Element {
       this.size = size || 14;
       this.fontFamily = fontFamily || 'Arial';
       this.align = align || 'left';
+
+      this.need_update = true;
    }
 
    get w() {
@@ -28,18 +30,35 @@ export default class Text extends Element {
    }
 
    isHover({x, y}) {
-      return x < this.x + this.r && x > this.x - this.r && y < this.y + this.r && y > this.y - this.r;
+      return false;
    }
 
    render(ctx, input, time) {
-      ctx.globalAlpha = this.alpha;
+      if (!this.isVisible(ctx.width)) {
+         return;
+      }
 
-      ctx.fillStyle = this.color;
-      ctx.font = `${this.size}px ${this.fontFamily}`;
-      ctx.textBaseline = 'top';
-      ctx.textAlign = this.align; 
+      // if (!this.need_update) {
+      //    return;
+      // }
+      // this.need_update = false;
+
+      if (ctx.globalAlpha !== this.alpha) {
+         ctx.globalAlpha = this.alpha;
+      }
+
+      if (ctx.fillStyle !== this.color) {
+         ctx.fillStyle = this.color;
+      }
+
+      if (ctx.font !== `${this.size}px ${this.fontFamily}`) {
+         ctx.font = `${this.size}px ${this.fontFamily}`;
+      }
+
+      if (ctx.textAlign !== this.align) {
+         ctx.textAlign = this.align;
+      }
+
       ctx.fillText(this.text, this.x, this.y);
-
-      super.render(ctx, input, time);
    }
 }

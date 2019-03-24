@@ -66,6 +66,19 @@ export default class Element extends Event {
    isHover({x, y}) {
       return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
    }
+
+   // Простая проверка виден ли элемент. Чтобы не рисовать скрытые элементы
+   isVisible(width) {
+      if (this.w == 0 || this.h == 0) {
+         return false;
+      }
+
+      if (this.alpha == 0 || !this.color || this.color == 'transparent') {
+         return false;
+      }
+
+      return this.x + this.w > 0 && this.x < width;
+   }
    
    render(ctx, input, time) {
       this.children.forEach((child) => child.render(ctx, input, time));

@@ -78,6 +78,9 @@ class LineChart {
 
       this.checboxes = new Checkboxes(id, hiddenColumnsObserver)
 
+      let map_y = height-map_height;
+      let dates_y = main_height + date_height/4;
+
       this.scaffold = new Scaffold({
          canvas,
          width,
@@ -90,13 +93,13 @@ class LineChart {
                ]
             }),
             new Position({
-               y: main_height + date_height/4,
+               y: dates_y,
                children: [
                   this.dates.element
                ]
             }),
             new Position({
-               y: height-map_height,
+               y: map_y,
                children: [
                   this.map.element
                ]
