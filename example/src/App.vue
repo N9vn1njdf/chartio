@@ -27,7 +27,7 @@ export default {
     Chart,
     Options,
   },
-  created() {
+  mounted() {
     this.axios.get('./chart_data.json').then((response) => {
       this.json = response.data;
     })
