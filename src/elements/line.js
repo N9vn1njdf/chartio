@@ -62,25 +62,23 @@ export default class Line extends Element {
 
    // Простая проверка виден ли элемент. Чтобы не рисовать скрытые элементы
    isVisible(width) {
-      if (this.alpha == 0 || !this.color || this.color == 'transparent') {
+      if (!this.color || this.color == 'transparent') {
          return false;
       }
-
-      return this.x + this.x2 > 0 && this.x < width;
+      
+      return (this.x > 0 || this.x2 > 0) && this.x < width;
    }
 
    render(ctx, input, time) {
       if (!this.isVisible(ctx.width)) {
          return;
       }
-
+      
       if (ctx.globalAlpha !== this.alpha) {
          ctx.globalAlpha = this.alpha;
       }
 
-      ctx.beginPath();
       ctx.moveTo(this.x, this.y);
       ctx.lineTo(this.x2, this.y2);
-      ctx.stroke();
    }
 }

@@ -30,9 +30,11 @@ export default class Scaffold {
       this.canvas.style.background = value;
    }
 
-   update() {
-      this.need_update = true;
-      this.one_frame = true;
+   update(delay = 100) {
+      setTimeout(() => {
+         this.need_update = true;
+         this.one_frame = true;
+      }, delay);
    }
 
    render(time) {

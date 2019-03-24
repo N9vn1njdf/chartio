@@ -81,7 +81,7 @@ export default class YAxis {
       for (let i = 1; i <= this.lines_count; i++) {
          this.data.push(this.calc(i));
       }
-      this.lines.top.children = this.getLinesGroup(0, 0, this.data);
+      this.lines.top.children = this.getLinesGroup(0, 0, this.data);      
    }
 
    animateDirection() {

@@ -5,7 +5,7 @@ export default class Text extends Element {
    constructor({text, size, fontFamily, align}) {
       super(arguments[0]);
       
-      this.text = text;
+      this.text = text+'' || '';
       this.size = size || 14;
       this.fontFamily = fontFamily || 'Arial';
       this.align = align || 'left';
@@ -13,7 +13,7 @@ export default class Text extends Element {
       this.cached = false;
    }
 
-   get w() {
+   get w() {      
       return this.size * this.text.length;
    }
 
@@ -33,19 +33,22 @@ export default class Text extends Element {
       return false;
    }
 
-   // cache(ctx) {
-   //    ctx.restore();
-   // }
+   isVisible(width) {
+      if (this.w == 0 || this.h == 0) {
+         return false;
+      }
+
+      if (this.alpha == 0 || !this.color || this.color == 'transparent') {
+         return false;
+      }
+      
+      return this.x + this.w >= 0 && this.x < width;
+   }
 
    render(ctx, input, time) {
       if (!this.isVisible(ctx.width)) {
          return;
       }
-
-      // if (this.cached) {
-      //    this.cache(ctx);
-      //    return;
-      // }
 
       if (ctx.globalAlpha !== this.alpha) {
          ctx.globalAlpha = this.alpha;
@@ -64,10 +67,5 @@ export default class Text extends Element {
       }
 
       ctx.fillText(this.text, this.x, this.y);
-
-
-
-
-      this.cached = true;
    }
 }

@@ -107,6 +107,13 @@ class LineChart {
          ]
       });
 
+      this.map.on('update', () => {
+         if (!this.init) {         
+            this.init = true;
+            this.scaffold.update(500);
+         }
+      })
+
       this.setTheme(theme || defaultTheme)
       this.setLocale(locale || LineChart.en)
    }

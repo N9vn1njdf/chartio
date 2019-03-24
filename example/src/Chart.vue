@@ -22,10 +22,10 @@ export default {
    },
    watch: {
       json(json) {
-         var max = 150;
-         for (let i in json.columns) {
-            // json.columns[i].splice(max, json.columns[i].length-1-max)
-         }
+         // var max = 10;
+         // for (let i in json.columns) {
+         //    json.columns[i].splice(max, json.columns[i].length-1-max)
+         // }
          
          this.chart.setData(json);
       },

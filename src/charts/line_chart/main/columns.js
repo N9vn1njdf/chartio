@@ -188,9 +188,6 @@ export default class Columns {
                   x2: i * this.scale.x,
                   y: offset - y,
                   y2: offset - y2,
-                  color: this.colors[column[0]],
-                  w: 2,
-   
                }),
                duration: this.duration,
                onProgress: () => this.updateLines()

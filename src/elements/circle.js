@@ -32,6 +32,19 @@ export default class Circle extends Element {
       return x < this.x + this.r && x > this.x - this.r && y < this.y + this.r && y > this.y - this.r;
    }
 
+   // Простая проверка виден ли элемент. Чтобы не рисовать скрытые элементы
+   isVisible(width) {
+      if (this.r == 0) {
+         return false;
+      }
+
+      if (this.alpha == 0 || !this.color || this.color == 'transparent') {
+         return false;
+      }
+
+      return this.x + this.r/2 > 0 && this.x - this.r/2 < width;
+   }
+
    render(ctx, input, time) {
       if (!this.isVisible(ctx.width)) {
          return;

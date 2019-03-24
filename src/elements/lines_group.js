@@ -5,7 +5,7 @@ export default class LinesGroup {
    constructor({x, y, lineWidth, color, children}) {
       this.x = x || 0;
       this.y = y || 0;
-      this.lineWidth = lineWidth-.5 || 1.5;
+      this.lineWidth = lineWidth !== null ? lineWidth-.5 : 1.5;
       this.color = color
       this.children = children || [];
    }
@@ -58,6 +58,10 @@ export default class LinesGroup {
          return;
       }
 
+      if (ctx.globalAlpha !== this.alpha) {
+         ctx.globalAlpha = this.alpha;
+      }
+
       if (ctx.strokeStyle !== this.color) {
          ctx.strokeStyle = this.color;
       }
@@ -65,10 +69,9 @@ export default class LinesGroup {
       if (ctx.lineWidth !== this.lineWidth) {
          ctx.lineWidth = this.lineWidth;
       }
-
       ctx.beginPath();
 
-      this.children.forEach((child) => child.render(ctx, input, time));
+      this._children.forEach((child) => child.render(ctx, input, time));
 
       ctx.closePath();
       ctx.stroke();
