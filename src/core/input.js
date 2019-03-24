@@ -10,6 +10,8 @@ export default class Input {
 
       var _this = this;
 
+      canvas.addEventListener('mouseout', () => scaffold.need_update = false)
+
       // Мышь
       document.addEventListener('mousemove', function(e) {
          _this.el = null;

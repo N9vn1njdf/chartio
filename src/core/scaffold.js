@@ -8,8 +8,8 @@ export default class Scaffold {
       this.canvas.height = this.height = height;
       this.canvas.style.background = background || '#fff';
 
-      this.need_update = true;
-      this.one_frame = false;
+      this._need_update = [];
+      this.need_update = false;
       
       this.input = new Input(this);
 
@@ -30,29 +30,36 @@ export default class Scaffold {
       this.canvas.style.background = value;
    }
 
+   get need_update() {
+      return this._need_update.length > 0;
+   }
+
+   set need_update(value) {
+      if (value) {
+         this._need_update.push(true)
+      } else if (this._need_update.length > 0) {
+         this._need_update.splice(0, 1);
+      }
+   }
+
    update(delay = 100) {
-      setTimeout(() => {
-         this.need_update = true;
-         this.one_frame = true;
-      }, delay);
+      this.need_update = true;
+      setTimeout(() => this.need_update = false, delay);
    }
 
    render(time) {
-      this.children.forEach((element) => {         
-         if (element.needUpdate) {
-            this.need_update = true;
-            return;
-         }
-      });
+      if (!this.need_update) {
+         this.children.forEach((element) => {         
+            if (element.needUpdate) {
+               this.need_update = true;
+               return;
+            }
+         });   
+      }
 
       if (!this.need_update) {
          requestAnimationFrame((time) => this.render(time));
          return;
-      }
-
-      if (this.one_frame) {
-         this.need_update = false;
-         this.one_frame = false;
       }
       
       this.ctx.clearRect(0, 0, this.width, this.height);

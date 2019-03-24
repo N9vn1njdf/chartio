@@ -1,9 +1,12 @@
+import { Event } from 'core'
 import { Line, LinesGroup, Rectangle } from 'elements'
 import { Slide } from 'animations'
 
-export default class Columns {
+export default class Columns extends Event {
 
-   constructor({width, height, themeObserver, hiddenColumnsObserver}) {      
+   constructor({width, height, themeObserver, hiddenColumnsObserver}) {
+      super();
+
       this.width = width;
       this.height = height;
       this.hidden_columns = [];
@@ -73,10 +76,11 @@ export default class Columns {
       this.updateLines();
    }
 
-   updatePointers() {
+   updatePointers() {      
       if (this.pointers.children.length == 0) {
          this.pointers.children = this.getColumnsGroup();
          this.element.w = (this.columns[0].length-2)*this.scale.x;
+         this.emit('ready');
          return 
       }
 
