@@ -264,17 +264,21 @@ export default class Map extends Event {
    
    // Вычисляем Y масштаб для основного графика
    caclMainYScale() {
+      if (!this.scale) {
+         return;
+      }
+
       var visible_items = [];
-      
+      let s = this.scale.x * 2;
+
       for (let c = 0; c < this.columns.length; c++) {
          if (this.hidden_columns.includes(c)) {
             continue;
          }
          
          for (let i = 1; i < this.columns[c].length; i++) {
-            let s = 70;
             let item_x = (i-1) * this.scale.x;
-
+            
             if (this.navigator.offset < item_x + s && this.navigator.offset + this.navigator.width > item_x - s) {
                visible_items.push(this.columns[c][i]);
             }
