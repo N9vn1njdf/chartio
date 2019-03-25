@@ -66,6 +66,7 @@ export default class Hover {
       canvas.addEventListener('mouseout', () => this.hideInfo())
       
       this.element.on('move', (input, element) => this.onMove(input));
+      this.element.on('leave', (input, element) => this.hideInfo());
       this.createInfo();
    }
 

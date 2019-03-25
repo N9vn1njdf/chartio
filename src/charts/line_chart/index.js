@@ -106,12 +106,12 @@ class LineChart {
       this.map.on('update', () => {
          if (!this.init) {         
             this.init = true;
-            this.scaffold.update(100);
+            this.scaffold.setNeedUpdate('init', true, 100);
          }
       })
 
       this.main.columns.on('ready', () => {         
-         this.scaffold.update(100);
+         this.scaffold.setNeedUpdate('columns_ready', true, 100);
       })
 
       this.setTheme(theme || defaultTheme)
@@ -121,7 +121,7 @@ class LineChart {
    setData(data) {      
       this.map.setData({columns: data.columns, colors: data.colors, names: data.names});
       this.checboxes.setData({columns: data.columns, colors: data.colors, names: data.names});
-      this.scaffold.update(100);
+      this.scaffold.setNeedUpdate('set_data', true, 100);
    }
 
    setTheme(theme) {
@@ -132,13 +132,13 @@ class LineChart {
       }
       
       this.themeObserver.broadcast(theme)
-      this.scaffold.update(100);
+      this.scaffold.setNeedUpdate('theme', true, 100);
       this.scaffold.background = theme.background;
    }
 
    setLocale(locale) {      
       this.localeObserver.broadcast(locale)
-      this.scaffold.update(100);
+      this.scaffold.setNeedUpdate('locale', true, 100);
    }
 }
 

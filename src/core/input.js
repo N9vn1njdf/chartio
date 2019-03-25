@@ -10,17 +10,17 @@ export default class Input {
 
       var _this = this;
 
-      canvas.addEventListener('mouseout', () => scaffold.need_update = false)
+      canvas.addEventListener('mouseout', () => scaffold.setNeedUpdate('mouse', false))
 
       // Мышь
       document.addEventListener('mousemove', function(e) {
          _this.el = null;
          if (e.target == canvas) {
-            scaffold.need_update = true;
+            scaffold.setNeedUpdate('mouse', true);
             _this.x = e.layerX;
             _this.y = e.layerY;
-         } else {            
-            scaffold.need_update = false;
+         } else {
+            scaffold.setNeedUpdate('mouse', false);
             _this.x = null;
             _this.y = null;
          }

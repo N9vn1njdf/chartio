@@ -8,8 +8,7 @@ export default class Scaffold {
       this.canvas.height = this.height = height;
       this.canvas.style.background = background || '#fff';
 
-      this._need_update = [];
-      this.need_update = false;
+      this._need_update = {};
       
       this.input = new Input(this);
 
@@ -32,34 +31,36 @@ export default class Scaffold {
       this.canvas.style.background = value;
    }
 
-   get need_update() {
-      return this._need_update.length > 0;
-   }
-
-   set need_update(value) {
-      if (value) {
-         this._need_update.push(true)
-      } else if (this._need_update.length > 0) {
-         this._need_update.splice(0, 1);
+   get needUpdate() {
+      for(let i in this._need_update) {
+         if (this._need_update[i]) {
+            return true;
+         }
       }
    }
 
-   update(delay = 100) {
-      this.need_update = true;
-      setTimeout(() => this.need_update = false, delay);
+   setNeedUpdate(key, value, delay = null) {
+      if (this._need_update[key] !== value) {
+         this._need_update[key] = value;
+         if (delay) {
+            setTimeout(() => this._need_update[key] = false, delay);
+         }
+      }
    }
 
    render(time) {
-      if (!this.need_update) {
+      let need_children_update = false;
+
+      if (!this.needUpdate) {
          this.children.forEach((element) => {         
             if (element.needUpdate) {
-               this.need_update = true;
+               need_children_update = true;
                return;
             }
          });   
       }
 
-      if (!this.need_update) {
+      if (!this.needUpdate && !need_children_update) {
          requestAnimationFrame((time) => this.render(time));
          return;
       }
