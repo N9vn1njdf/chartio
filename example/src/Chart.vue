@@ -22,7 +22,7 @@ export default {
    },
    watch: {
       json(json) {
-         // var max = 10;
+         // var max = 50;
          // for (let i in json.columns) {
          //    json.columns[i].splice(max, json.columns[i].length-1-max)
          // }

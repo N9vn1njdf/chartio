@@ -30,7 +30,7 @@ export default class LinesGroup {
    }
 
    set x(value) {
-      return this._x = value + .5;
+      return this._x = value;
    }
 
    get y() {
@@ -41,7 +41,7 @@ export default class LinesGroup {
    }
 
    set y(value) {
-      return this._y = value + .5;
+      return this._y = value;
    }
 
    get needUpdate() {      
@@ -61,10 +61,11 @@ export default class LinesGroup {
       if (ctx.strokeStyle !== this.color) {
          ctx.strokeStyle = this.color;
       }
-      
+
       if (ctx.lineWidth !== this.lineWidth) {
          ctx.lineWidth = this.lineWidth;
       }
+
       ctx.beginPath();
 
       this._children.forEach((child) => child.render(ctx, input, time));

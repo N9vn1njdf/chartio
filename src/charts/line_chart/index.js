@@ -87,11 +87,7 @@ class LineChart {
          height,
          background: theme ? theme.background : defaultTheme.background,
          children: [
-            new Position({
-               children: [
-                  this.main.element
-               ]
-            }),
+            this.main.element,
             new Position({
                y: dates_y,
                children: [

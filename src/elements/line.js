@@ -1,15 +1,29 @@
-import Element from './element.js'
 
 // Элемент должен быть помещен в LinesGroup для отрисовки
-export default class Line extends Element {
+export default class Line {
 
    constructor({x, y, x2, y2}) {
-      super(arguments[0]);
-      
+      this.x = x || 0;
+      this.y = y || 0;      
       this.x2 = x2 || 0;
       this.y2 = y2 || y;
+      this.alpha = 1;
    }
 
+   get alpha() {
+      let result = this._alpha;
+
+      if (this.parent != null && this.parent.alpha != null) {         
+         result = this._alpha * this.parent.alpha;
+      }
+
+      return result < 0 ? 0 : result;
+   }
+
+   set alpha(value) {
+      return this._alpha = value;
+   }
+   
    get x2() {
       if (this.parent != null) {         
          return this._x2 + this.parent.x;
@@ -18,7 +32,7 @@ export default class Line extends Element {
    }
 
    set x2(value) {
-      return this._x2 = value + .5
+      return this._x2 = value - 0.01
    }
 
    get y2() {
@@ -29,18 +43,18 @@ export default class Line extends Element {
    }
 
    set y2(value) {
-      return this._y2 = value + .5
+      return this._y2 = value
    }
 
    get x() {
       if (this.parent != null) {
-         return this._x + this.parent.x;
+         return this._x + this.parent.x - 0.01;
       }
       return this._x;
    }
 
    set x(value) {
-      return this._x = value + .5;
+      return this._x = value;
    }
 
    get y() {
@@ -51,7 +65,7 @@ export default class Line extends Element {
    }
 
    set y(value) {
-      return this._y = value + .5;
+      return this._y = value;
    }
 
    get color() {
@@ -73,7 +87,7 @@ export default class Line extends Element {
       if (!this.isVisible(ctx.width)) {
          return;
       }
-      
+ 
       if (ctx.globalAlpha !== this.alpha) {
          ctx.globalAlpha = this.alpha;
       }

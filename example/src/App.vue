@@ -4,10 +4,10 @@
     <div class="col-9">
       <h5>The graph does not use third-party libraries. All code is written from scratch.</h5>
       <h5>Charts are updated only when required.</h5>
-      <Chart :json="json[0]" ref="chart0" id="chart0" :locale="locale" :theme="theme" />
+      <!-- <Chart :json="json[0]" ref="chart0" id="chart0" :locale="locale" :theme="theme" />
       <Chart :json="json[1]" ref="chart1" id="chart1" :locale="locale" :theme="theme" />
       <Chart :json="json[2]" ref="chart2" id="chart2" :locale="locale" :theme="theme" />
-      <Chart :json="json[3]" ref="chart3" id="chart3" :locale="locale" :theme="theme" />
+      <Chart :json="json[3]" ref="chart3" id="chart3" :locale="locale" :theme="theme" /> -->
       <Chart :json="json[4]" ref="chart4" id="chart4" :locale="locale" :theme="theme" />
     </div>
 
@@ -34,10 +34,10 @@ export default {
   },
   methods: {
     setTheme(value) {
-      this.$refs.chart0.setTheme(value)
-      this.$refs.chart1.setTheme(value)
-      this.$refs.chart2.setTheme(value)
-      this.$refs.chart3.setTheme(value)
+      // this.$refs.chart0.setTheme(value)
+      // this.$refs.chart1.setTheme(value)
+      // this.$refs.chart2.setTheme(value)
+      // this.$refs.chart3.setTheme(value)
       this.$refs.chart4.setTheme(value)
     }
   },
