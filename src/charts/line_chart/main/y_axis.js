@@ -19,7 +19,7 @@ export default class YAxis {
       themeObserver.subscribe(theme => {
          this.padding_top = theme.main_padding_top;
          this.padding_bottom = theme.main_padding_bottom;
-         this.lines_count = theme.lines_count;
+         this.lines_count = theme.lines_count-1;
          this.step = (this.height-30)/this.lines_count;
          this.color = this.bottom_text.color = theme.text_color1;
          this.font_size = this.bottom_text.size = theme.text_size1;
@@ -68,10 +68,10 @@ export default class YAxis {
       i = (i*this.step+this.offset.y-this.padding_bottom)/this.scale.y;
 
       if (i > 1000000) {
-         return ((i/1000000) >> 0)+'М'
+         return (i/1000000).toFixed(1)+'М'
       }
       if (i > 1000) {
-         return ((i/1000) >> 0)+'К'
+         return (i/1000).toFixed(1)+'К'
       }
       return (i) >> 0;
    }
@@ -130,7 +130,7 @@ export default class YAxis {
       for (let i = 1; i <= this.lines_count; i++) {
          children.push(new FadeSlide({
             child: new Text({
-               y: this.height-(i*this.step)-15,
+               y: this.height-i*this.step-15,
                text: data[i-1],
                size: this.font_size,
                fontFamily: this.font_family,

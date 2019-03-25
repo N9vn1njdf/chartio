@@ -27,7 +27,7 @@ export default class Lines {
 
       themeObserver.subscribe(theme => {
          this.lines_count = theme.lines_count-1;
-         this.step = (this.height-30)/this.lines_count;
+         this.step = (this.height-30)/this.lines_count;         
          this.color = this.lines.top.color = this.lines.bottom.color = this.lines.fixed.color = theme.line_color1;         
          this.duration = theme.animation_duration_1;
          this.lines.top.children = this.getLinesGroup(0, 0, 0);
