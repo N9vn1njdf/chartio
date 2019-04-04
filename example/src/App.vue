@@ -11,9 +11,9 @@
       <Chart :json="json[4]" ref="chart4" id="chart4" :locale="locale" :theme="theme" />
     </div>
 
-    <div class="col-3">
+    <!-- <div class="col-3">
       <Options ref="options" v-on:locale="(value) => locale = value" v-on:theme="setTheme" />
-    </div>
+    </div> -->
   </div>
 </div>
 </template>

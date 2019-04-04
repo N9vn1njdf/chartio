@@ -58,7 +58,7 @@ export default class Lines {
       if (this.lines.top.children.running) {
          return;
       }
-      
+
       if (this.prev_scale.y < this.scale.y) {
          this.animateFrom('bottom');
       }
@@ -74,7 +74,7 @@ export default class Lines {
       this.lines[from].children = this.getLinesGroup(0, -60, -20);
       this.lines[to].children = this.getLinesGroup(0, 100, 5);
       
-      this.lines.top.children.forEach(element => {         
+      this.lines.top.children.forEach(element => {
          element.completed = true
          element.reverse()
       });

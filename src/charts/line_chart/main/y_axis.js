@@ -58,9 +58,8 @@ export default class YAxis {
             
       if (this.prev_scale) {
          this.animateDirection();
-
       } else {
-         this.createLines()
+         this.createLines();
       }
    }
 

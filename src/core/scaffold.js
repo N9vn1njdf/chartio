@@ -13,6 +13,7 @@ export default class Scaffold {
       this.input = new Input(this);
 
       this.children = children || [];
+
       this.ctx = this.canvas.getContext('2d');
       this.ctx.textBaseline = 'top';
       this.ctx.width = this.width;
@@ -52,12 +53,12 @@ export default class Scaffold {
       let need_children_update = false;
 
       if (!this.needUpdate) {
-         this.children.forEach((element) => {         
+         this.children.forEach((element) => {
             if (element.needUpdate) {
                need_children_update = true;
                return;
             }
-         });   
+         });
       }
 
       if (!this.needUpdate && !need_children_update) {
@@ -70,10 +71,6 @@ export default class Scaffold {
       this.children.forEach((element) => {
          element.render(this.ctx, this.input, time);
       });
-
-      if (this.input.down && !this.input.event_down) {
-         this.input.event_down = true;
-      }
 
       if (this.input.el) {
          if (this.input.el.cursor != this.cursor) {         

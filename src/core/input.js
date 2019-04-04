@@ -1,43 +1,49 @@
+import Event from './event.js'
 
-export default class Input {
+export default class Input extends Event {
    
    constructor(scaffold) {
+      super();
       let canvas = scaffold.canvas;
       this.x = null;
       this.y = null;
       this.down = false;
-      this.event_down = false;
 
       var _this = this;
 
-      canvas.addEventListener('mouseout', () => scaffold.setNeedUpdate('mouse', false))
+      canvas.addEventListener('mouseout', () => scaffold.setNeedUpdate('mousemove', false))
 
       // Мышь
       document.addEventListener('mousemove', function(e) {
          _this.el = null;
-         if (e.target == canvas) {
-            scaffold.setNeedUpdate('mouse', true);
-            _this.x = e.layerX;
-            _this.y = e.layerY;
-         } else {
-            scaffold.setNeedUpdate('mouse', false);
-            _this.x = null;
-            _this.y = null;
-         }
 
+         var rect = canvas.getBoundingClientRect();
+         _this.x = e.x - rect.left;
+         _this.y = e.y - rect.top;
+
+         if (e.target == canvas) {
+            scaffold.setNeedUpdate('mousemove', true);
+         } else {
+            scaffold.setNeedUpdate('mousemove', false);
+         }
       });
+
       document.addEventListener('mousedown', function(e) {
          if (e.target == canvas) {
             _this.down = true;
+            _this.emit('down', _this);
+            scaffold.setNeedUpdate('mousedown', true);
          }
       });
       document.addEventListener('mouseup', function(e) {
          _this.el = null;
-
+      
          if (e.target == canvas) {
             _this.down = false;
-            _this.event_down = null;
          }
+
+         _this.emit('up', _this);
+         scaffold.setNeedUpdate('mousedown', false);
       });
 
       // Тач

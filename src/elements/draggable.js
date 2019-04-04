@@ -77,6 +77,10 @@ export default class Draggable extends Element {
 
       if(this._mouse_down) {
          this._drag = true;
+
+      } else {
+         this._drag = false;
+         this._inputOffset = null;
       }
 
       if(this._drag) {

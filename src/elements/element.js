@@ -20,11 +20,11 @@ export default class Element extends Event {
       return this._children;
    }
 
-   set children(value) {      
+   set children(value) {
       for (let i in value) {
          value[i].parent = this;
       }
-      return this._children = value;
+      this._children = value;
    }
 
    get x() {
@@ -35,7 +35,7 @@ export default class Element extends Event {
    }
 
    set x(value) {
-      return this._x = value;
+      this._x = value;
    }
 
    get y() {
@@ -46,13 +46,13 @@ export default class Element extends Event {
    }
 
    set y(value) {
-      return this._y = value;
+      this._y = value;
    }
 
    get alpha() {
       let result = this._alpha;
 
-      if (this.parent != null && this.parent.alpha != null) {         
+      if (this.parent != null && this.parent.alpha != null) {
          result = this._alpha * this.parent.alpha;
       }
 
@@ -89,6 +89,20 @@ export default class Element extends Event {
       return this.x + this.w > 0 && this.x < width;
    }
    
+   onDown(input) {
+      if (this.isHover(input) && !input.event_down) {
+         this._mouse_down = true;
+         this.emit('down', input, this);
+      }
+   }
+
+   onUp(input) {
+      if (this._mouse_down) {
+         this._mouse_down = false;
+         this.emit('up', input, this);          
+      }
+   }
+
    render(ctx, input, time) {
       this._children.forEach((child) => child.render(ctx, input, time));
       
@@ -100,13 +114,10 @@ export default class Element extends Event {
          this._move = true;
          this.emit('move', input, this);
 
-         if (input.down && !input.event_down) {
-            this._mouse_down = true;
-            this.emit('down', input, this);
-
-         } else if (this._mouse_down) {
-            this._mouse_down = false;
-            this.emit('up', input, this);
+         if (!this._has_input_event) {
+            this._has_input_event = true;
+            input.on('down', (input) => this.onDown(input));
+            input.on('up', (input) => this.onUp(input));
          }
 
       } else if(this._move) {

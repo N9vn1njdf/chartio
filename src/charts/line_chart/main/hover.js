@@ -103,7 +103,8 @@ export default class Hover {
       if (!this.scale) {
          return;
       }
-      this.r = 2+(this.scale.x/10);
+
+      this.r = 3+(this.scale.x/30);
       if (this.r > 5) {
          this.r = 5;
       }
@@ -112,10 +113,17 @@ export default class Hover {
       this.element.w = (this.columns[0].length-2)*this.scale.x;
    }
 
+   get distance() {
+      let p1 = this.pointers.children[0];
+      let p2 = this.pointers.children[1];
+      return p2.x - p1.x - this.r*2
+   }
+
    onMove(input) {
-      if (input.x == this.prev_input.x && input.y == this.prev_input.y) {
+      if (!this.columns || (input.x == this.prev_input.x && input.y == this.prev_input.y)) {
          return;
       }
+
       this.prev_input.x = input.x;
       this.prev_input.y = input.y;
 
@@ -126,6 +134,8 @@ export default class Hover {
 
       let values = [];
       let index;
+
+      let r = this.distance < 2 ? 1 : this.r;
       
       this.pointers.children.forEach(point => {         
          if (this.hidden_columns.includes(point.column_index)) {
@@ -134,7 +144,7 @@ export default class Hover {
 
          let x = this.element.x + point._x;
 
-         if (input.x > x - point.r && input.x < x + point.r) {            
+         if (input.x > x - r && input.x < x + r) {            
             new_visible = true;
             point.alpha = 1;
             values[point.column_index] = point.value;
@@ -158,8 +168,8 @@ export default class Hover {
       if (this.visible) {
          let y = this.canvas.offsetTop + input.y;
          
-         this.div.style.top = (y < 100 ? 0 : y - 100) + 'px';
-         this.div.style.left = (this.canvas.offsetLeft + input.x + 220) + 'px';
+         this.div.style.top = (y < 100 ? 0 : y) + 'px';
+         this.div.style.left = (input.x + 140) + 'px';
       }
    }
 
@@ -260,8 +270,8 @@ export default class Hover {
          for (let i = 1; i < column.length; i++) {
             let rect = new Circle({
                alpha: 0,
-               x: (i-1) * this.scale.x + 1,
-               y: (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom + 1,
+               x: (i-1) * this.scale.x,
+               y: (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom,
                r: this.r,
                border: {w: this.r/2-.5, color: this.colors[column[0]]},
                color: this.background

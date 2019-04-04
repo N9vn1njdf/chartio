@@ -104,7 +104,7 @@ export default class Columns extends Event {
                continue;
             }
 
-            if (slide2 && slide.column_index == slide2.column_index) {                     
+            if (slide2 && slide.column_index == slide2.column_index) {
                slide.child._x2 = slide2.child._x
                slide.child._y2 = slide2.child._y
             }
