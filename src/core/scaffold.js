@@ -42,9 +42,11 @@ export default class Scaffold {
 
    setNeedUpdate(key, value, delay = null) {
       if (this._need_update[key] !== value) {
-         this._need_update[key] = value;
          if (delay) {
-            setTimeout(() => this._need_update[key] = false, delay);
+            this._need_update[key] = value;
+            setTimeout(() => this._need_update[key] = !value, delay);
+         } else {
+            this._need_update[key] = value;
          }
       }
    }

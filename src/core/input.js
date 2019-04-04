@@ -11,7 +11,8 @@ export default class Input extends Event {
 
       var _this = this;
 
-      canvas.addEventListener('mouseout', () => scaffold.setNeedUpdate('mousemove', false))
+      // Как только мышь покидает график, отрисовать еще 100мс для остаточных действий
+      canvas.addEventListener('mouseout', () => scaffold.setNeedUpdate('mouseout', true, 100))
 
       // Мышь
       document.addEventListener('mousemove', function(e) {

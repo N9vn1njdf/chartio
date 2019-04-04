@@ -249,7 +249,9 @@ export default class Hover {
    }
 
    hideInfo() {
+      this.line.alpha = 0;
       this.div.style.display = 'none';
+      this.pointers.children.forEach(point => point.alpha = 0)
    }
 
    getDateByIndex(index) {

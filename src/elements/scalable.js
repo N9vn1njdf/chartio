@@ -72,11 +72,11 @@ export default class Scalable extends Element {
       
       this.left = new Rectangle({x: -this.edgeWidth, w: this.edgeWidth, h: this.h, cursor: 'col-resize', color: this.edgeColor});
       this.left.on('down', () => this.left._scaling = true);
-      this.left.on('up', () => this.left._scaling = false);
+      this.left.on('up', () => this._stopScale());
 
       this.right = new Rectangle({x: this.w, w: this.edgeWidth, h: this.h, cursor: 'col-resize', color: this.edgeColor});
       this.right.on('down', () => this.right._scaling = true);
-      this.right.on('up', () => this.right._scaling = false);
+      this.right.on('up', () => this._stopScale());
 
       var edgesX = this.axisX ? [this.left, this.right] : [];
 
@@ -87,26 +87,23 @@ export default class Scalable extends Element {
       return [...edgesX, ...edgesY, this.child];
    }
 
+   _stopScale() {
+      this.left._scaling = false;
+      this.left._inputOffset = null;
+      this.right._scaling = false;
+      this.right._inputOffset = null;
+   }
+
    _slaleLeftX(input) {
-      if (!input.down) {
-         this.left._scaling = false;
-         this.left._inputOffset = null;
-         return;
-      }
-      
-      if (!this.left._inputOffset) {
+      if (!this.left._inputOffset) {         
          this.left._inputOffset = {x: input.x - this._x, y: input.y - this._y, w: this.w + this._x};
       }
 
-      if (this.x-this.edgeWidth <= 0) {
-         this.x = this.edgeWidth - this.left._inputOffset.x;
-         
-         if (input.direction.x != 'right') {
-            return;
-         }
-      }
-
       let newX = input.x - this.left._inputOffset.x;
+      
+      if (newX-(this.width - this.right.x) < 0) {
+         newX = this.width - this.right.x;
+      }      
       
       this.w = this.left._inputOffset.w - newX;
       this.right.x = this.w;      
@@ -116,25 +113,17 @@ export default class Scalable extends Element {
    }
    
    _slaleRightX(input) {
-      if (!input.down) {
-         this.right._scaling = false;
-         this.right._inputOffset = null;
-         return;
-      }
-
-      if (this.right.x+this.edgeWidth >= this.width) {
-         this.right.x = this.w;
-
-         if (input.direction.x != 'left') {
-            return;
-         }
-      }
-
       if (!this.right._inputOffset) {
          this.right._inputOffset = {x: input.x - this.w, y: input.y - this._y, w: this.w + this._x};
       }
       
-      this.w = input.x - this.right._inputOffset.x;
+      let newW = input.x - this.right._inputOffset.x;
+
+      if (this.x + newW + this.edgeWidth >= this.width) {
+         newW = this.width - this.x - this.edgeWidth;
+      }
+
+      this.w = newW;
       this.right.x = this.w;      
       
       this.emit('scaling');
