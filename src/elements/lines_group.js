@@ -2,12 +2,13 @@
 // Используется совместно и Line
 export default class LinesGroup {
 
-   constructor({x, y, lineWidth, color, children}) {
+   constructor({x, y, lineWidth, color, children, lineCap}) {
       this.x = x || 0;
       this.y = y || 0;
       this.lineWidth = lineWidth !== null ? lineWidth-.5 : 1.5;
       this.color = color
       this.children = children || [];
+      this.lineCap = lineCap || 'butt';
    }
 
    get children() {
@@ -56,6 +57,10 @@ export default class LinesGroup {
    render(ctx, input, time) {
       if (this.alpha == 0) {
          return;
+      }
+
+      if (ctx.lineCap != this.lineCap) {
+         ctx.lineCap = this.lineCap;
       }
 
       if (ctx.strokeStyle !== this.color) {

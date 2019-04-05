@@ -17,7 +17,6 @@ export default class Scaffold {
       this.ctx = this.canvas.getContext('2d');
       this.ctx.textBaseline = 'top';
       this.ctx.width = this.width;
-      this.ctx.lineCap = 'round';
       this.ctx.miterLimit = 1;
 
       requestAnimationFrame((time) => this.render(time));

@@ -85,10 +85,8 @@ export default class Columns extends Event {
       }
 
       this.pointers.children.forEach(lines_group => {
-         lines_group.children.forEach(slide => {
-            slide.child.x = slide.index * this.scale.x;
-         });
-      });
+         lines_group.children.forEach(slide => slide.child.x = slide.index * this.scale.x)
+      })
 
       this.animateDirection();
    }
@@ -100,7 +98,6 @@ export default class Columns extends Event {
             const slide2 = lines_group.children[i+1];
 
             if (!slide2) {
-               slide.child._x2 = slide.child._x;
                continue;
             }
 
@@ -113,15 +110,10 @@ export default class Columns extends Event {
    }
 
    animateDirection() {
-      if (this.pointers.children[0].running) {
+      if (this.pointers.children[0].running || this.prev_scale.y == this.scale.y) {
          return;
       }
-      if (this.prev_scale.y !== this.scale.y) {
-         this.animateColumns();
-      }
-   }
 
-   animateColumns() {
       this.pointers.children.forEach(lines_group => {
          lines_group.children.forEach(slide => {
             let offset = (this.height - slide.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
@@ -129,8 +121,8 @@ export default class Columns extends Event {
             slide.completed = false
             slide.offset = -(slide.child.y - offset);
             slide.forward()
-         });
-      });
+         })
+      })
    }
 
    hideColumn(index) {
@@ -140,32 +132,23 @@ export default class Columns extends Event {
                return;
             }
 
-            let offset = (this.height - slide.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
-
-            slide.completed = false
-            slide.offset = -(slide.child.y - offset)
             slide.toAlpha(0)
             slide.forward()
-         });
-      });
+         })
+      })
    }
 
    showColumn(index) {
       this.pointers.children.forEach(lines_group => {
          lines_group.children.forEach(slide => {
-
             if (slide.column_index !== index) {
                return;
             }
 
-            let offset = (this.height - slide.column_value * this.scale.y + this.offset.y) - this.padding_bottom;
-
-            slide.completed = false
-            slide.offset = -(slide.child.y - offset)
             slide.toAlpha(1)
             slide.forward()
-         });
-      });
+         })
+      })
    }
 
    getColumnsGroup() {      
@@ -174,7 +157,7 @@ export default class Columns extends Event {
       for (let c_i = 0; c_i < this.columns.length; c_i++) {
          let column = this.columns[c_i];
 
-         let group = new LinesGroup({lineWidth: 2, color: this.colors[column[0]]});
+         let group = new LinesGroup({lineWidth: 2, color: this.colors[column[0]], lineCap: 'round'});
          let lines = [];
 
          for (let i = 1; i < column.length; i++) {

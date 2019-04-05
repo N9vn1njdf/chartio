@@ -1,11 +1,11 @@
 import Animation from './animation.js'
 
-export default class FadeY extends Animation {
+export default class FadeSlide extends Animation {
    
    constructor({offset}) {
       super(arguments[0]);
 
-      this.offset = offset || 20;
+      this.offset = offset || 0;
    }
 
    get offset() {

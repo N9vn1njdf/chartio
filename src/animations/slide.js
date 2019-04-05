@@ -5,7 +5,7 @@ export default class FadeY extends Animation {
    constructor({offset, onProgress}) {
       super(arguments[0]);
 
-      this.offset = offset || 20;
+      this.offset = offset || 0;
       this.onProgress = onProgress;
    }
 

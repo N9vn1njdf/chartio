@@ -10,8 +10,9 @@ export default class Navigator extends Event {
 
       themeObserver.subscribe(theme => {
          if (this.scalable) {
-            this.offset = width-navigator_width-theme.map_edge_width
-            this.scalable.edgeWidth = theme.map_edge_width;
+            this.offset = width-navigator_width-theme.map_navigator_edge_width
+            this.scalable.edgeWidth = theme.map_navigator_edge_width;
+            this.scalable.minWidth = theme.map_navigator_min_width >>> 0;
             this.background[0].w = this.offset;
             this.background[1].x = this.offset + this.width;
 
@@ -22,7 +23,7 @@ export default class Navigator extends Event {
 
       this.scalable = new Scalable({
          axisX: true,
-         width: width,
+         maxWidth: width,
          onScaling: () => this.onScaling(),
          child: new Rectangle({
             w: navigator_width,

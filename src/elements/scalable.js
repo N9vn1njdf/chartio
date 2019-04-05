@@ -5,7 +5,7 @@ import Rectangle from './rectangle.js'
 
 export default class Scalable extends Element {
 
-   constructor({child, axisX, axisY, width, onScaling, edgeColor, edgeWidth}) {
+   constructor({child, axisX, axisY, maxWidth, minWidth, onScaling, edgeColor, edgeWidth}) {
       super({x: child.x, y: child.y, w: child.w, h: child.h});
 
       child.x = 0;
@@ -15,7 +15,8 @@ export default class Scalable extends Element {
       this.axisX = axisX || false;
       this.axisY = axisY || false;
 
-      this.width = width;  // максимальная ширина по которой возможно масштабирование
+      this.width = maxWidth;  // максимальная ширина по которой возможно масштабирование
+      this.minWidth = minWidth || 10;  // минимальная ширина
 
       if (onScaling) {
          this.on('scaling', onScaling);
@@ -95,7 +96,7 @@ export default class Scalable extends Element {
    }
 
    _slaleLeftX(input) {
-      if (!this.left._inputOffset) {         
+      if (!this.left._inputOffset) {
          this.left._inputOffset = {x: input.x - this._x, y: input.y - this._y, w: this.w + this._x};
       }
 
@@ -103,10 +104,14 @@ export default class Scalable extends Element {
       
       if (newX-(this.width - this.right.x) < 0) {
          newX = this.width - this.right.x;
-      }      
+      }
+
+      if (this.left._inputOffset.w - newX < this.minWidth) {
+         newX = newX - (this.minWidth - (this.left._inputOffset.w - newX))
+      }
       
       this.w = this.left._inputOffset.w - newX;
-      this.right.x = this.w;      
+      this.right.x = this.w;
       this.x = newX;
       
       this.emit('scaling');
@@ -123,8 +128,12 @@ export default class Scalable extends Element {
          newW = this.width - this.x - this.edgeWidth;
       }
 
+      if (newW < this.minWidth) {         
+         newW = this.minWidth;
+      }
+
       this.w = newW;
-      this.right.x = this.w;      
+      this.right.x = this.w;
       
       this.emit('scaling');
    }

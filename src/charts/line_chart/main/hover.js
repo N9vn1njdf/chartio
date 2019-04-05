@@ -166,10 +166,16 @@ export default class Hover {
       }
 
       if (this.visible) {
+         var rect = this.canvas.getBoundingClientRect();
          let y = this.canvas.offsetTop + input.y;
+         let x = input.x + rect.left + 20;
          
-         this.div.style.top = (y < 100 ? 0 : y) + 'px';
-         this.div.style.left = (input.x + 140) + 'px';
+         if (input.x + this.div.offsetWidth > this.width) {
+            x = input.x + rect.left - 20 - this.div.offsetWidth
+         }
+
+         this.div.style.top = y + 'px';
+         this.div.style.left = x + 'px';
       }
    }
 
@@ -249,6 +255,7 @@ export default class Hover {
    }
 
    hideInfo() {
+      this.visible = false;
       this.line.alpha = 0;
       this.div.style.display = 'none';
       this.pointers.children.forEach(point => point.alpha = 0)

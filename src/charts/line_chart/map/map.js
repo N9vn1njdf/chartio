@@ -1,6 +1,7 @@
 import { Event } from 'core'
 import { LinesGroup, Line, Rectangle, Position } from 'elements'
 import { Slide } from 'animations'
+import { AnimationController } from '../../../animations_new'
 import Navigator from './navigator.js'
 
 export default class Map extends Event {
@@ -76,20 +77,24 @@ export default class Map extends Event {
       this.navigator.on('offset', () => this.emitUpdate());
       this.navigator.on('scaling', () => this.emitUpdate());
 
-      this.pointers = new Position();
+      this.lines_groups = new Position();
 
       this.element = new Rectangle({
          clip: true,
          w: width,
          h: map_height,
          children: [
-            this.pointers,
+            this.lines_groups,
             this.navigator.element,
          ]
       });      
    }
 
    emitUpdate() {
+      if (!this.scale) {
+         return;
+      }
+
       this.caclMainYScale();
       this.emit('update', this.update_data);
    }
@@ -154,40 +159,33 @@ export default class Map extends Event {
    }
 
    hideColumn(index) {
-      this.pointers.children.forEach(lines_group => {
+      this.lines_groups.children.forEach(lines_group => {
          lines_group.children.forEach(slide => {
-            if (slide.column_index == index) {
-               slide.toAlpha(0);
-            }
-            
-            let new_y = this.map_height - slide.column_value * this.scale.y + this.min_y * this.scale.y - this.padding_bottom;
-            if (new_y < 0 && slide.column_index !== index) {
-               new_y = -new_y
+            if (slide.column_index !== index) {
+               return;
             }
 
-            slide.completed = false;
-            slide.offset = -(slide.child._y - new_y);
+            slide.toAlpha(0)
             slide.forward()
          });
       })
    }
 
    showColumn(index) {
-      this.pointers.children.forEach(lines_group => {
+      this.lines_groups.children.forEach(lines_group => {
          lines_group.children.forEach(slide => {
-            if (slide.column_index == index) {
-               slide.toAlpha(1);
+            if (slide.column_index !== index) {
+               return;
             }
 
-            slide.offset = -slide.offset;
-            slide.completed = false;
+            slide.toAlpha(1)
             slide.forward()
          })
       })
    }
 
    updateLines() {
-      this.pointers.children.forEach(lines_group => {
+      this.lines_groups.children.forEach(lines_group => {
          for (let i = 0; i < lines_group.children.length; i++) {
             const slide = lines_group.children[i];
             const slide2 = lines_group.children[i+1];
@@ -196,7 +194,7 @@ export default class Map extends Event {
                continue;
             }
 
-            if (slide.column_index == slide2.column_index) {               
+            if (slide2 && slide.column_index == slide2.column_index) {
                slide.child._x2 = slide2.child._x
                slide.child._y2 = slide2.child._y
             }
@@ -206,7 +204,8 @@ export default class Map extends Event {
 
    createLines() {
       var children = [];
-      
+      let offset = this.map_height + this.min_y * this.scale.y - this.padding_bottom;
+
       for (let c_i = 0; c_i < this.columns.length; c_i++) {
          let column = this.columns[c_i];
 
@@ -220,7 +219,6 @@ export default class Map extends Event {
 
             let y = column[i] * this.scale.y;
             let y2 = column[i+1] * this.scale.y;
-            let offset = this.map_height + this.min_y * this.scale.y - this.padding_bottom;
 
             let child = new Slide({
                child: new Line({
@@ -243,7 +241,7 @@ export default class Map extends Event {
          children.push(group);
       };
       
-      this.pointers.children = children;
+      this.lines_groups.children = children;
    }
 
    // Вычисляем Y масштаб для миникарты
@@ -251,23 +249,33 @@ export default class Map extends Event {
       let items = [];
       
       for (let i = 0; i < this.columns.length; i++) {
-         if (this.hidden_columns.includes(i)) {
-            continue;
+         if (!this.hidden_columns.includes(i)) {
+            this.columns[i].forEach(element => items.push(element));
          }
-         this.columns[i].forEach(element => items.push(element));
-      }      
+      }
       
       let min_max = this.getMinMaxY(items);
       this.min_y = min_max.min;
       this.map_scale_y = (this.map_height-this.padding_top-this.padding_bottom)/(min_max.max - min_max.min)
+
+      this.animateDirection();
    }
-   
+
+   animateDirection() {
+      this.lines_groups.children.forEach(lines_group => {
+         lines_group.children.forEach(slide => {
+            let offset = this.map_height + this.min_y * this.scale.y - this.padding_bottom;
+            let y = slide.column_value * this.scale.y;
+
+            slide.completed = false
+            slide.offset = -(slide.child._y - (offset-y));            
+            slide.forward()
+         })
+      })
+   }
+
    // Вычисляем Y масштаб для основного графика
    caclMainYScale() {
-      if (!this.scale) {
-         return;
-      }
-
       var visible_items = [];
       let s = this.scale.x * 2;
 
@@ -285,10 +293,9 @@ export default class Map extends Event {
          }
       }
 
-      var min_max = this.getMinMaxY(visible_items);
-      var diff = min_max.max - min_max.min;
-      this.main_scale_y = (this.main_height-this.main_padding_top-this.main_padding_bottom)/diff;
-      
+      let min_max = this.getMinMaxY(visible_items);
+
+      this.main_scale_y = (this.main_height-this.main_padding_top-this.main_padding_bottom)/(min_max.max - min_max.min);
       this.main_offset_y = this.main_scale_y * min_max.min;
    }
 
@@ -299,7 +306,7 @@ export default class Map extends Event {
       items.forEach(element => {
          max = element > max ? element : max;
          min = element < min ? element : min;
-      });
+      })
 
       return {min, max}
    }

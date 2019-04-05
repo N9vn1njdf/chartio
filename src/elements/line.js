@@ -32,7 +32,7 @@ export default class Line {
    }
 
    set x2(value) {
-      return this._x2 = value - 0.01
+      return this._x2 = value + .5
    }
 
    get y2() {
@@ -43,18 +43,18 @@ export default class Line {
    }
 
    set y2(value) {
-      return this._y2 = value
+      return this._y2 = value + .5
    }
 
    get x() {
       if (this.parent != null) {
-         return this._x + this.parent.x - 0.01;
+         return this._x + this.parent.x;
       }
       return this._x;
    }
 
    set x(value) {
-      return this._x = value;
+      return this._x = value + .5
    }
 
    get y() {
@@ -65,7 +65,7 @@ export default class Line {
    }
 
    set y(value) {
-      return this._y = value;
+      return this._y = value + .5
    }
 
    get color() {

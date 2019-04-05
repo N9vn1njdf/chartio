@@ -43,8 +43,13 @@
       </div>
 
       <div class="form-group">
-         <label>Map edge width</label>
-         <input type="number" class="form-control form-control-sm" v-model="themes.custom.map_edge_width">
+         <label>Map navigator edge width</label>
+         <input type="number" class="form-control form-control-sm" v-model="themes.custom.map_navigator_edge_width">
+      </div>
+
+      <div class="form-group">
+         <label>Map navigator min width</label>
+         <input type="number" class="form-control form-control-sm" v-model="themes.custom.map_navigator_min_width">
       </div>
 
       <div class="form-group">
@@ -166,7 +171,8 @@ export default {
                background: '#2e3337',
                map_color1: 'rgba(205, 211, 236, 0.4)',
                map_color2: 'rgba(212, 220, 244, 0.28)',
-               map_edge_width: 4,
+               map_navigator_edge_width: 4,
+               map_navigator_min_width: 80,
                map_padding_top: 5,
                map_padding_bottom: 5,
                font_family: 'Arial',
