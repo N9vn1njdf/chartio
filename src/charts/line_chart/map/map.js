@@ -1,7 +1,6 @@
 import { Event } from 'core'
 import { LinesGroup, Line, Rectangle, Position } from 'elements'
 import { Slide } from 'animations'
-import { AnimationController } from '../../../animations_new'
 import Navigator from './navigator.js'
 
 export default class Map extends Event {
@@ -161,25 +160,19 @@ export default class Map extends Event {
    hideColumn(index) {
       this.lines_groups.children.forEach(lines_group => {
          lines_group.children.forEach(slide => {
-            if (slide.column_index !== index) {
-               return;
+            if (slide.column_index == index) {
+               slide.toAlpha(0)
             }
-
-            slide.toAlpha(0)
-            slide.forward()
-         });
+         })
       })
    }
 
    showColumn(index) {
       this.lines_groups.children.forEach(lines_group => {
          lines_group.children.forEach(slide => {
-            if (slide.column_index !== index) {
-               return;
+            if (slide.column_index == index) {
+               slide.toAlpha(1)
             }
-
-            slide.toAlpha(1)
-            slide.forward()
          })
       })
    }

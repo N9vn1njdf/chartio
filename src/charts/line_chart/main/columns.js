@@ -128,12 +128,9 @@ export default class Columns extends Event {
    hideColumn(index) {
       this.pointers.children.forEach(lines_group => {
          lines_group.children.forEach(slide => {
-            if (slide.column_index !== index) {
-               return;
+            if (slide.column_index == index) {
+               slide.toAlpha(0)
             }
-
-            slide.toAlpha(0)
-            slide.forward()
          })
       })
    }
@@ -141,12 +138,9 @@ export default class Columns extends Event {
    showColumn(index) {
       this.pointers.children.forEach(lines_group => {
          lines_group.children.forEach(slide => {
-            if (slide.column_index !== index) {
-               return;
+            if (slide.column_index == index) {
+               slide.toAlpha(1)
             }
-
-            slide.toAlpha(1)
-            slide.forward()
          })
       })
    }
