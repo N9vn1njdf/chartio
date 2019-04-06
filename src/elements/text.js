@@ -34,14 +34,9 @@ export default class Text extends Element {
    }
 
    isVisible(width) {
-      if (this.w == 0 || this.h == 0) {
+      if (this.alpha == 0 || this.w == 0 || this.h == 0 || !this.color || this.color == 'transparent') {
          return false;
       }
-
-      if (this.alpha == 0 || !this.color || this.color == 'transparent') {
-         return false;
-      }
-      
       return this.x + this.w >= 0 && this.x < width;
    }
 

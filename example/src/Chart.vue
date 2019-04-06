@@ -22,11 +22,6 @@ export default {
    },
    watch: {
       json(json) {
-         // var max = 50;
-         // for (let i in json.columns) {
-         //    json.columns[i].splice(max, json.columns[i].length-1-max)
-         // }
-         
          this.chart.setData(json);
       },
       locale(value) {         
@@ -34,7 +29,7 @@ export default {
       },
    },
    mounted() {
-      this.chart = new LineChart(this.id, 670, 460, {locale: this.locale});
+      this.chart = new LineChart(this.id, 380, 400, {locale: this.locale});
    },
    methods: {
       setTheme(value) {         

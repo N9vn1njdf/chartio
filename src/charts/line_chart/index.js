@@ -17,7 +17,7 @@ var defaultTheme = {
    map_color1: 'rgba(205, 211, 236, 0.4)',
    map_color2: 'rgba(212, 220, 244, 0.28)',
    map_navigator_edge_width: 4,
-   map_navigator_min_width: 80,
+   map_navigator_min_width: 20,
    map_padding_top: 5,
    map_padding_bottom: 5,
    font_family: 'Arial',
@@ -54,6 +54,12 @@ class LineChart {
 
    constructor(id, width, height, {locale, theme}) {
       let canvas = document.createElement('canvas');
+      canvas.style.width = width + 'px'
+      canvas.style.height = height + 'px'
+
+      width = width/100*120;
+      height = height/100*120;
+
       let div = document.getElementById(id, hiddenColumnsObserver);
       div.appendChild(canvas);
 
@@ -72,10 +78,6 @@ class LineChart {
       
       // Создаем график
       this.main = new Main({canvas, width, height: main_height, localeObserver, themeObserver, hiddenColumnsObserver});
-
-      // Слушаем события миникарты и обновляем график и даты
-      this.map.on('update', (data) => this.main.update(data))
-      this.map.on('update', (data) => this.dates.update(data))
 
       this.checboxes = new Checkboxes(id, themeObserver, hiddenColumnsObserver)
 
@@ -104,11 +106,14 @@ class LineChart {
          ]
       });
 
-      this.map.on('update', () => {
+      this.map.on('update', (data) => {
          if (!this.init) {         
             this.init = true;
             this.scaffold.setNeedUpdate('init', true, 100);
          }
+
+         this.main.update(data)
+         this.dates.update(data)
       })
 
       this.main.columns.on('ready', () => {         

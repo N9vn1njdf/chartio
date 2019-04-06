@@ -2,27 +2,11 @@ import Element from './element.js'
 
 export default class Circle extends Element {
 
-   constructor({r, border} = {}) {
+   constructor({r, border}) {
       super(arguments[0]);
       
       this.r = r;
       this.border = border;
-   }
-
-   get w() {
-      return this.r;
-   }
-
-   set w(value) {
-      this.r = value;
-   }
-
-   get h() {
-      return this.r;
-   }
-
-   set h(value) {
-      this.r = value;
    }
 
    isHover({x, y}) {
@@ -32,20 +16,14 @@ export default class Circle extends Element {
       return x < this.x + this.r && x > this.x - this.r && y < this.y + this.r && y > this.y - this.r;
    }
 
-   // Простая проверка виден ли элемент. Чтобы не рисовать скрытые элементы
    isVisible(width) {
-      if (this.r == 0) {
+      if (this.r == 0 || this.alpha == 0 || !this.color || this.color == 'transparent') {
          return false;
       }
-
-      if (this.alpha == 0 || !this.color || this.color == 'transparent') {
-         return false;
-      }
-
       return this.x + this.r/2 > 0 && this.x - this.r/2 < width;
    }
 
-   render(ctx, input, time) {
+   render(ctx) {
       if (!this.isVisible(ctx.width)) {
          return;
       }
@@ -64,7 +42,6 @@ export default class Circle extends Element {
       ctx.fill();
       
       if (this.border) {
-         ctx.beginPath();
          ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
          ctx.strokeStyle = this.border.color;
          ctx.lineWidth = this.border.w;

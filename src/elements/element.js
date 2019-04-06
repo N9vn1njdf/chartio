@@ -103,8 +103,8 @@ export default class Element extends Event {
       }
    }
 
-   render(ctx, input, time) {
-      this._children.forEach((child) => child.render(ctx, input, time));
+   render(renderer, input, time) {
+      this._children.forEach((child) => child.render(renderer, input, time));
       
       if (this.isHover(input)) {
          if(!input.el && this.color != 'transparent' && !this.inputIgnore) {

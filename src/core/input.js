@@ -4,33 +4,30 @@ export default class Input extends Event {
    
    constructor(scaffold) {
       super();
-      let canvas = scaffold.canvas;
-      this.x = null;
-      this.y = null;
+      this.canvas = scaffold.canvas;
+      this.x = this.y = null;
       this.down = false;
 
-      var _this = this;
+      let _this = this;
 
       // Как только мышь покидает график, отрисовать еще 100мс для остаточных действий
-      canvas.addEventListener('mouseout', () => scaffold.setNeedUpdate('mouseout', true, 100))
+      this.canvas.addEventListener('mouseout', () => scaffold.setNeedUpdate('mouseout', true, 100))
 
       // Мышь
-      document.addEventListener('mousemove', function(e) {
+      document.addEventListener('mousemove', function(e) {         
          _this.el = null;
 
-         var rect = canvas.getBoundingClientRect();
-         _this.x = e.x - rect.left;
-         _this.y = e.y - rect.top;
+         let rect = _this.canvas.getBoundingClientRect();
+         _this.x = (e.pageX - rect.left)/100*120
+         _this.y = (e.pageY - rect.top)/100*120
 
-         if (e.target == canvas) {
-            scaffold.setNeedUpdate('mousemove', true);
-         } else {
-            scaffold.setNeedUpdate('mousemove', false);
+         if (e.target == _this.canvas) {
+            scaffold.setNeedUpdate('mousemove', true, 100);
          }
       });
 
       document.addEventListener('mousedown', function(e) {
-         if (e.target == canvas) {
+         if (e.target == _this.canvas) {
             _this.down = true;
             _this.emit('down', _this);
             scaffold.setNeedUpdate('mousedown', true);
@@ -39,7 +36,7 @@ export default class Input extends Event {
       document.addEventListener('mouseup', function(e) {
          _this.el = null;
       
-         if (e.target == canvas) {
+         if (e.target == _this.canvas) {
             _this.down = false;
          }
 
@@ -48,48 +45,19 @@ export default class Input extends Event {
       });
 
       // Тач
-      canvas.addEventListener('touchmove', function(e) {
-         if (e.target == canvas) {
+      this.canvas.addEventListener('touchmove', function(e) {
+         if (e.target == _this.canvas) {
             var touch = e.targetTouches[0];
             
             _this.down = true;
-            _this.x = touch.pageX - canvas.offsetLeft;
-            _this.y = touch.pageY - canvas.offsetTop;
+            _this.x = touch.pageX - _this.canvas.offsetLeft;
+            _this.y = touch.pageY - _this.canvas.offsetTop;
          }
       });
       document.addEventListener('touchend', function(e) {
-         if (e.target == canvas) {
+         if (e.target == _this.canvas) {
             _this.down = false;
          }
       });
-   }
-
-   get x() {
-      return this._x;
-   }
-
-   set x(value) {
-      if (this._x && this._prev_x != this._x) {
-         this._prev_x = this._x;
-      }
-      this._x = value;
-   }
-
-   get direction() {
-      let x = 'unknow';
-
-      if (!this._prev_x || !this._x) {
-         return {x};
-      }
-
-      if (this._prev_x > this._x) {
-         x = 'left';
-      }
-
-      if (this._prev_x < this._x) {
-         x = 'right';
-      }
-
-      return {x}
    }
 }

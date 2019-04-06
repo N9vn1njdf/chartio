@@ -1,4 +1,4 @@
-import { Rectangle, Position, Circle } from 'elements'
+import { Rectangle, Circle } from 'elements'
 
 export default class Hover {
 
@@ -8,7 +8,7 @@ export default class Hover {
       this.height = height;
       this.prev_input = {};
       this.hidden_columns = [];
-      this.r = 0;
+      this.r = 4
 
       localeObserver.subscribe(locale => {         
          this.locale = locale;
@@ -104,11 +104,6 @@ export default class Hover {
          return;
       }
 
-      this.r = 3+(this.scale.x/30);
-      if (this.r > 5) {
-         this.r = 5;
-      }
-      
       this.pointers.children = this.getColumnsGroup();
       this.element.w = (this.columns[0].length-2)*this.scale.x;
    }
@@ -181,6 +176,7 @@ export default class Hover {
 
    createInfo() {
       this.div = document.createElement('div');
+
       this.updateDiv(this.div, {
          position: 'absolute',
          'padding-bottom': '8px',
@@ -282,7 +278,7 @@ export default class Hover {
                x: (i-1) * this.scale.x,
                y: (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom,
                r: this.r,
-               border: {w: this.r/2-.5, color: this.colors[column[0]]},
+               border: {w: this.r/2, color: this.colors[column[0]]},
                color: this.background
             });
 

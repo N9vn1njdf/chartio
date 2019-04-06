@@ -74,7 +74,6 @@ export default class Line {
 
    set color(value) {}
 
-   // Простая проверка виден ли элемент. Чтобы не рисовать скрытые элементы
    isVisible(width) {
       if (!this.color || this.color == 'transparent') {
          return false;

@@ -1,7 +1,7 @@
 <template>
 <div class="container">
   <div class="row">
-    <div class="col-9">
+    <div class="col-12 col-md-9">
       <h5>The graph does not use third-party libraries. All code is written from scratch.</h5>
       <h5>Charts are updated only when required.</h5>
       <Chart :json="json[0]" ref="chart0" id="chart0" :locale="locale" :theme="theme" />
@@ -11,9 +11,9 @@
       <Chart :json="json[4]" ref="chart4" id="chart4" :locale="locale" :theme="theme" />
     </div>
 
-    <!-- <div class="col-3">
+    <div class="col-3 d-block d-sm-none d-lg-block">
       <Options ref="options" v-on:locale="(value) => locale = value" v-on:theme="setTheme" />
-    </div> -->
+    </div>
   </div>
 </div>
 </template>

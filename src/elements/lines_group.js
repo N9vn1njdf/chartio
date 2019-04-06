@@ -5,7 +5,7 @@ export default class LinesGroup {
    constructor({x, y, lineWidth, color, children, lineCap}) {
       this.x = x || 0;
       this.y = y || 0;
-      this.lineWidth = lineWidth !== null ? lineWidth-.5 : 1.5;
+      this.lineWidth = lineWidth;
       this.color = color
       this.children = children || [];
       this.lineCap = lineCap || 'butt';
@@ -19,7 +19,6 @@ export default class LinesGroup {
       for (let i in value) {
          value[i].parent = this;
       }
-      
       return this._children = value;
    }
 
