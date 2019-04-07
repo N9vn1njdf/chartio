@@ -1,67 +1,13 @@
-let css = `
-.styled-checkbox {display:none;}
-.styled-checkbox + label {
-  position: relative;
-  cursor: pointer;
-  padding: 8px 20px 8px 10px;
-  border: 1.2px solid rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  margin-right: 20px;
-  margin-top: 15px;
-}
-.styled-checkbox:hover + label:before {
-  background: rgba(0, 0, 0, 0.05);
-}
-.styled-checkbox + label:before {
-  content: '';
-  margin-right: 12px;
-  display: inline-block;
-  vertical-align: text-top;
-  width: 24px;
-  height: 24px;
-  border: 1px solid;
-  border-radius: 100%;
-  margin-top: -3px;
-}
-.styled-checkbox:checked + label:after {
-  content: '';
-  position: absolute;
-  left: 16px;
-  top: 19px;
-  background: white;
-  width: 2px;
-  height: 2px;
-  box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
-  transform: rotate(45deg) scale(1.2);
-}`
 
 export default class Checkboxes {
-  constructor(id, themeObserver, hiddenColumnsObserver) {
+  constructor(id, hiddenColumnsObserver) {
     this.id = id;
     this.hidden_columns = [];
     this.hiddenColumnsObserver = hiddenColumnsObserver;
-    
-    themeObserver.subscribe(theme => {
-      // доработать смену тем
-    })
 
     let div = document.getElementById(id);
     this.ui = document.createElement('div');
     div.appendChild(this.ui);
-
-    this.createStyle(css);
-   }
-
-  createStyle(css) {
-    let head = document.head || document.getElementsByTagName('head')[0];
-    let style = document.createElement('style');
-    head.appendChild(style);
-
-    if (style.styleSheet){
-        style.styleSheet.cssText = css;
-    } else {
-        style.appendChild(document.createTextNode(css));
-    }
   }
 
   setData({columns, colors, names}) {
@@ -84,29 +30,20 @@ export default class Checkboxes {
   createCheckbox(index, text, color) {
     let id = 'column_' + index + '_' + this.id;
 
-    let checbox = document.createElement('input');
-    checbox.setAttribute('type', 'checkbox');
-    checbox.setAttribute('checked', 'true');
-    checbox.setAttribute('id', id);
-    checbox.setAttribute('class', 'styled-checkbox ');
-    checbox.addEventListener('change', () => this.toggleColumn(index));
+    let checkbox = document.createElement('input');
+    checkbox.setAttribute('type', 'checkbox');
+    checkbox.setAttribute('checked', 'true');
+    checkbox.setAttribute('id', id);
+    checkbox.setAttribute('class', 'chart-checkbox');
+    checkbox.addEventListener('change', () => this.toggleColumn(index));
 
     let label = document.createElement('label');
     label.setAttribute('for', id);
     label.innerText = text;
+    label.style.background = color
 
-    this.ui.appendChild(checbox);
+    this.ui.appendChild(checkbox);
     this.ui.appendChild(label);
-
-    let css = `
-      #${id}.styled-checkbox + label:before {
-        border-color: ${color};
-      }
-      #${id}.styled-checkbox:checked + label:before {
-        background: ${color};
-      }
-    `;
-    this.createStyle(css);
   }
 
   toggleColumn(index) {
@@ -132,14 +69,14 @@ export default class Checkboxes {
       }
 
       let id = 'column_' + left_index + '_' + this.id;
-      let checbox = document.getElementById(id);
-      checbox.setAttribute('disabled', true)
+      let checkbox = document.getElementById(id);
+      checkbox.setAttribute('disabled', true)
 
     } else {
       for (let i = 1; i < this.columns.length; i++) {        
         let id = 'column_' + (i-1) + '_' + this.id;        
-        let checbox = document.getElementById(id);
-        checbox.removeAttribute('disabled')
+        let checkbox = document.getElementById(id);
+        checkbox.removeAttribute('disabled')
       }
     }
   }

@@ -7,6 +7,7 @@ import Lines from './lines.js'
 export default class Main {
 
    constructor({canvas, width, height, localeObserver, themeObserver, hiddenColumnsObserver}) {
+      width -= 20
       this.width = width;
       this.height = height;
 
@@ -16,6 +17,7 @@ export default class Main {
       this.columns = new Columns({width, height, themeObserver, hiddenColumnsObserver});
 
       this.element = new Position({
+         x: 10,
          children: [
             this.lines.element,
             this.columns.element,

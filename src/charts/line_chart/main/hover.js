@@ -8,7 +8,7 @@ export default class Hover {
       this.height = height;
       this.prev_input = {};
       this.hidden_columns = [];
-      this.r = 4
+      this.r = 5
 
       localeObserver.subscribe(locale => {         
          this.locale = locale;
@@ -21,18 +21,8 @@ export default class Hover {
          this.padding_bottom = theme.main_padding_bottom;
          this.background = theme.background;
          this.line.color = theme.line_color2;
-         this.font_size = theme.text_size3;
-         this.font_family = theme.font_family;
 
-         this.updateDiv(this.div, {
-            background: this.background,
-         });
-         
-         this.updateDiv(this.date_text, {
-            color: theme.text_color3,
-            'font-size': this.font_size + 'px',
-            'font-family': theme.font_family,
-         });
+         this.div.setAttribute('class', 'chart-popup ' + theme.name + '-theme')
 
          this.updatePointers();
       })
@@ -51,12 +41,12 @@ export default class Hover {
          }
       })
       
-      this.pointers = new Rectangle({h: height})
+      this.pointers = new Rectangle()
       this.line = new Rectangle({w: 1, h: height})
 
       this.element = new Rectangle({
-         w: width,
          h: height,
+         // color: 'red',
          children: [
             this.line,
             this.pointers,
@@ -80,14 +70,8 @@ export default class Hover {
       return result;
    }
 
-   updateDiv(element, styles) {
-      for(let name in styles) {
-         element.style[name] = styles[name]
-      }
-   }
-
    update({offset, scale, columns, dates_column, colors, names}) {
-      this.element.x = offset.x;
+      this.element.x = offset.x - 10;
       this.offset = offset;
       this.prev_scale = this.scale;
       this.scale = scale;
@@ -105,13 +89,7 @@ export default class Hover {
       }
 
       this.pointers.children = this.getColumnsGroup();
-      this.element.w = (this.columns[0].length-2)*this.scale.x;
-   }
-
-   get distance() {
-      let p1 = this.pointers.children[0];
-      let p2 = this.pointers.children[1];
-      return p2.x - p1.x - this.r*2
+      this.element.w = (this.columns[0].length-2)*this.scale.x + 10;
    }
 
    onMove(input) {
@@ -122,82 +100,64 @@ export default class Hover {
       this.prev_input.x = input.x;
       this.prev_input.y = input.y;
 
-      let x = -this.element.x + input.x;
-      this.line.x = x;
+      this.line.x = -this.element.x + input.x
       this.line.alpha = 1;
-      let new_visible = false;
 
-      let values = [];
-      let index;
+      let closerLeft = [];
+      let closerRight = [];
 
-      let r = this.distance < 2 ? 1 : this.r;
-      
-      this.pointers.children.forEach(point => {         
+      for(let i in this.pointers.children) {
+         let point = this.pointers.children[i];
          if (this.hidden_columns.includes(point.column_index)) {
-            return;
+            continue;
          }
 
-         let x = this.element.x + point._x;
+         let x = this.element.x + point._x
 
-         if (input.x > x - r && input.x < x + r) {            
-            new_visible = true;
-            point.alpha = 1;
-            values[point.column_index] = point.value;
-            index = point.index;
-
-         } else {
-            point.alpha = 0;
+         if (x < input.x && (!closerLeft[point.column_index] || closerLeft[point.column_index].x < x)) {
+            closerLeft[point.column_index] = point;
+         } else if (x > input.x && (!closerRight[point.column_index] || closerRight[point.column_index].x > x)) {
+            closerRight[point.column_index] = point;
          }
-      });
 
-      if (this.visible !== new_visible) {
-         this.visible = new_visible;
-
-         if (new_visible) {
-            this.showInfo(values, index);
-         } else {
-            this.hideInfo();
-         }
+         point.alpha = 0;
       }
 
-      if (this.visible) {
-         var rect = this.canvas.getBoundingClientRect();
-         let y = this.canvas.offsetTop + input.y;
-         let x = input.x + rect.left + 20;
+      if (closerLeft[0] || closerRight[0]) {
+
+         if (closerRight[0] && (!closerLeft[0] || input.x - closerLeft[0].x >= closerRight[0].x - input.x)) {
+            this.showInfo(closerRight);
+         } else {
+            this.showInfo(closerLeft);
+         }
+
+         let y = this.canvas.offsetTop + input.y - 20;
+         let x = input.event.x + 20;         
          
-         if (input.x + this.div.offsetWidth > this.width) {
-            x = input.x + rect.left - 20 - this.div.offsetWidth
+         if (x + this.div.offsetWidth > this.width) {
+            x = input.event.x - 20 - this.div.offsetWidth
          }
 
          this.div.style.top = y + 'px';
          this.div.style.left = x + 'px';
+
+      } else {
+         this.hideInfo();
       }
    }
 
    createInfo() {
       this.div = document.createElement('div');
-
-      this.updateDiv(this.div, {
-         position: 'absolute',
-         'padding-bottom': '8px',
-         background: this.background,
-         'box-shadow': '0px 0px 2px rgba(0, 0, 0, 0.42)',
-         'border-radius': '6px',
-         'display': 'none'
-      });
+      this.div.setAttribute('class', 'chart-popup')
 
       this.date_text = document.createElement('div');
+      this.date_text.setAttribute('class', 'chart-popup-date')
+
       this.div.appendChild(this.date_text);
-      this.updateDiv(this.date_text, {
-         'font-weight': 'bold',
-         margin: '10px 14px',
-      });
 
       this.div_columns = document.createElement('div');
+      this.div_columns.setAttribute('class', 'chart-popup-values')
       this.div.appendChild(this.div_columns);
-      this.updateDiv(this.div_columns, {
-         margin: '-4px 14px',
-      });
 
       document.body.appendChild(this.div);
    }
@@ -208,50 +168,36 @@ export default class Hover {
          return;
       }
 
-      let name = this.names[this.columns[index][0]];
-      let color = this.colors[this.columns[index][0]];
-
       let div = document.createElement('div');
-      this.updateDiv(div, {
-         color,
-         float: index%2 ? 'right' : 'left',
-         'font-size': (this.font_size-2) + 'px',
-         'font-family': this.font_family,
-         'margin-right': '10px'
-      });
-      
-      let count = document.createElement('div');
-      this.updateDiv(count, {
-         'font-size': (this.font_size*1.25) + 'px',
-         'font-family': this.font_family,
-         'font-weight': 'bold',
-      })
+      div.setAttribute('class', 'chart-popup-value')
+
+      let count = document.createElement('div');      
+      count.style.color = this.colors[this.columns[index][0]];
+      count.setAttribute('class', 'chart-popup-value-count')
       count.innerHTML = value;
       div.appendChild(count);
 
       let label = document.createElement('div');
-      this.updateDiv(count, {
-         'font-family': this.font_family,
-      })
-      label.innerHTML = name;
+      label.setAttribute('class', 'chart-popup-value-label')
+
+      label.innerHTML = this.names[this.columns[index][0]];
       div.appendChild(label);
 
       this.div_columns.appendChild(div);
    }
 
-   showInfo(data, index) {
+   showInfo(data) {      
       this.div_columns.innerHTML = null;
-
       for(let i in data) {
-         let value = data[i];
+         data[i].alpha = 1;
+         let value = data[i].value;
          this.createColumnInfo(i, value);
       }
-      this.date_text.innerHTML = this.getDateByIndex(index)
-      this.div.style.display = 'table';
+      this.date_text.innerHTML = this.getDateByIndex(data[0].index)
+      this.div.style.display = 'block';
    }
 
    hideInfo() {
-      this.visible = false;
       this.line.alpha = 0;
       this.div.style.display = 'none';
       this.pointers.children.forEach(point => point.alpha = 0)
@@ -262,8 +208,9 @@ export default class Hover {
       let day = this.locale.day[date.getDay()]
       let d = date.getDate()
       let m = this.locale.month[date.getMonth()];
+      let y = date.getFullYear();
 
-      return `${day}, ${m} ${d}`
+      return day + ', ' + d + ' ' + m + ' ' + y
    }
 
    getColumnsGroup() {
@@ -275,7 +222,7 @@ export default class Hover {
          for (let i = 1; i < column.length; i++) {
             let rect = new Circle({
                alpha: 0,
-               x: (i-1) * this.scale.x,
+               x: (i-1) * this.scale.x + 10,
                y: (this.height - column[i] * this.scale.y + this.offset.y) - this.padding_bottom,
                r: this.r,
                border: {w: this.r/2, color: this.colors[column[0]]},

@@ -29,7 +29,6 @@
          <div id="color" class="item" :style="{background: themes.custom.line_color2}" v-on:click="showPicker('line_color2')"></div>
          <div id="color" class="item" :style="{background: themes.custom.text_color1}" v-on:click="showPicker('text_color1')"></div>
          <div id="color" class="item" :style="{background: themes.custom.text_color2}" v-on:click="showPicker('text_color2')"></div>
-         <div id="color" class="item" :style="{background: themes.custom.text_color3}" v-on:click="showPicker('text_color3')"></div>
       </div>
 
       <div class="form-group">
@@ -75,11 +74,6 @@
       <div class="form-group">
          <label>Text size 2</label>
          <input type="number" class="form-control form-control-sm" v-model="themes.custom.text_size2">
-      </div>
-      
-      <div class="form-group">
-         <label>Text size 3</label>
-         <input type="number" class="form-control form-control-sm" v-model="themes.custom.text_size3">
       </div>
 
       <div class="form-group">
@@ -156,6 +150,7 @@ export default {
          themes: {
             day: {},
             night: {
+               name: 'night',
                background: '#1e2a38',
                map_color1: 'rgba(205, 211, 236, 0.1)',
                map_color2: 'rgba(212, 220, 244, 0.2)',
@@ -166,6 +161,7 @@ export default {
                text_color3: '#fff'
             },
             custom: {
+               name: 'custom',
                main_padding_top: 40,
                main_padding_bottom: 40,
                background: '#2e3337',
@@ -180,8 +176,6 @@ export default {
                text_size1: 12.5,
                text_color2: 'red',
                text_size2: 12,
-               text_color3: '#fff',
-               text_size3: 14,
                line_color1: 'rgba(255, 255, 255, 0.1)',
                line_color2: 'rgba(255, 255, 255, 0.1)',
                lines_count: 6,

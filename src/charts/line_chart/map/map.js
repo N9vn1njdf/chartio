@@ -5,7 +5,7 @@ import Navigator from './navigator.js'
 
 export default class Map extends Event {
 
-   constructor({width, map_height, main_height, localeObserver, themeObserver, hiddenColumnsObserver}) {
+   constructor({y, width, map_height, main_height, localeObserver, themeObserver, hiddenColumnsObserver}) {
       super()
 
       this.width = width
@@ -76,9 +76,10 @@ export default class Map extends Event {
       this.navigator.on('update', () => this.emitUpdate())
 
       this.lines_groups = new Position()
-
+      
       this.element = new Rectangle({
-         clip: true,
+         // clip: true,
+         y,
          w: width,
          h: map_height,
          children: [
@@ -106,7 +107,7 @@ export default class Map extends Event {
 
    get main_scale() {
       return {
-         x: this.scale.x * this.width / this.navigator.width,
+         x: this.scale.x * (this.width-5) / this.navigator.width,
          y: this.main_scale_y,
       }
    }

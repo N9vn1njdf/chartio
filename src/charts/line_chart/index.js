@@ -6,34 +6,33 @@ import Map from './map'
 import Checkboxes from './ckeckboxes.js'
 
 // Размер миникарты
-var map_height = 50;
+var map_height = 56;
 // Размер линии дат
-var date_height = 35;
+var date_height = 40;
 
 var defaultTheme = {
-   main_padding_top: 40,
+   name: 'default',
+   main_padding_top: 20,
    main_padding_bottom: 40,
    background: '#fff',
-   map_color1: 'rgba(205, 211, 236, 0.4)',
-   map_color2: 'rgba(212, 220, 244, 0.28)',
-   map_navigator_edge_width: 4,
+   map_color1: '#c0d1e1',
+   map_color2: 'rgba(215, 228, 237, 0.5)',
+   map_navigator_edge_width: 12,
    map_navigator_min_width: 20,
    map_padding_top: 5,
    map_padding_bottom: 5,
    font_family: 'Arial',
    text_color1: '#99a4ac',
-   text_size1: 12.5,
+   text_size1: 14,
    text_color2: '#99a4ac',
-   text_size2: 12,
-   text_color3: '#000',
-   text_size3: 14,
+   text_size2: 14,
    line_color1: '#f2f4f5',
    line_color2: '#d2d2d2',
    lines_count: 6,
    animation_duration_1: 260,
    animation_duration_2: 260,
-   animation_duration_3: 200,
-   animation_duration_4: 220,
+   animation_duration_3: 260,
+   animation_duration_4: 260,
 }
 
 class LineChart {
@@ -56,6 +55,7 @@ class LineChart {
       let canvas = document.createElement('canvas');
       canvas.style.width = width + 'px'
       canvas.style.height = height + 'px'
+      canvas.style.background = theme ? theme.background : defaultTheme.background
 
       width = width/100*120;
       height = height/100*120;
@@ -71,38 +71,25 @@ class LineChart {
       var main_height = height - map_height - date_height;
 
       // Создаем миникарту
-      this.map = new Map({width, map_height, main_height, localeObserver, themeObserver, hiddenColumnsObserver});
+      this.map = new Map({y: height-map_height, width, map_height, main_height, localeObserver, themeObserver, hiddenColumnsObserver});
 
       // Создаем индиктор дат
-      this.dates = new Dates({animation_duration: 280, localeObserver, themeObserver});
+      this.dates = new Dates({y: main_height + date_height/4, animation_duration: 280, localeObserver, themeObserver});
       
       // Создаем график
       this.main = new Main({canvas, width, height: main_height, localeObserver, themeObserver, hiddenColumnsObserver});
 
-      this.checboxes = new Checkboxes(id, themeObserver, hiddenColumnsObserver)
-
-      let map_y = height-map_height;
-      let dates_y = main_height + date_height/4;
+      // Чекбоксы
+      this.checboxes = new Checkboxes(id, hiddenColumnsObserver)
 
       this.scaffold = new Scaffold({
          canvas,
          width,
          height,
-         background: theme ? theme.background : defaultTheme.background,
          children: [
             this.main.element,
-            new Position({
-               y: dates_y,
-               children: [
-                  this.dates.element
-               ]
-            }),
-            new Position({
-               y: map_y,
-               children: [
-                  this.map.element
-               ]
-            }),
+            this.dates.element,
+            this.map.element
          ]
       });
 
@@ -139,7 +126,7 @@ class LineChart {
       
       this.themeObserver.broadcast(theme)
       this.scaffold.setNeedUpdate('theme', true, 100);
-      this.scaffold.background = theme.background;
+      this.scaffold.canvas.style.background = theme.background;
    }
 
    setLocale(locale) {      

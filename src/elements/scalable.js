@@ -71,11 +71,11 @@ export default class Scalable extends Element {
 
    _getChildren() {
       
-      this.left = new Rectangle({x: -this.edgeWidth, w: this.edgeWidth, h: this.h, cursor: 'col-resize', color: this.edgeColor});
+      this.left = new Rectangle({x: -this.edgeWidth, w: this.edgeWidth, h: this.h, color: this.edgeColor});
       this.left.on('down', () => this.left._scaling = true);
       this.left.on('up', () => this._stopScale());
 
-      this.right = new Rectangle({x: this.w, w: this.edgeWidth, h: this.h, cursor: 'col-resize', color: this.edgeColor});
+      this.right = new Rectangle({x: this.w, w: this.edgeWidth, h: this.h, color: this.edgeColor});
       this.right.on('down', () => this.right._scaling = true);
       this.right.on('up', () => this._stopScale());
 

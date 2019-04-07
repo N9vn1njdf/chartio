@@ -10,19 +10,19 @@ export default class Line {
       this.alpha = 1;
    }
 
-   get alpha() {
-      let result = this._alpha;
+   // get alpha() {
+   //    let result = this._alpha;
 
-      if (this.parent != null && this.parent.alpha != null) {         
-         result = this._alpha * this.parent.alpha;
-      }
+   //    if (this.parent != null && this.parent.alpha != null) {         
+   //       result = this._alpha * this.parent.alpha;
+   //    }
 
-      return result < 0 ? 0 : result;
-   }
+   //    return result < 0 ? 0 : result;
+   // }
 
-   set alpha(value) {
-      return this._alpha = value;
-   }
+   // set alpha(value) {
+   //    return this._alpha = value;
+   // }
    
    get x2() {
       if (this.parent != null) {         
@@ -78,7 +78,6 @@ export default class Line {
       if (!this.color || this.color == 'transparent') {
          return false;
       }
-      
       return (this.x > 0 || this.x2 > 0) && this.x < width;
    }
 

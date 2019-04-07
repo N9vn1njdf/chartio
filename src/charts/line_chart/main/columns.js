@@ -98,6 +98,8 @@ export default class Columns extends Event {
             const slide2 = lines_group.children[i+1];
 
             if (!slide2) {
+               slide.child._x2 = slide.child._x
+               slide.child._y2 = slide.child._y
                continue;
             }
 
@@ -151,7 +153,7 @@ export default class Columns extends Event {
       for (let c_i = 0; c_i < this.columns.length; c_i++) {
          let column = this.columns[c_i];
 
-         let group = new LinesGroup({lineWidth: 2, color: this.colors[column[0]], lineCap: 'round'});
+         let group = new LinesGroup({lineWidth: 2.5, color: this.colors[column[0]], lineCap: 'round'});
          let lines = [];
 
          for (let i = 1; i < column.length; i++) {

@@ -26,14 +26,14 @@ export default class Navigator extends Event {
          maxWidth: width,
          onScaling: () => this.update(),
          child: new Rectangle({w: navigator_width, h: height}),
-      });
+      })
 
       this.navigator = new Draggable({
          axisX: true,
          canDragX: (e) => this.canDragX(e),
          onDragging: () => this.update(),
          child: this.scalable
-      });
+      })
       
       this.background = [
          new Rectangle({h: height, inputIgnore: true}),

@@ -22,17 +22,15 @@ export default class Rectangle extends Element {
          // ctx.clip();
       }
 
-      if (this.alpha > 0) {
-         if (ctx.globalAlpha !== this.alpha) {
-            ctx.globalAlpha = this.alpha;
-         }
-
-         if (ctx.fillStyle !== this.color) {
-            ctx.fillStyle = this.color;
-         }
-
-         ctx.fillRect(this.x, this.y, this.w, this.h);
+      if (ctx.globalAlpha !== this.alpha) {
+         ctx.globalAlpha = this.alpha;
       }
+
+      if (ctx.fillStyle !== this.color) {
+         ctx.fillStyle = this.color;
+      }
+
+      ctx.fillRect(this.x, this.y, this.w, this.h);
 
       super.render(ctx, input, time);
 

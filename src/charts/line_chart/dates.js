@@ -3,11 +3,11 @@ import { Fade } from 'animations'
 
 export default class Dates {
 
-   constructor({localeObserver, themeObserver}) {
+   constructor({y, localeObserver, themeObserver}) {
       this.dates = [];
       this.hidden_levels = [];
       
-      this.element = new Position();
+      this.element = new Position({y});
 
       localeObserver.subscribe(locale => {         
          this.locale = locale;

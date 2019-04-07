@@ -2,7 +2,7 @@ import { Event } from 'core'
 
 export default class Element extends Event {
 
-   constructor({x, y, color, alpha, children, cursor, inputIgnore} = {}) {
+   constructor({x, y, color, alpha, children, inputIgnore} = {}) {
       super();
       
       this.x = x || 0;
@@ -10,7 +10,6 @@ export default class Element extends Event {
       this.color = color || 'transparent';
       this.alpha = alpha != null ? alpha : 1;
       this.children = children || [];
-      this.cursor = cursor || 'default';
       this.inputIgnore = inputIgnore || false;
 
       this._mouse_down = false;
@@ -76,7 +75,6 @@ export default class Element extends Event {
       return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
    }
 
-   // Простая проверка виден ли элемент. Чтобы не рисовать скрытые элементы
    isVisible(width) {
       if (this.w == 0 || this.h == 0) {
          return false;
