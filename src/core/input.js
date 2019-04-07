@@ -39,7 +39,8 @@ export default class Input extends Event {
       document.addEventListener('mouseup', function(e) {
          _this.el = null;
          _this.event = e;
-    
+         _this.event_down = false;
+
          if (e.target == _this.canvas) {
             _this.down = false;
          }

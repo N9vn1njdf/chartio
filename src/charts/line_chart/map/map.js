@@ -82,10 +82,19 @@ export default class Map extends Event {
          y,
          w: width,
          h: map_height,
-         children: [
-            this.lines_groups,
-            this.navigator.element,
-         ]
+         child: new Position({
+            children: [
+               this.lines_groups,
+               this.navigator.element,
+               // new Rectangle({
+               //    color: 'green',
+               //    w: 400,
+               //    h: 30,
+               //    x: 0,
+               //    y: 0
+               // })
+            ]
+         }),
       })      
    }
 
@@ -188,8 +197,8 @@ export default class Map extends Event {
             }
 
             if (slide2 && slide.column_index == slide2.column_index) {
-               slide.child._x2 = slide2.child._x
-               slide.child._y2 = slide2.child._y
+               // slide.child._x2 = slide2.child._x
+               // slide.child._y2 = slide2.child._y
             }
          }
       })
@@ -206,23 +215,26 @@ export default class Map extends Event {
          let lines = []
 
          for (let i = 1; i < column.length; i++) {
-            if (i > column.length-1) {
+            if (!column[i+1]) {
                break
             }
 
             let y = column[i] * this.scale.y
-            let y2 = column[i+1] * this.scale.y
-
-            let child = new Slide({
-               child: new Line({
+            let y2 = column[i+1] * this.scale.y            
+            
+            let child = 
+            // new Slide({
+            //    child: 
+               new Line({
                   x: (i-1) * this.scale.x,
-                  x2: i * this.scale.x,
                   y: offset - y,
+                  x2: i * this.scale.x,
                   y2: offset - y2,
-               }),
-               duration: this.duration,
-               onProgress: () => this.updateLines()
-            })
+               })
+            //    ,
+            //    duration: this.duration,
+            //    onProgress: () => this.updateLines()
+            // })
 
             child.column_index = c_i
             child.column_value = column[i]
@@ -261,7 +273,7 @@ export default class Map extends Event {
             let y = slide.column_value * this.scale.y
 
             slide.completed = false
-            slide.offset = -(slide.child._y - (offset-y))            
+            // slide.offset = -(slide.child._y - (offset-y))            
             slide.forward()
          })
       })

@@ -1,5 +1,5 @@
 import { Scaffold, Observer } from 'core'
-import { Position } from 'elements'
+import { Position, Rectangle } from 'elements'
 import Main from './main'
 import Dates from './dates.js'
 import Map from './map'
@@ -17,7 +17,7 @@ var defaultTheme = {
    background: '#fff',
    map_color1: '#c0d1e1',
    map_color2: 'rgba(215, 228, 237, 0.5)',
-   map_navigator_edge_width: 12,
+   map_navigator_edge_width: 14,
    map_navigator_min_width: 20,
    map_padding_top: 5,
    map_padding_bottom: 5,
@@ -74,7 +74,7 @@ class LineChart {
       this.map = new Map({y: height-map_height, width, map_height, main_height, localeObserver, themeObserver, hiddenColumnsObserver});
 
       // Создаем индиктор дат
-      this.dates = new Dates({y: main_height + date_height/4, animation_duration: 280, localeObserver, themeObserver});
+      // this.dates = new Dates({y: main_height + date_height/4, animation_duration: 280, localeObserver, themeObserver});
       
       // Создаем график
       this.main = new Main({canvas, width, height: main_height, localeObserver, themeObserver, hiddenColumnsObserver});
@@ -87,11 +87,36 @@ class LineChart {
          width,
          height,
          children: [
-            this.main.element,
-            this.dates.element,
+            // this.element2 = new Rectangle({
+            //    color: 'rgba(234, 123, 123, 0.5)',
+            //    y: 100,
+            //    w: 500,
+            //    h: 100,
+            //    child: new Position({
+            //       children: [
+            //          this.element3 = new Rectangle({
+            //             color: 'rgba(134, 223, 123, 0.5)',
+            //             w: 300,
+            //             h: 30,
+            //             x: 0,
+            //             y: 10
+            //          })
+            //       ]
+            //    })
+            // }),
+            // this.main.element,
+            // this.dates.element,
             this.map.element
          ]
       });
+
+      // setInterval(() => {
+      //    console.log('timer');
+         
+      //    this.element2.x += 3
+      //    this.element3.x += 5
+      //    this.scaffold.setNeedUpdate('init', true, 100);
+      // }, 1000);
 
       this.map.on('update', (data) => {
          if (!this.init) {         
@@ -100,7 +125,7 @@ class LineChart {
          }
 
          this.main.update(data)
-         this.dates.update(data)
+         // this.dates.update(data)
       })
 
       this.main.columns.on('ready', () => {         
@@ -131,7 +156,7 @@ class LineChart {
 
    setLocale(locale) {      
       this.localeObserver.broadcast(locale)
-      this.scaffold.setNeedUpdate('locale', true, 100);
+      this.scaffold.setNeedUpdate('locale', true, 100)
    }
 }
 

@@ -32,19 +32,23 @@ export default class Circle extends Element {
          ctx.globalAlpha = this.alpha;
       }
 
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
-      
       if (ctx.fillStyle !== this.color) {
          ctx.fillStyle = this.color;
       }
 
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
       ctx.fill();
       
       if (this.border) {
-         ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
-         ctx.strokeStyle = this.border.color;
-         ctx.lineWidth = this.border.w;
+         // ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+         if (ctx.strokeStyle !== this.border.color) {
+            ctx.strokeStyle = this.border.color;
+         }
+   
+         if (ctx.lineWidth !== this.border.w) {
+            ctx.lineWidth = this.border.w;
+         }
          ctx.stroke();
       }
    }

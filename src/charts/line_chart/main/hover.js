@@ -1,4 +1,4 @@
-import { Rectangle, Circle } from 'elements'
+import { Position, Rectangle, Circle } from 'elements'
 
 export default class Hover {
 
@@ -41,7 +41,7 @@ export default class Hover {
          }
       })
       
-      this.pointers = new Rectangle()
+      this.pointers = new Position()
       this.line = new Rectangle({w: 1, h: height})
 
       this.element = new Rectangle({

@@ -4,10 +4,10 @@
     <div class="col-12 col-md-9">
       <p>The graph does not use third-party libraries. All code is written from scratch.</p>
       <Chart :json="json[0]" ref="chart0" id="chart0" :locale="locale" :theme="theme" />
-      <Chart :json="json[1]" ref="chart1" id="chart1" :locale="locale" :theme="theme" />
+      <!-- <Chart :json="json[1]" ref="chart1" id="chart1" :locale="locale" :theme="theme" />
       <Chart :json="json[2]" ref="chart2" id="chart2" :locale="locale" :theme="theme" />
       <Chart :json="json[3]" ref="chart3" id="chart3" :locale="locale" :theme="theme" />
-      <Chart :json="json[4]" ref="chart4" id="chart4" :locale="locale" :theme="theme" />
+      <Chart :json="json[4]" ref="chart4" id="chart4" :locale="locale" :theme="theme" /> -->
     </div>
 
     <div class="col-12 col-md-3">
@@ -34,10 +34,10 @@ export default {
   methods: {
     setTheme(value) {
       this.$refs.chart0.setTheme(value)
-      this.$refs.chart1.setTheme(value)
-      this.$refs.chart2.setTheme(value)
-      this.$refs.chart3.setTheme(value)
-      this.$refs.chart4.setTheme(value)
+      // this.$refs.chart1.setTheme(value)
+      // this.$refs.chart2.setTheme(value)
+      // this.$refs.chart3.setTheme(value)
+      // this.$refs.chart4.setTheme(value)
     }
   },
   data () {
@@ -54,6 +54,9 @@ export default {
 .container {
   margin-top: 50px;
 }
+p {
+  font-size: 14px;
+}
 
 
 
@@ -66,8 +69,8 @@ export default {
     padding: 6px 20px 6px 40px;
     color: #fff;
     border-radius: 20px;
-    margin-right: 20px;
-    margin-top: 15px;
+    margin-right: 8px;
+    margin-top: 10px;
     font-weight: bold;
   }
 

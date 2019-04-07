@@ -1,56 +1,14 @@
+import Children from "./children";
 
 // Используется совместно и Line
-export default class LinesGroup {
+export default class LinesGroup extends Children {
 
-   constructor({x, y, lineWidth, color, children, lineCap}) {
-      this.x = x || 0;
-      this.y = y || 0;
+   constructor({x, y, children, lineWidth, color, lineCap}) {
+      super({x, y, children})
+
       this.lineWidth = lineWidth;
       this.color = color
-      this.children = children || [];
       this.lineCap = lineCap || 'butt';
-   }
-
-   get children() {
-      return this._children;
-   }
-
-   set children(value) {      
-      for (let i in value) {
-         value[i].parent = this;
-      }
-      return this._children = value;
-   }
-
-   get x() {
-      if (this.parent != null) {
-         return this._x + this.parent.x;
-      }
-      return this._x;
-   }
-
-   set x(value) {
-      return this._x = value;
-   }
-
-   get y() {
-      if (this.parent != null) {
-         return this._y + this.parent.y;
-      }
-      return this._y;
-   }
-
-   set y(value) {
-      return this._y = value;
-   }
-
-   get needUpdate() {      
-      for(let i in this._children) {
-         if (this._children[i].needUpdate) {
-            return true;
-         }
-      }
-      return false
    }
 
    render(ctx, input, time) {
@@ -72,7 +30,10 @@ export default class LinesGroup {
 
       ctx.beginPath();
 
-      this._children.forEach((child) => child.render(ctx, input, time));
+      super.render(ctx, input, time)
+
+      // ctx.fillStyle = 'rgba(123, 234, 123, 0.5)'
+      // ctx.fillRect(this.globalX, this.globalY, 600, 55);
 
       ctx.closePath();
       ctx.stroke();

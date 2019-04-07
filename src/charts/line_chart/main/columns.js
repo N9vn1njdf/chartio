@@ -1,5 +1,5 @@
 import { Event } from 'core'
-import { Line, LinesGroup, Rectangle } from 'elements'
+import { Position, Line, LinesGroup, Rectangle } from 'elements'
 import { Slide } from 'animations'
 
 export default class Columns extends Event {
@@ -44,7 +44,7 @@ export default class Columns extends Event {
          }
       })
 
-      this.pointers = new Rectangle()
+      this.pointers = new Position()
 
       this.element = new Rectangle({
          h: height,

@@ -46,26 +46,58 @@ export default class Animation {
       return this._child = value;
    }
 
+   // get x() {
+   //    if (!this.parent) {
+   //       return 0;
+   //    }
+   //    return this.parent.x
+   // }
+
+   // set x(value) {
+   //    this.parent.x = value;
+   // }
+
+   // get y() {
+   //    if (!this.parent) {
+   //       return 0;
+   //    }
+   //    return this.parent.y;
+   // }
+
+   // set y(value) {
+   //    this.parent.y = value;
+   // }
+
    get x() {
-      if (!this.parent) {
-         return 0;
-      }
-      return this.parent.x
+      return this.child.x
    }
 
    set x(value) {
-      this.parent.x = value;
+      this.child.x = value
    }
 
    get y() {
-      if (!this.parent) {
-         return 0;
-      }
-      return this.parent.y;
+      return this.child.y
    }
 
    set y(value) {
-      this.parent.y = value;
+      this.child.y = value
+   }
+
+   get x2() {
+      return this.child.x2
+   }
+
+   set x2(value) {
+      this.child.x2 = value
+   }
+
+   get y2() {
+      return this.child.y2
+   }
+
+   set y2(value) {
+      this.child.y2 = value
    }
 
    get w() {

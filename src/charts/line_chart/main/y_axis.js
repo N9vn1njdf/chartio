@@ -84,9 +84,9 @@ export default class YAxis {
    }
 
    animateDirection() {
-      if (this.lines.top.children.running) {
-         return;
-      }
+      // if (this.lines.top.children.running) {
+      //    return;
+      // }
 
       if (this.prev_scale.y < this.scale.y) {
          this.animateFrom('bottom');

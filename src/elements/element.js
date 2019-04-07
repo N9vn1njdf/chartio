@@ -1,66 +1,28 @@
-import { Event } from 'core'
+import Child from './child';
 
-export default class Element extends Event {
+export default class Element extends Child {
 
-   constructor({x, y, color, alpha, children, inputIgnore} = {}) {
-      super();
-      
-      this.x = x || 0;
-      this.y = y || 0;
-      this.color = color || 'transparent';
-      this.alpha = alpha != null ? alpha : 1;
-      this.children = children || [];
-      this.inputIgnore = inputIgnore || false;
+   constructor({x, y, child, color, alpha, inputIgnore} = {}) {
+      super({x, y, child})
 
-      this._mouse_down = false;
+      this.color = color
+      this.alpha = alpha != null ? alpha : 1
+      this.inputIgnore = inputIgnore || false
    }
 
-   get children() {
-      return this._children;
-   }
+   // get alpha() {
+   //    let result = this._alpha;
 
-   set children(value) {
-      for (let i in value) {
-         value[i].parent = this;
-      }
-      this._children = value;
-   }
+   //    if (this.parent != null && this.parent.alpha != null) {
+   //       result = this.parent.alpha - this._alpha;
+   //    }
 
-   get x() {
-      if (this.parent != null) {
-         return this._x + this.parent.x;
-      }
-      return this._x;
-   }
+   //    return result < 0 ? 0 : result;
+   // }
 
-   set x(value) {
-      this._x = value;
-   }
-
-   get y() {
-      if (this.parent != null) {
-         return this._y + this.parent.y;
-      }
-      return this._y;
-   }
-
-   set y(value) {
-      this._y = value;
-   }
-
-   get alpha() {
-      let result = this._alpha;
-
-      if (this.parent != null && this.parent.alpha != null) {
-         result = this._alpha * this.parent.alpha;
-      }
-
-      return result < 0 ? 0 : result;
-   }
-
-   set alpha(value) {
-      return this._alpha = value;
-   }
+   // set alpha(value) {
+   //    return this._alpha = value;
+   // }
 
    get needUpdate() {
       for(let i in this._children) {
@@ -72,23 +34,19 @@ export default class Element extends Event {
    }
    
    isHover({x, y}) {
-      return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
+      return x > this.globalX && x < this.globalX + this.w && y > this.globalY && y < this.globalY + this.h;
    }
 
    isVisible(width) {
-      if (this.w == 0 || this.h == 0) {
+      if (this.w == 0 || this.h == 0 || this.alpha == 0 || !this.color) {
          return false;
       }
-
-      if (this.alpha == 0 || !this.color || this.color == 'transparent') {
-         return false;
-      }
-
-      return this.x + this.w > 0 && this.x < width;
+      return this.globalX + this.w > 0 && this.globalX < width;
    }
    
    onDown(input) {
-      if (this.isHover(input) && !input.event_down) {
+      if (!input.event_down && this.isHover(input) && this.color && this.alpha > 0 && !this.inputIgnore) {
+         input.event_down = true;
          this._mouse_down = true;
          this.emit('down', input, this);
       }
@@ -101,11 +59,11 @@ export default class Element extends Event {
       }
    }
 
-   render(renderer, input, time) {
-      this._children.forEach((child) => child.render(renderer, input, time));
+   render(ctx, input, time) {
+      super.render(ctx, input, time)
       
-      if (this.isHover(input)) {
-         if(!input.el && this.color != 'transparent' && !this.inputIgnore) {
+      if (this.isHover(input)) {         
+         if(!input.el && !this.inputIgnore) {
             input.el = this;
          }
 

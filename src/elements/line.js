@@ -3,94 +3,46 @@
 export default class Line {
 
    constructor({x, y, x2, y2}) {
-      this.x = x || 0;
-      this.y = y || 0;      
-      this.x2 = x2 || 0;
-      this.y2 = y2 || y;
-      this.alpha = 1;
+      this.x = x
+      this.y = y
+      this.x2 = x2
+      this.y2 = y2      
+
+      this.alpha = 1
    }
 
-   // get alpha() {
-   //    let result = this._alpha;
-
-   //    if (this.parent != null && this.parent.alpha != null) {         
-   //       result = this._alpha * this.parent.alpha;
-   //    }
-
-   //    return result < 0 ? 0 : result;
-   // }
-
-   // set alpha(value) {
-   //    return this._alpha = value;
-   // }
-   
-   get x2() {
-      if (this.parent != null) {         
-         return this._x2 + this.parent.x;
-      }
-      return this._x2;
+   get globalX() {
+      return this._globalX
    }
 
-   set x2(value) {
-      return this._x2 = value + .5
+   set globalX(value) {
+      this._globalX = value
+      this.globalX2 = value + this.x2 - this.x
    }
 
-   get y2() {
-      if (this.parent != null) {
-         return this._y2 + this.parent.y;
-      }
-      return this._y2;
+   get globalY() {
+      return this._globalY
    }
 
-   set y2(value) {
-      return this._y2 = value + .5
+   set globalY(value) {
+      this._globalY = value
+      this.globalY2 = value + this.y2 - this.y      
    }
-
-   get x() {
-      if (this.parent != null) {
-         return this._x + this.parent.x;
-      }
-      return this._x;
-   }
-
-   set x(value) {
-      return this._x = value + .5
-   }
-
-   get y() {
-      if (this.parent != null) {
-         return this._y + this.parent.y;
-      }
-      return this._y;
-   }
-
-   set y(value) {
-      return this._y = value + .5
-   }
-
-   get color() {
-      return this.parent.color
-   }
-
-   set color(value) {}
 
    isVisible(width) {
-      if (!this.color || this.color == 'transparent') {
-         return false;
-      }
-      return (this.x > 0 || this.x2 > 0) && this.x < width;
+      return (this.globalX > 0 || this.globalX2 > 0) && this.globalX < width
    }
 
    render(ctx, input, time) {
-      if (!this.isVisible(ctx.width)) {
-         return;
-      }
- 
-      if (ctx.globalAlpha !== this.alpha) {
-         ctx.globalAlpha = this.alpha;
+      if (!this.isVisible(ctx.width)) {         
+         return
       }
 
-      ctx.moveTo(this.x, this.y);
-      ctx.lineTo(this.x2, this.y2);
+      if (ctx.globalAlpha !== this.alpha) {
+         ctx.globalAlpha = this.alpha
+      }
+
+      ctx.moveTo(this.globalX, this.globalY)
+      ctx.lineTo(this.globalX2, this.globalY2)
    }
 }
