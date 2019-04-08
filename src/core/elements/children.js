@@ -52,7 +52,7 @@ export default class Children {
       }
    }
 
-   updateParentY(value) {      
+   updateParentY(value) {
       if (this.parent) {
          this.parent.updateChild()
       } else {
@@ -62,17 +62,8 @@ export default class Children {
 
    updateChild() {
       this.children.forEach(child => {
-         if (child.$is_mounted) {
-            if (child.$element) {
-               console.log(child);
-               
-               child = child.$element
-               console.log( child.x, this.globalX);
-            }
-            
-            child.globalX = child.x + this.globalX
-            child.globalY = child.y + this.globalY
-         }
+         child.globalX = child.x + this.globalX
+         child.globalY = child.y + this.globalY
       })
    }
 
@@ -80,7 +71,7 @@ export default class Children {
       return this._children || []
    }
 
-   set children(children) {      
+   set children(children) {
       for (let i in children) {
          children[i].parent = this
       }

@@ -1,75 +1,13 @@
 import Event from './event.js'
+import Scaffold from './scaffold.js'
 
-class Sub extends Event {
-   
-   get x() {
-      return this._x
-   }
-
-   set x(value) {
-      this._x = value
-      this.updateParent(value)
-   }
-
-   get y() {
-      return this._y
-   }
-
-   set y(value) {
-      this._y = value
-      this.updateParent(value)
-   }
-
-   get globalX() {      
-      return this._globalX
-   }
-
-   set globalX(value) {
-      console.trace(value);
-
-      this._globalX = value
-      this.updateChild()
-   }
-
-   get globalY() {
-      return this._globalY
-   }
-
-   set globalY(value) {
-      this._globalY = value
-      this.updateChild()
-   }
-
-   updateParent(value) {
-      if (this.parent) {
-         console.log(this.parent);
-         
-         this.parent.updateChild()
-      } else {
-         this.globalY = value
-         this.globalX = value
-      }
-   }
-
-   updateChild() {
-      if (this._child && this._child.$is_mounted) {
-         if (this._child.$element) {
-            this._child.$element.globalY = this._child.$element.y + this.globalY
-            this._child.$element.globalX = this._child.$element.x + this.globalX
-         } else {
-            this._child.globalY = this._child.y + this.globalY
-            this._child.globalX = this._child.x + this.globalX
-         }
-      }
-   }
-}
-
-export default class Component extends Sub {
+export default class Component extends Event {
    
    constructor() {
       super()
 
       this.$scaffold
+      this.$is_component = true
    }
 
    /**
@@ -89,25 +27,47 @@ export default class Component extends Sub {
     * 
     * @param {Object} theme
     */
-   $theme(theme) {}
+   $themeUpdated(theme) {}
 
    get $element() {
-      this.$is_mounted = true
-      if (!this._$element) {
-         console.log(123);
-         
-         // this.updateParent()
-         this._$element = this.$build()
+      if (!this._$element) {         
+         this._$element = this.$build(Scaffold.theme, this.$locale)
+         this.child = this._$element
+         this.y = this._$element.y
+         this.x = this._$element.x
       }
       
       return this._$element
    }
 
-   // set $element(value) {
-   //    this._$element = value
-   //    this.$is_mounted = true
-   //    this.updateParent()
-   // }
+   set parent(parent) {      
+      if (this.$element) {
+         this.$element.parent = parent
+
+         if (parent.$element) {            
+            this.$element.globalY = parent.$element.globalY
+            this.$element.globalX = parent.$element.globalX
+         }
+      }
+   }
+
+   get globalX() {
+      return this.$element._globalX
+   }
+
+   set globalX(value) {      
+      this.$element._globalX = value
+      this.$element.updateChild()
+   }
+
+   get globalY() {
+      return this.$element._globalY
+   }
+
+   set globalY(value) {      
+      this.$element._globalY = value      
+      this.$element.updateChild()
+   }
 
    /**
     * Функция рендер. Вызывается при каждой отрисовке компонента
@@ -117,10 +77,6 @@ export default class Component extends Sub {
     * @param {Number} time 
     */
    render(ctx, input, time) {
-      // if (!this.$element) {
-      //    this.$element = this.$build()
-      // }
-
       this.$element.render(ctx, input, time)
    }
 }

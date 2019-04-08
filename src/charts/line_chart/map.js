@@ -72,16 +72,7 @@ export default class Map extends Component {
       // })
    }
 
-   $created(theme, locale) {
-      console.log('map created');
-
-      this.navigator = new Navigator({width: this.$scaffold.width, height: this.map_height})
-      this.navigator.on('update', () => this.emitUpdate())
-
-      this.lines_groups = new Position()
-   }
-
-   $theme(theme) {
+   $newTheme(theme) {
       this.main_padding_top = theme.main_padding_top
       this.main_padding_bottom = theme.main_padding_bottom
       this.padding_top = theme.map_padding_top
@@ -96,14 +87,42 @@ export default class Map extends Component {
       }
    }
 
-   $build() {
+   $newData({columns, colors, names}) {      
+      columns = columns.slice()
+      this.dates_column = columns[0]
+      this.columns = columns.splice(1, columns.length)
+      this.colors = colors
+      this.names = names
+
+      this.caclMapYScale()
+      this.createLines()
+      this.emitUpdate()
+   }
+
+   $build(theme, locale) {
       console.log('map build');
 
+      this.navigator = new Navigator({width: this.$canvas.width, height: this.map_height})
+      this.navigator.on('update', () => this.emitUpdate())
+
+      this.lines_groups = new Position()
+      this.$newTheme(theme)
+      // return new Rectangle({
+      //    color: 'green',
+      //    x: 100,
+      //    y: 110,
+      //    w: 200,
+      //    h: 100,
+      //    child: this.navigator
+      // })
+      this.lines_groups2 = new Rectangle({w: 100, h: 100, color: 'red'})
+      
       return new Rectangle({
          // clip: true,
-         y: this.$scaffold.height - this.map_height,
-         w: this.$scaffold.width,
+         y: this.$canvas.height - this.map_height,
+         w: this.$canvas.width,
          h: this.map_height,
+         // color: 'red',
          child: new Position({
             children: [
                this.lines_groups,
@@ -121,14 +140,14 @@ export default class Map extends Component {
 
    get main_offset() {
       return {
-         x: -this.navigator.offset * ((this.scale.x * this.$scaffold.width / this.navigator.width) / this.scale.x),
+         x: -this.navigator.offset * ((this.scale.x * this.$canvas.width / this.navigator.scale) / this.scale.x),
          y: this.main_offset_y || 0
       }
    }
 
    get main_scale() {
       return {
-         x: this.scale.x * (this.$scaffold.width-5) / this.navigator.width,
+         x: this.scale.x * (this.$canvas.width-5) / this.navigator.scale,
          y: this.main_scale_y,
       }
    }
@@ -144,27 +163,15 @@ export default class Map extends Component {
       }
    }
 
-   get scale() {
+   get scale() {      
       return {
-         x: this.data_count > 0 ? this.width/this.data_count : 0,
+         x: this.data_count > 0 ? this.$canvas.width/this.data_count : 0,
          y: this.map_scale_y
       }
    }
 
    get data_count() {
       return this.columns[0] ? this.columns[0].length-2 : 0
-   }
-   
-   setData({columns, colors, names}) {
-      columns = columns.slice()
-      this.dates_column = columns[0]
-      this.columns = columns.splice(1, columns.length)
-      this.colors = colors
-      this.names = names
-
-      this.caclMapYScale()
-      this.createLines()
-      this.emitUpdate()
    }
 
    get visible_columns() {
@@ -232,7 +239,7 @@ export default class Map extends Component {
             }
 
             let y = column[i] * this.scale.y
-            let y2 = column[i+1] * this.scale.y            
+            let y2 = column[i+1] * this.scale.y
             
             let child = 
             // new Slide({
@@ -259,6 +266,8 @@ export default class Map extends Component {
       }
       
       this.lines_groups.children = children
+      console.log(this.lines_groups.children);
+      
    }
 
    // Вычисляем Y масштаб для миникарты
@@ -304,7 +313,7 @@ export default class Map extends Component {
          for (let i = 1; i < this.columns[c].length; i++) {
             let item_x = (i-1) * this.scale.x
             
-            if (this.navigator.offset < item_x + s && this.navigator.offset + this.navigator.width > item_x - s) {
+            if (this.navigator.offset < item_x + s && this.navigator.offset + this.navigator.scale > item_x - s) {
                visible_items.push(this.columns[c][i])
             }
          }

@@ -20,7 +20,7 @@ export default class Chart {
       theme = this._calcTheme(theme)
 
       this.$created(theme, locale)
-
+      
       this.scaffold = new Scaffold({
          id,
          width,
@@ -30,11 +30,16 @@ export default class Chart {
       })
    }
 
+   setData(data) {      
+      // this.map.setData({columns: data.columns, colors: data.colors, names: data.names});
+      // this.checboxes.setData({columns: data.columns, colors: data.colors, names: data.names});
+      this.scaffold.setData(data)
+   }
+
    setTheme(theme) {
       // this.components.forEach(component => component.$theme(theme))
       // this.scaffold.setNeedUpdate('theme', true, 100)
-      // this.scaffold.canvas.style.background = theme.background
-
+      this.scaffold.canvas.style.background = theme.background
       this.scaffold.theme = this._calcTheme(theme)
    }
 

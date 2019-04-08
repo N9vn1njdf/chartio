@@ -1,4 +1,5 @@
 import Input from './input.js'
+import Observer from './observer.js';
 
 /**
  * 
@@ -8,6 +9,15 @@ import Input from './input.js'
  */
 export default class Scaffold {
 
+   static get theme() {
+      return this._theme
+   }
+
+   static set theme(theme) {
+      this._theme = theme
+      // this._components.forEach(component => component.$theme(theme))
+   }
+
    constructor({id, width, height, theme, components}) {
       let canvas = document.createElement('canvas')
       canvas.style.width = width + 'px'
@@ -15,7 +25,7 @@ export default class Scaffold {
       canvas.style.background = theme.background
       document.getElementById(id).appendChild(canvas)
 
-      this._theme = theme
+      Scaffold.theme = theme
 
       this.canvas = canvas
       this.canvas.width = this.width = width/100*120
@@ -27,6 +37,9 @@ export default class Scaffold {
       this.ctx.miterLimit = 1
       
       this.input = new Input(this)
+      this.theme_observer = new Observer()
+      this.locale_observer = new Observer()
+      this.data_observer = new Observer()
       this.components = components || []
 
       this._need_update = {}
@@ -34,25 +47,46 @@ export default class Scaffold {
       requestAnimationFrame((time) => this.render(time))
    }
 
-   get theme() {
-      return this._theme
-   }
-
-   set theme(theme) {
-      this._theme = theme
-      this._components.forEach(component => component.$theme(theme))
+   setData(data) {
+      this.data_observer.broadcast(data)
+      this.setNeedUpdate('set_data', true, 100)
    }
 
    get components() {
       return this._components
    }
 
-   set components(components) {
-      components.forEach(component => {
-         component.$scaffold = this         
-         component.$created(this.theme)
-      })
+   set components(components) {      
+      this.buildComponents(components)
       this._components = components
+   }
+
+   buildComponents(children) {
+      children.forEach(child => {
+
+         if (child.$is_component) {
+            this._initComponent(child)
+            child = child.$element
+         }
+
+         if (child.children) {
+            this.buildComponents(child.children)
+         } else if (child.child) {
+            this.buildComponents([child.child])
+         }
+      })
+   }
+
+   _initComponent(component) {
+      component.$canvas = this.canvas
+      this.theme_observer.subscribe((e) => component.$newTheme(e))
+
+      if (component.$newData) {
+         this.data_observer.subscribe((e) => component.$newData(e))
+      }
+      if (component.$newLocale) {
+         this.locale_observer.subscribe((e) => component.$newLocale(e))
+      }
    }
 
    get needUpdate() {

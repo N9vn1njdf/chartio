@@ -8,7 +8,7 @@ export default class Child extends Event {
       this.x = this._globalX = x || 0
       this.y = this._globalY = y || 0
 
-      if (child) {
+      if (child) {         
          this.child = child
       }
    }
@@ -65,15 +65,10 @@ export default class Child extends Event {
       }
    }
 
-   updateChild() {
-      if (this.child && this.child.$is_mounted) {         
-         if (this.child.$element) {
-            this._child.$element.globalY = this._child.$element.y + this.globalY
-            this._child.$element.globalX = this._child.$element.x + this.globalX
-         } else {
-            this._child.globalY = this._child.y + this.globalY
-            this._child.globalX = this._child.x + this.globalX
-         }
+   updateChild() {      
+      if (this.child) {         
+         this.child.globalY = this.child.y + this.globalY
+         this.child.globalX = this.child.x + this.globalX
       }
    }
 
@@ -81,9 +76,9 @@ export default class Child extends Event {
       return this._child
    }
 
-   set child(child) {      
+   set child(child) {
       child.parent = this
-      this._child = child
+      this._child = child      
       this.updateChild()
    }
    

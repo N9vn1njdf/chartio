@@ -42,10 +42,6 @@ export default class LineChart extends Chart {
    constructor(id, width, height, {locale, theme}) {
       super(id, width, height, locale, theme)
 
-
-
-
-
       // Создаем индиктор дат
       // this.dates = new Dates({y: main_height + date_height/4, animation_duration: 280, localeObserver, themeObserver});
       
@@ -70,8 +66,6 @@ export default class LineChart extends Chart {
       // this.main.columns.on('ready', () => {         
       //    this.scaffold.setNeedUpdate('columns_ready', true, 100);
       // })
-      
-
    }
 
    $created(theme, locale) {
@@ -88,11 +82,5 @@ export default class LineChart extends Chart {
          // this.dates.element,
          this.map
       ]
-   }
-
-   setData(data) {      
-      // this.map.setData({columns: data.columns, colors: data.colors, names: data.names});
-      // this.checboxes.setData({columns: data.columns, colors: data.colors, names: data.names});
-      this.scaffold.setNeedUpdate('set_data', true, 100);
    }
 }
