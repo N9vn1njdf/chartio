@@ -1,5 +1,6 @@
 
 export default class Checkboxes {
+
   constructor(id, hiddenColumnsObserver) {
     this.id = id;
     this.hidden_columns = [];

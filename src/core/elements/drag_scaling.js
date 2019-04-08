@@ -149,6 +149,13 @@ export default class DragScaling extends Children {
       this.x = newX
    }
 
+   /**
+    * Функция рендер. Вызывается при каждой отрисовке элемента
+    * 
+    * @param {CanvasRenderingContext2D} ctx 
+    * @param {Input} input 
+    * @param {Number} time 
+    */
    render(ctx, input, time) {
       super.render(ctx, input, time)
 

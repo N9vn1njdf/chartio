@@ -23,6 +23,13 @@ export default class Rectangle extends Element {
       if (fill || typeof(fill) === "undefined") ctx.fill()
    }
 
+   /**
+    * Функция рендер. Вызывается при каждой отрисовке элемента
+    * 
+    * @param {CanvasRenderingContext2D} ctx 
+    * @param {Input} input 
+    * @param {Number} time 
+    */
    render(ctx, input, time) {
       if (!this.isVisible(ctx.width) && !this.clip) {
          super.render(ctx, input, time)

@@ -8,6 +8,8 @@ export default class Element extends Child {
       this.color = color
       this.alpha = alpha != null ? alpha : 1
       this.inputIgnore = inputIgnore || false
+
+      this.$is_mounted = true
    }
 
    // get alpha() {
@@ -59,6 +61,13 @@ export default class Element extends Child {
       }
    }
 
+   /**
+    * Функция рендер. Вызывается при каждой отрисовке элемента
+    * 
+    * @param {CanvasRenderingContext2D} ctx 
+    * @param {Input} input 
+    * @param {Number} time 
+    */
    render(ctx, input, time) {
       super.render(ctx, input, time)
       

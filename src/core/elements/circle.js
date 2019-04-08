@@ -23,7 +23,14 @@ export default class Circle extends Element {
       return this.x + this.r/2 > 0 && this.x - this.r/2 < width;
    }
 
-   render(ctx) {
+   /**
+    * Функция рендер. Вызывается при каждой отрисовке элемента
+    * 
+    * @param {CanvasRenderingContext2D} ctx 
+    * @param {Input} input 
+    * @param {Number} time 
+    */
+   render(ctx, input, time) {
       if (!this.isVisible(ctx.width)) {
          return;
       }

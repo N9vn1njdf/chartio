@@ -1,25 +1,24 @@
 import { Position, Rectangle, DragScaling } from 'elements'
-import { Event } from 'core'
+import { Component } from 'core'
 
-export default class Navigator extends Event {
+export default class Navigator extends Component {
 
    constructor({width, height, themeObserver}) {
       super()
-      
-      this.map_width = width
+   
       var navigator_width = 100
 
-      themeObserver.subscribe(theme => {
-         if (this.navigator) {
-            this.offset = width-navigator_width-theme.map_navigator_edge_width
-            this.navigator.edgeWidth = theme.map_navigator_edge_width
-            this.navigator.minWidth = theme.map_navigator_min_width >>> 0
-            this.update(false)
+      // themeObserver.subscribe(theme => {
+      //    if (this.navigator) {
+      //       this.offset = width-navigator_width-theme.map_navigator_edge_width
+      //       this.navigator.edgeWidth = theme.map_navigator_edge_width
+      //       this.navigator.minWidth = theme.map_navigator_min_width >>> 0
+      //       this.update(false)
 
-            this.navigator.edgeColor = this.border[0].color = this.border[1].color = theme.map_color1
-            this.background[0].color = this.background[1].color = theme.map_color2
-         }
-      })
+      //       this.navigator.edgeColor = this.border[0].color = this.border[1].color = theme.map_color1
+      //       this.background[0].color = this.background[1].color = theme.map_color2
+      //    }
+      // })
 
       this.navigator = new DragScaling({
          axisX: {min: 0, max: width},
@@ -38,9 +37,20 @@ export default class Navigator extends Event {
          new Rectangle({h: 2, y: height-2}),
       ]
 
-      this.element = new Position({
-         w: width,
-         h: height,
+      this.width = width
+      this.height = height
+   }
+
+   $created(theme, locale) {
+      console.log('navigator created');
+   }
+
+   $build() {
+      console.log('navigator build');
+
+      return new Position({
+         w: this.width,
+         h: this.height,
          children: [
             ...this.background,
             ...this.border,
@@ -52,7 +62,7 @@ export default class Navigator extends Event {
    update(event = true) {
       this.background[0].w = this.offset + this.navigator.edgeWidth
       this.background[1].x = this.navigator.x + this.navigator.w
-      this.background[1].w = this.map_width - this.background[1].x
+      this.background[1].w = this.width - this.background[1].x
 
       this.border[0].w = this.border[1].w = this.navigator.w
       this.border[0].x = this.border[1].x = this.navigator.x

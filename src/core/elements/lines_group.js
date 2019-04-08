@@ -11,6 +11,13 @@ export default class LinesGroup extends Children {
       this.lineCap = lineCap || 'butt';
    }
 
+   /**
+    * Функция рендер. Вызывается при каждой отрисовке элемента
+    * 
+    * @param {CanvasRenderingContext2D} ctx 
+    * @param {Input} input 
+    * @param {Number} time 
+    */
    render(ctx, input, time) {
       if (this.alpha == 0) {
          return;

@@ -1,9 +1,11 @@
-import Scaffold from './scaffold.js'
+import Chart from './chart.js'
+import Component from './component.js'
 import Event from './event.js'
 import Observer from './observer.js'
 
 export {
-   Scaffold,
+   Chart,
+   Component,
    Event,
    Observer,
 }

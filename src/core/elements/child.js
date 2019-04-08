@@ -13,22 +13,6 @@ export default class Child extends Event {
       }
    }
 
-   updateParentX(value) {
-      if (this.parent) {
-         this.parent.updateChildX()
-      } else {
-         this.globalX = value
-      }
-   }
-
-   updateParentY(value) {
-      if (this.parent) {
-         this.parent.updateChildY()
-      } else {
-         this.globalY = value
-      }
-   }
-
    get x() {
       return this._x
    }
@@ -53,7 +37,7 @@ export default class Child extends Event {
 
    set globalX(value) {
       this._globalX = value
-      this.updateChildX()
+      this.updateChild()
    }
 
    get globalY() {
@@ -62,25 +46,34 @@ export default class Child extends Event {
 
    set globalY(value) {
       this._globalY = value
-      this.updateChildY()
+      this.updateChild()
    }
 
-   updateChildX() {
-      if (this.child) {
-         this._child.globalX = this._child.x + this.globalX
+   updateParentX(value) {
+      if (this.parent) {
+         this.parent.updateChild()
+      } else {
+         this.globalX = value
       }
    }
 
-   updateChildY() {
-      if (this.child) {
-         this._child.globalY = this._child.y + this.globalY
+   updateParentY(value) {
+      if (this.parent) {
+         this.parent.updateChild()
+      } else {
+         this.globalY = value
       }
    }
 
    updateChild() {
-      if (this.child) {
-         this._child.globalX = this._child.x + this.globalX
-         this._child.globalY = this._child.y + this.globalY
+      if (this.child && this.child.$is_mounted) {         
+         if (this.child.$element) {
+            this._child.$element.globalY = this._child.$element.y + this.globalY
+            this._child.$element.globalX = this._child.$element.x + this.globalX
+         } else {
+            this._child.globalY = this._child.y + this.globalY
+            this._child.globalX = this._child.x + this.globalX
+         }
       }
    }
 
@@ -98,6 +91,13 @@ export default class Child extends Event {
       return this.child.needUpdate
    }
 
+   /**
+    * Функция рендер. Вызывается при каждой отрисовке элемента
+    * 
+    * @param {CanvasRenderingContext2D} ctx 
+    * @param {Input} input 
+    * @param {Number} time 
+    */
    render(ctx, input, time) {
       if (this._child) {
          this._child.render(ctx, input, time)

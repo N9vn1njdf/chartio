@@ -1,5 +1,11 @@
 import Event from './event.js'
 
+/**
+ * 
+ * Слой ввода данных.
+ * Отвечает за прием событий ввода(мышь, тач), конвертацию и передачу в Scaffold
+ * 
+ */
 export default class Input extends Event {
    
    constructor(scaffold) {

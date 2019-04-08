@@ -40,6 +40,13 @@ export default class Text extends Element {
       return this.x + this.w >= 0 && this.x < width;
    }
 
+   /**
+    * Функция рендер. Вызывается при каждой отрисовке элемента
+    * 
+    * @param {CanvasRenderingContext2D} ctx 
+    * @param {Input} input 
+    * @param {Number} time 
+    */
    render(ctx, input, time) {
       if (!this.isVisible(ctx.width)) {
          return;

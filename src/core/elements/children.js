@@ -8,22 +8,6 @@ export default class Children {
       this.children = children || []
    }
 
-   updateParentX(value) {
-      if (this.parent) {
-         this.parent.updateChildX()
-      } else {
-         this.globalX = value
-      }
-   }
-
-   updateParentY(value) {
-      if (this.parent) {
-         this.parent.updateChildY()
-      } else {
-         this.globalY = value
-      }
-   }
-
    get x() {
       return this._x
    }
@@ -48,7 +32,7 @@ export default class Children {
 
    set globalX(value) {
       this._globalX = value
-      this.updateChildX()
+      this.updateChild()
    }
 
    get globalY() {
@@ -57,21 +41,38 @@ export default class Children {
 
    set globalY(value) {
       this._globalY = value
-      this.updateChildY()
+      this.updateChild()
    }
 
-   updateChildX() {
-      this.children.forEach(child => child.globalX = child.x + this.globalX)
+   updateParentX(value) {
+      if (this.parent) {
+         this.parent.updateChild()
+      } else {
+         this.globalX = value
+      }
    }
 
-   updateChildY() {
-      this.children.forEach(child => child.globalY = child.y + this.globalY)
+   updateParentY(value) {      
+      if (this.parent) {
+         this.parent.updateChild()
+      } else {
+         this.globalY = value
+      }
    }
 
-   updateChildren() {
+   updateChild() {
       this.children.forEach(child => {
-         child.globalX = child.x + this.globalX
-         child.globalY = child.y + this.globalY
+         if (child.$is_mounted) {
+            if (child.$element) {
+               console.log(child);
+               
+               child = child.$element
+               console.log( child.x, this.globalX);
+            }
+            
+            child.globalX = child.x + this.globalX
+            child.globalY = child.y + this.globalY
+         }
       })
    }
 
@@ -84,7 +85,7 @@ export default class Children {
          children[i].parent = this
       }
       this._children = children
-      this.updateChildren()
+      this.updateChild()
    }
    
    get needUpdate() {
@@ -96,6 +97,13 @@ export default class Children {
       return false
    }
 
+   /**
+    * Функция рендер. Вызывается при каждой отрисовке элемента
+    * 
+    * @param {CanvasRenderingContext2D} ctx 
+    * @param {Input} input 
+    * @param {Number} time 
+    */
    render(ctx, input, time) {
       this._children.forEach(child => child.render(ctx, input, time))
    }

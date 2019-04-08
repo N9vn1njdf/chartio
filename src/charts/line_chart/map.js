@@ -1,14 +1,13 @@
-import { Event } from 'core'
+import { Component } from 'core'
 import { LinesGroup, Line, Rectangle, Position } from 'elements'
 import { Slide } from 'animations'
-import Navigator from './navigator.js'
+import { Navigator } from 'components'
 
-export default class Map extends Event {
+export default class Map extends Component {
 
-   constructor({y, width, map_height, main_height, localeObserver, themeObserver, hiddenColumnsObserver}) {
+   constructor({map_height, main_height}) {
       super()
 
-      this.width = width
       this.map_height = map_height
       this.padding_top = 0
       this.padding_bottom = 0
@@ -26,97 +25,110 @@ export default class Map extends Event {
       this.map_scale_y = 1
       this.duration = 200
 
-      localeObserver.subscribe(locale => {
-         this.locale = locale
-         this.createLines()
-      })
+      // localeObserver.subscribe(locale => {
+      //    this.locale = locale
+      //    this.createLines()
+      // })
 
-      themeObserver.subscribe(theme => {
-         this.main_padding_top = theme.main_padding_top
-         this.main_padding_bottom = theme.main_padding_bottom
-         this.padding_top = theme.map_padding_top
-         this.padding_bottom = theme.map_padding_bottom
+      // themeObserver.subscribe(theme => {
+      //    this.main_padding_top = theme.main_padding_top
+      //    this.main_padding_bottom = theme.main_padding_bottom
+      //    this.padding_top = theme.map_padding_top
+      //    this.padding_bottom = theme.map_padding_bottom
 
-         this.duration = theme.animation_duration_4
-         this.caclMapYScale()
-         this.createLines()
+      //    this.duration = theme.animation_duration_4
+      //    this.caclMapYScale()
+      //    this.createLines()
          
-         if (this.columns.length > 0) {
-            this.emitUpdate()
-         }
-      })
+      //    if (this.columns.length > 0) {
+      //       this.emitUpdate()
+      //    }
+      // })
 
-      hiddenColumnsObserver.subscribe(([act, index]) => {
-         if (act == 'hide' && this.visible_columns.length > 1) {
-            this.hidden_columns.push(index)
-            this.caclMapYScale()
-            this.hideColumn(index)
-            this.emitUpdate()
-         }
+      // hiddenColumnsObserver.subscribe(([act, index]) => {
+      //    if (act == 'hide' && this.visible_columns.length > 1) {
+      //       this.hidden_columns.push(index)
+      //       this.caclMapYScale()
+      //       this.hideColumn(index)
+      //       this.emitUpdate()
+      //    }
 
-         if (act == 'show') {
-            let has = false
-            for(let i in this.hidden_columns) {
-               if (this.hidden_columns.includes(index)) {
-                  has = true
-                  this.hidden_columns.splice(i, 1)
-               }
-            }
+      //    if (act == 'show') {
+      //       let has = false
+      //       for(let i in this.hidden_columns) {
+      //          if (this.hidden_columns.includes(index)) {
+      //             has = true
+      //             this.hidden_columns.splice(i, 1)
+      //          }
+      //       }
 
-            if (has) {
-               this.hidden_columns_count--
-               this.caclMapYScale()
-               this.showColumn(index)
-               this.emitUpdate()
-            }
-         }
-      })
+      //       if (has) {
+      //          this.hidden_columns_count--
+      //          this.caclMapYScale()
+      //          this.showColumn(index)
+      //          this.emitUpdate()
+      //       }
+      //    }
+      // })
+   }
 
-      this.navigator = new Navigator({width, height: map_height, themeObserver})
+   $created(theme, locale) {
+      console.log('map created');
+
+      this.navigator = new Navigator({width: this.$scaffold.width, height: this.map_height})
       this.navigator.on('update', () => this.emitUpdate())
 
       this.lines_groups = new Position()
+   }
+
+   $theme(theme) {
+      this.main_padding_top = theme.main_padding_top
+      this.main_padding_bottom = theme.main_padding_bottom
+      this.padding_top = theme.map_padding_top
+      this.padding_bottom = theme.map_padding_bottom
+
+      this.duration = theme.animation_duration_4
+      this.caclMapYScale()
+      this.createLines()
       
-      this.element = new Rectangle({
+      if (this.columns.length > 0) {
+         this.emitUpdate()
+      }
+   }
+
+   $build() {
+      console.log('map build');
+
+      return new Rectangle({
          // clip: true,
-         y,
-         w: width,
-         h: map_height,
+         y: this.$scaffold.height - this.map_height,
+         w: this.$scaffold.width,
+         h: this.map_height,
          child: new Position({
             children: [
                this.lines_groups,
-               this.navigator.element,
-               // new Rectangle({
-               //    color: 'green',
-               //    w: 400,
-               //    h: 30,
-               //    x: 0,
-               //    y: 0
-               // })
+               this.navigator,
             ]
          }),
-      })      
+      })
    }
 
    emitUpdate() {
-      if (!this.scale) {
-         return
+      if (this.scale) {
+         this.caclMainYScale()
       }
-
-      this.caclMainYScale()
-      this.emit('update', this.update_data)
    }
 
    get main_offset() {
       return {
-         x: -this.navigator.offset * ((this.scale.x * this.width / this.navigator.width) / this.scale.x),
+         x: -this.navigator.offset * ((this.scale.x * this.$scaffold.width / this.navigator.width) / this.scale.x),
          y: this.main_offset_y || 0
       }
    }
 
    get main_scale() {
       return {
-         x: this.scale.x * (this.width-5) / this.navigator.width,
+         x: this.scale.x * (this.$scaffold.width-5) / this.navigator.width,
          y: this.main_scale_y,
       }
    }
@@ -302,6 +314,8 @@ export default class Map extends Event {
 
       this.main_scale_y = (this.main_height-this.main_padding_top-this.main_padding_bottom)/(min_max.max - min_max.min)
       this.main_offset_y = this.main_scale_y * min_max.min
+
+      this.emit('update', this.update_data)
    }
 
    getMinMaxY(items) {
