@@ -72,7 +72,7 @@ export default class Map extends Component {
       // })
    }
 
-   $newTheme(theme) {
+   $onTheme(theme) {
       this.main_padding_top = theme.main_padding_top
       this.main_padding_bottom = theme.main_padding_bottom
       this.padding_top = theme.map_padding_top
@@ -87,7 +87,7 @@ export default class Map extends Component {
       }
    }
 
-   $newData({columns, colors, names}) {      
+   $onData({columns, colors, names}) {      
       columns = columns.slice()
       this.dates_column = columns[0]
       this.columns = columns.splice(1, columns.length)
@@ -99,22 +99,25 @@ export default class Map extends Component {
       this.emitUpdate()
    }
 
-   $build(theme, locale) {
-      console.log('map build');
+   $onHideColumn(index) {      
+      // this.caclMapYScale()
+      this.hideColumn(index)
+      this.$update()
+   }
 
+   $onShowColumn(index) {      
+      // this.caclMapYScale()
+      this.showColumn(index)
+      this.$update()
+   }
+
+   $build(theme, locale) {
       this.navigator = new Navigator({width: this.$canvas.width, height: this.map_height})
       this.navigator.on('update', () => this.emitUpdate())
 
       this.lines_groups = new Position()
-      this.$newTheme(theme)
-      // return new Rectangle({
-      //    color: 'green',
-      //    x: 100,
-      //    y: 110,
-      //    w: 200,
-      //    h: 100,
-      //    child: this.navigator
-      // })
+      this.$onTheme(theme)
+
       this.lines_groups2 = new Rectangle({w: 100, h: 100, color: 'red'})
       
       return new Rectangle({
@@ -122,7 +125,6 @@ export default class Map extends Component {
          y: this.$canvas.height - this.map_height,
          w: this.$canvas.width,
          h: this.map_height,
-         // color: 'red',
          child: new Position({
             children: [
                this.lines_groups,
@@ -187,9 +189,10 @@ export default class Map extends Component {
 
    hideColumn(index) {
       this.lines_groups.children.forEach(lines_group => {
-         lines_group.children.forEach(slide => {
-            if (slide.column_index == index) {
-               slide.toAlpha(0)
+         lines_group.children.forEach(line => {
+            if (line.column_index == index) {
+               line.alpha = 0
+               // slide.toAlpha(0)
             }
          })
       })
@@ -197,9 +200,10 @@ export default class Map extends Component {
 
    showColumn(index) {
       this.lines_groups.children.forEach(lines_group => {
-         lines_group.children.forEach(slide => {
-            if (slide.column_index == index) {
-               slide.toAlpha(1)
+         lines_group.children.forEach(line => {
+            if (line.column_index == index) {
+               // slide.toAlpha(1)
+               line.alpha = 1
             }
          })
       })

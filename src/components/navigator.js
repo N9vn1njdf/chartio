@@ -3,7 +3,7 @@ import { Component } from 'core'
 
 export default class Navigator extends Component {
 
-   constructor({width, height, themeObserver}) {
+   constructor({width, height}) {
       super()
    
       // themeObserver.subscribe(theme => {
@@ -23,7 +23,6 @@ export default class Navigator extends Component {
    }
 
    $build(theme, locale) {
-      console.log('navigator build');
 
       this.navigator = new DragScaling({
          axisX: {min: 0, max: this.width},
@@ -33,8 +32,6 @@ export default class Navigator extends Component {
          edgeWidth: theme.map_navigator_edge_width,
          edgeColor: theme.map_color1
       })
-
-      // return new Rectangle({color: 'green', w: 500, h: 60, x: 10, child: this.navigator})
 
       this.offset = this.width-this.scale+theme.map_navigator_edge_width
       

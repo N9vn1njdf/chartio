@@ -18,33 +18,67 @@ export default class Component extends Event {
    }
 
    /**
-    * Вызывает после того как компонент создан. Доступна переменная $scaffold
+    * Используется для ручного обновления холста
     */
-   $created() {}
+   $update() {
+      this.$scaffold.setNeedUpdate('component', true)
+   }
 
    /**
-    * Вызывает после инициализации или изменении темы
-    * 
     * @param {Object} theme
     */
-   $themeUpdated(theme) {}
+   $onTheme(theme) {}
+
+   /**
+    * @param {object} locale
+    */
+   $onLocale(locale) {}
+
+   /**
+    * @param {object} data
+    */
+   $onData(data) {}
+
+   /**
+    * @param {number} index
+    */
+   $showColumn(index) {
+      this.$scaffold.show_column_observer.broadcast(index)
+   }
+
+   /**
+    * @param {number} index
+    */
+   $onShowColumn(index) {}
+
+   /**
+    * @param {number} index
+    */
+   $hideColumn(index) {
+      this.$scaffold.hide_column_observer.broadcast(index)
+   }
+   
+   /**
+    * @param {number} index
+    */
+   $onHideColumn(index) {}
 
    get $element() {
-      if (!this._$element) {         
-         this._$element = this.$build(Scaffold.theme, this.$locale)
+      if (!this._$element && this.$build) {
+         this._$element = this.$build(Scaffold.theme, Scaffold.$locale)
          this.child = this._$element
          this.y = this._$element.y
          this.x = this._$element.x
       }
-      
+
       return this._$element
    }
 
-   set parent(parent) {      
+   set parent(parent) {
       if (this.$element) {
          this.$element.parent = parent
 
-         if (parent.$element) {            
+         if (parent.$element) {
             this.$element.globalY = parent.$element.globalY
             this.$element.globalX = parent.$element.globalX
          }
@@ -52,20 +86,20 @@ export default class Component extends Event {
    }
 
    get globalX() {
-      return this.$element._globalX
+      return this.$element ? this.$element._globalX : null
    }
 
-   set globalX(value) {      
+   set globalX(value) {
       this.$element._globalX = value
       this.$element.updateChild()
    }
 
    get globalY() {
-      return this.$element._globalY
+      return this.$element ? this.$element._globalY : null
    }
 
-   set globalY(value) {      
-      this.$element._globalY = value      
+   set globalY(value) {
+      this.$element._globalY = value
       this.$element.updateChild()
    }
 
@@ -77,6 +111,8 @@ export default class Component extends Event {
     * @param {Number} time 
     */
    render(ctx, input, time) {
-      this.$element.render(ctx, input, time)
+      if (this._$element) {
+         this._$element.render(ctx, input, time)
+      }
    }
 }

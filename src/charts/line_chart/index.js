@@ -48,9 +48,6 @@ export default class LineChart extends Chart {
       // Создаем график
       // this.main = new Main({canvas, width, height: main_height, localeObserver, themeObserver, hiddenColumnsObserver});
 
-      // Чекбоксы
-      // this.checboxes = new Checkboxes(id, hiddenColumnsObserver)
-
 
 
       // this.map.on('update', (data) => {
@@ -66,21 +63,31 @@ export default class LineChart extends Chart {
       // this.main.columns.on('ready', () => {         
       //    this.scaffold.setNeedUpdate('columns_ready', true, 100);
       // })
+
+
    }
 
-   $created(theme, locale) {
+   $create(scaffold, theme, locale) {
       // Вычисляем размер графика
-      var main_height = this.height - map_height - date_height
+      var main_height = scaffold.height - map_height - date_height
 
       // Создаем миникарту
       this.map = new Map({map_height, main_height})
+
+      // Чекбоксы
+      this.checboxes = new Checkboxes(scaffold.id)
+   }
+
+   $created(theme, locale) {
+      // this.scaffold.initComponent(this.checboxes)
    }
 
    get components() {
       return [
          // this.main.element,
          // this.dates.element,
-         this.map
+         this.map,
+         this.checboxes,
       ]
    }
 }

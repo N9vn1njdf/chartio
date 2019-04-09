@@ -16,23 +16,25 @@ export default class Chart {
    //    }
    // }
 
-   constructor(id, width, height, locale, theme) {
+   constructor(id, width, height, locale, theme) {      
       theme = this._calcTheme(theme)
-
-      this.$created(theme, locale)
       
       this.scaffold = new Scaffold({
          id,
          width,
          height,
          theme,
-         components: this.components
       })
+
+      this.$create(this.scaffold, theme, locale)
+
+      this.scaffold.components = this.components
+
+      this.$created(theme, locale)
    }
 
    setData(data) {      
-      // this.map.setData({columns: data.columns, colors: data.colors, names: data.names});
-      // this.checboxes.setData({columns: data.columns, colors: data.colors, names: data.names});
+      // this.checboxes.setData(data);
       this.scaffold.setData(data)
    }
 
@@ -53,7 +55,6 @@ export default class Chart {
             theme[key] = this.defaultTheme[key]
          }
       }
-
       return theme
    }
 

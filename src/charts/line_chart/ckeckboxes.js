@@ -1,21 +1,22 @@
+import { Component } from 'core'
 
-export default class Checkboxes {
+export default class Checkboxes extends Component {
 
-  constructor(id, hiddenColumnsObserver) {
+  constructor(id) {
+    super()
+
     this.id = id;
     this.hidden_columns = [];
-    this.hiddenColumnsObserver = hiddenColumnsObserver;
 
     let div = document.getElementById(id);
     this.ui = document.createElement('div');
     div.appendChild(this.ui);
   }
 
-  setData({columns, colors, names}) {
+  $onData({columns, colors, names}) {
     this.columns = columns;
     this.colors = colors;
-    this.names = names;
-    
+    this.names = names;    
     this.update();
   }
 
@@ -49,17 +50,19 @@ export default class Checkboxes {
 
   toggleColumn(index) {
     if (this.hidden_columns.includes(index)) {
-      this.hiddenColumnsObserver.broadcast(['show', index]);
-      
+      this.$showColumn(index)
+
       for(let i in this.hidden_columns) {
         if (this.hidden_columns[i] == index) {
           this.hidden_columns.splice(i, 1);
         }
       }
-    } else {
+    } else {      
       this.hidden_columns.push(index);
-      this.hiddenColumnsObserver.broadcast(['hide', index]);
+      this.$hideColumn(index)
     }
+
+    
     
     if (this.columns.length - 1 - this.hidden_columns.length == 1) {
       let left_index;

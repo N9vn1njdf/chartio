@@ -19,6 +19,8 @@ export default class Scaffold {
    }
 
    constructor({id, width, height, theme, components}) {
+      this.id = id
+
       let canvas = document.createElement('canvas')
       canvas.style.width = width + 'px'
       canvas.style.height = height + 'px'
@@ -37,9 +39,13 @@ export default class Scaffold {
       this.ctx.miterLimit = 1
       
       this.input = new Input(this)
+
       this.theme_observer = new Observer()
       this.locale_observer = new Observer()
       this.data_observer = new Observer()
+      this.show_column_observer = new Observer()
+      this.hide_column_observer = new Observer()
+   
       this.components = components || []
 
       this._need_update = {}
@@ -65,8 +71,8 @@ export default class Scaffold {
       children.forEach(child => {
 
          if (child.$is_component) {
-            this._initComponent(child)
-            child = child.$element
+            this.initComponent(child)
+            child = child.$element ? child.$element : child
          }
 
          if (child.children) {
@@ -77,16 +83,15 @@ export default class Scaffold {
       })
    }
 
-   _initComponent(component) {
+   initComponent(component) {
+      component.$scaffold = this
       component.$canvas = this.canvas
-      this.theme_observer.subscribe((e) => component.$newTheme(e))
 
-      if (component.$newData) {
-         this.data_observer.subscribe((e) => component.$newData(e))
-      }
-      if (component.$newLocale) {
-         this.locale_observer.subscribe((e) => component.$newLocale(e))
-      }
+      this.theme_observer.subscribe((e) => component.$onTheme(e))
+      this.locale_observer.subscribe((e) => component.$onLocale(e))
+      this.data_observer.subscribe((e) => component.$onData(e))
+      this.show_column_observer.subscribe((e) => component.$onShowColumn(e))
+      this.hide_column_observer.subscribe((e) => component.$onHideColumn(e))
    }
 
    get needUpdate() {
