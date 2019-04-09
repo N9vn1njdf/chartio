@@ -3,7 +3,7 @@ import { Position, Rectangle } from 'elements'
 import Main from './main'
 import Dates from './dates.js'
 import Map from './map.js'
-import Checkboxes from './ckeckboxes.js'
+import { Checkboxes } from 'components'
 
 // Размер миникарты
 var map_height = 56;

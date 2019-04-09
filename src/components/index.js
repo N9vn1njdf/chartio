@@ -1,12 +1,7 @@
-/**
- * 
- * Готовые компоненты, которые можно использовать в разных графиках
- * Например, навигатор для миникарты
- * 
- */
-
 import Navigator from './navigator.js'
+import Checkboxes from './ckeckboxes.js'
 
 export {
-   Navigator
+   Navigator,
+   Checkboxes,
 }
