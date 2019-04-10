@@ -1,6 +1,5 @@
-import { Component } from 'core'
+import { Component, Animation } from 'core'
 import { LinesGroup, Line, Rectangle, Position } from 'elements'
-import { Slide } from 'animations'
 import { Navigator } from 'components'
 
 export default class Map extends Component {
@@ -9,21 +8,22 @@ export default class Map extends Component {
       super()
 
       this.map_height = map_height
-      this.padding_top = 0
-      this.padding_bottom = 0
+      this.padding = 0
 
       this.main_height = main_height
       this.main_padding_top = 0
       this.main_padding_bottom = 0
 
-      this.dates_column = []
-      this.columns = []
-      this.hidden_columns = []
-      this.colors = {}
-      this.names = {}
       this.main_scale_y = 1
       this.map_scale_y = 1
-      this.duration = 200
+
+      this.animation = new Animation({
+         component: this,
+         duration: 200,
+         curve: (time_fraction) => Math.pow(time_fraction, 1),
+         onStart: this.startAnimate,
+         handle: this.animate
+      })
 
       // localeObserver.subscribe(locale => {
       //    this.locale = locale
@@ -33,41 +33,15 @@ export default class Map extends Component {
       // themeObserver.subscribe(theme => {
       //    this.main_padding_top = theme.main_padding_top
       //    this.main_padding_bottom = theme.main_padding_bottom
-      //    this.padding_top = theme.map_padding_top
-      //    this.padding_bottom = theme.map_padding_bottom
+      //    this.padding = theme.map_padding_top
+      //    this.padding = theme.map_padding_bottom
 
       //    this.duration = theme.animation_duration_4
-      //    this.caclMapYScale()
+      //    this.calcMapYScale()
       //    this.createLines()
          
-      //    if (this.columns.length > 0) {
-      //       this.emitUpdate()
-      //    }
-      // })
-
-      // hiddenColumnsObserver.subscribe(([act, index]) => {
-      //    if (act == 'hide' && this.visible_columns.length > 1) {
-      //       this.hidden_columns.push(index)
-      //       this.caclMapYScale()
-      //       this.hideColumn(index)
-      //       this.emitUpdate()
-      //    }
-
-      //    if (act == 'show') {
-      //       let has = false
-      //       for(let i in this.hidden_columns) {
-      //          if (this.hidden_columns.includes(index)) {
-      //             has = true
-      //             this.hidden_columns.splice(i, 1)
-      //          }
-      //       }
-
-      //       if (has) {
-      //          this.hidden_columns_count--
-      //          this.caclMapYScale()
-      //          this.showColumn(index)
-      //          this.emitUpdate()
-      //       }
+      //    if (this.$columns.length > 0) {
+      //       this.caclMainYScale()
       //    }
       // })
    }
@@ -75,50 +49,40 @@ export default class Map extends Component {
    $onTheme(theme) {
       this.main_padding_top = theme.main_padding_top
       this.main_padding_bottom = theme.main_padding_bottom
-      this.padding_top = theme.map_padding_top
-      this.padding_bottom = theme.map_padding_bottom
 
-      this.duration = theme.animation_duration_4
-      this.caclMapYScale()
-      this.createLines()
-      
-      if (this.columns.length > 0) {
-         this.emitUpdate()
-      }
+      this.padding = theme.map_padding
+      this.animation.duration = theme.animation_duration_4
+
+      // this.calcMapYScale()
+      // this.calcMapVerticalOffset()
+      // this.createLines()
    }
 
-   $onData({columns, colors, names}) {      
-      columns = columns.slice()
-      this.dates_column = columns[0]
-      this.columns = columns.splice(1, columns.length)
-      this.colors = colors
-      this.names = names
-
-      this.caclMapYScale()
+   $onData({dates, columns, colors, names}) {
+      this.calcMapYScale()
+      this.calcMapVerticalOffset()
       this.createLines()
-      this.emitUpdate()
+      // this.caclMainYScale()
    }
 
-   $onHideColumn(index) {      
-      // this.caclMapYScale()
-      this.hideColumn(index)
-      this.$update()
+   $onHideColumn(index) {            
+      this.calcMapYScale()
+      this.calcMapVerticalOffset()
+      this.animation.run([0, index])
    }
 
    $onShowColumn(index) {      
-      // this.caclMapYScale()
-      this.showColumn(index)
-      this.$update()
+      this.calcMapYScale()
+      this.calcMapVerticalOffset()
+      this.animation.run([1, index])
    }
 
    $build(theme, locale) {
       this.navigator = new Navigator({width: this.$canvas.width, height: this.map_height})
-      this.navigator.on('update', () => this.emitUpdate())
+      this.navigator.on('update', () => this.caclMainYScale())
 
       this.lines_groups = new Position()
       this.$onTheme(theme)
-
-      this.lines_groups2 = new Rectangle({w: 100, h: 100, color: 'red'})
       
       return new Rectangle({
          // clip: true,
@@ -134,10 +98,43 @@ export default class Map extends Component {
       })
    }
 
-   emitUpdate() {
-      if (this.scale) {
-         this.caclMainYScale()
-      }
+   startAnimate([type, column_index]) {      
+      this.lines_groups.children.forEach(lines_group => {
+         for (let i = 0; i < lines_group.children.length; i++) {
+            let line = lines_group.children[i]
+            let line2 = lines_group.children[i+1]
+
+            line.old_y = line.y
+            line.new_y = this.vertical_offset - line.column_value * this.scale.y
+            line.offset_y = line.new_y - line.y
+           
+            if (line2) {
+               line.old_y2 = line.y2
+               line.new_y2 =  this.vertical_offset - line2.column_value * this.scale.y            
+               line.offset_y2 = line.new_y2 - line.y2
+            }
+         }
+      })
+   }
+
+   // type: 1 - показать, 0 скрыть
+   animate(progress, [type, column_index]) {
+      this.lines_groups.children.forEach(lines_group => {
+         
+         for (let i = 0; i < lines_group.children.length; i++) {
+            let line = lines_group.children[i]
+
+            if (line.column_index == column_index) {               
+               line.alpha = type == 0 ? 1 - progress : progress
+            }
+
+            line.y = line.offset_y * progress + line.old_y
+
+            if (line.offset_y2) {
+               line.y2 = line.offset_y2 * progress + line.old_y2
+            }
+         }
+      })
    }
 
    get main_offset() {
@@ -158,10 +155,6 @@ export default class Map extends Component {
       return {
          offset: this.main_offset,
          scale: this.main_scale,
-         dates_column: this.dates_column,
-         columns: this.columns,
-         colors: this.colors,
-         names: this.names,
       }
    }
 
@@ -173,91 +166,28 @@ export default class Map extends Component {
    }
 
    get data_count() {
-      return this.columns[0] ? this.columns[0].length-2 : 0
-   }
-
-   get visible_columns() {
-      var result = []
-      
-      for (let i = 0; i < this.columns.length; i++) {
-         if (!this.hidden_columns.includes(i)) {
-            result.push(i)
-         }
-      }
-      return result
-   }
-
-   hideColumn(index) {
-      this.lines_groups.children.forEach(lines_group => {
-         lines_group.children.forEach(line => {
-            if (line.column_index == index) {
-               line.alpha = 0
-               // slide.toAlpha(0)
-            }
-         })
-      })
-   }
-
-   showColumn(index) {
-      this.lines_groups.children.forEach(lines_group => {
-         lines_group.children.forEach(line => {
-            if (line.column_index == index) {
-               // slide.toAlpha(1)
-               line.alpha = 1
-            }
-         })
-      })
-   }
-
-   updateLines() {
-      this.lines_groups.children.forEach(lines_group => {
-         for (let i = 0; i < lines_group.children.length; i++) {
-            const slide = lines_group.children[i]
-            const slide2 = lines_group.children[i+1]
-
-            if (!slide2) {
-               continue
-            }
-
-            if (slide2 && slide.column_index == slide2.column_index) {
-               // slide.child._x2 = slide2.child._x
-               // slide.child._y2 = slide2.child._y
-            }
-         }
-      })
+      return this.$columns[0] ? this.$columns[0].length-2 : 0
    }
 
    createLines() {
       var children = []
-      let offset = this.map_height + this.min_y * this.scale.y - this.padding_bottom
 
-      for (let c_i = 0; c_i < this.columns.length; c_i++) {
-         let column = this.columns[c_i]
+      for (let c_i = 0; c_i < this.$columns.length; c_i++) {
+         let column = this.$columns[c_i]
 
-         let group = new LinesGroup({lineWidth: 1.5, color: this.colors[column[0]]})
+         let group = new LinesGroup({lineWidth: 1.5, color: this.$colors[column[0]]})
          let lines = []
 
          for (let i = 1; i < column.length; i++) {
-            if (!column[i+1]) {
-               break
-            }
-
             let y = column[i] * this.scale.y
-            let y2 = column[i+1] * this.scale.y
+            let y2 = column[i+1] ? column[i+1] * this.scale.y : y
             
-            let child = 
-            // new Slide({
-            //    child: 
-               new Line({
-                  x: (i-1) * this.scale.x,
-                  y: offset - y,
-                  x2: i * this.scale.x,
-                  y2: offset - y2,
-               })
-            //    ,
-            //    duration: this.duration,
-            //    onProgress: () => this.updateLines()
-            // })
+            let child =  new Line({
+               x: (i-1) * this.scale.x,
+               y: this.vertical_offset - y,
+               x2: i * this.scale.x,
+               y2: this.vertical_offset - y2,
+            })
 
             child.column_index = c_i
             child.column_value = column[i]
@@ -270,55 +200,47 @@ export default class Map extends Component {
       }
       
       this.lines_groups.children = children
-      console.log(this.lines_groups.children);
-      
    }
 
-   // Вычисляем Y масштаб для миникарты
-   caclMapYScale() {
+   calcMapVerticalOffset() {
+      this.vertical_offset = this.map_height + this.min_y * this.scale.y - this.padding
+   }
+
+   calcMapYScale() {
       let items = []
-      
-      for (let i = 0; i < this.columns.length; i++) {
-         if (!this.hidden_columns.includes(i)) {
-            this.columns[i].forEach(element => items.push(element))
-         }
+
+      for (let i in this.$visible_columns) {         
+         this.$columns[this.$visible_columns[i]].forEach(item => items.push(item))
       }
       
-      let min_max = this.getMinMaxY(items)
-      this.min_y = min_max.min
-      this.map_scale_y = (this.map_height-this.padding_top-this.padding_bottom)/(min_max.max - min_max.min)
-
-      this.animateDirection()
+      if (items.length > 0) {         
+         let min_max = this.getMinMaxY(items)
+         this.min_y = min_max.min
+         this.map_scale_y = (this.map_height-this.padding*2)/(min_max.max - min_max.min)
+         
+      } else {
+         this.map_scale_y = 0         
+      }
    }
 
-   animateDirection() {
-      this.lines_groups.children.forEach(lines_group => {
-         lines_group.children.forEach(slide => {
-            let offset = this.map_height + this.min_y * this.scale.y - this.padding_bottom
-            let y = slide.column_value * this.scale.y
-
-            slide.completed = false
-            // slide.offset = -(slide.child._y - (offset-y))            
-            slide.forward()
-         })
-      })
-   }
-
-   // Вычисляем Y масштаб для основного графика
    caclMainYScale() {
+      if (!this.scale) {
+         return
+      }
+
       var visible_items = []
       let s = this.scale.x * 2
 
-      for (let c = 0; c < this.columns.length; c++) {
-         if (this.hidden_columns.includes(c)) {
+      for (let c = 0; c < this.$columns.length; c++) {
+         if (this.$hidden_columns.includes(c)) {
             continue
          }
          
-         for (let i = 1; i < this.columns[c].length; i++) {
+         for (let i = 1; i < this.$columns[c].length; i++) {
             let item_x = (i-1) * this.scale.x
             
             if (this.navigator.offset < item_x + s && this.navigator.offset + this.navigator.scale > item_x - s) {
-               visible_items.push(this.columns[c][i])
+               visible_items.push(this.$columns[c][i])
             }
          }
       }

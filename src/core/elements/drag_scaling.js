@@ -1,8 +1,6 @@
 import Rectangle from './rectangle.js'
 import Children from './children.js'
 
-// Note: масштабирование по оси Y не реализовано
-
 export default class DragScaling extends Children {
 
    constructor({x, y, w, h, axisX, minWidth, onUpdate, edgeColor, edgeWidth}) {

@@ -19,12 +19,7 @@ export default class Chart {
    constructor(id, width, height, locale, theme) {      
       theme = this._calcTheme(theme)
       
-      this.scaffold = new Scaffold({
-         id,
-         width,
-         height,
-         theme,
-      })
+      this.scaffold = new Scaffold({id, width, height, theme})
 
       this.$create(this.scaffold, theme, locale)
 
@@ -34,7 +29,6 @@ export default class Chart {
    }
 
    setData(data) {      
-      // this.checboxes.setData(data);
       this.scaffold.setData(data)
    }
 
@@ -60,6 +54,6 @@ export default class Chart {
 
    setLocale(locale) {
       // this.localeObserver.broadcast(locale)
-      this.scaffold.setNeedUpdate('locale', true, 100)
+      // this.scaffold.setNeedUpdate('locale', true, 100)
    }
 }

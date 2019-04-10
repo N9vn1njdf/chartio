@@ -52,13 +52,8 @@
       </div>
 
       <div class="form-group">
-         <label>Map padding top</label>
-         <input type="number" class="form-control form-control-sm" v-model="themes.custom.map_padding_top">
-      </div>
-
-      <div class="form-group">
-         <label>Map padding bottom</label>
-         <input type="number" class="form-control form-control-sm" v-model="themes.custom.map_padding_bottom">
+         <label>Map padding</label>
+         <input type="number" class="form-control form-control-sm" v-model="themes.custom.map_padding">
       </div>
 
       <div class="form-group">
@@ -169,8 +164,7 @@ export default {
                map_color2: 'rgba(212, 220, 244, 0.28)',
                map_navigator_edge_width: 4,
                map_navigator_min_width: 80,
-               map_padding_top: 5,
-               map_padding_bottom: 5,
+               map_padding: 5,
                font_family: 'Arial',
                text_color1: 'red',
                text_size1: 12.5,

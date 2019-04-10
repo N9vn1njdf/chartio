@@ -11,22 +11,70 @@ export default class Line {
       this.alpha = 1
    }
 
-   get globalX() {
-      return this._globalX
+   get x() {
+      return this._x
    }
 
-   set globalX(value) {
-      this._globalX = value
-      this.globalX2 = value + this.x2 - this.x
+   set x(value) {
+      this._x = value
+      this.updateParentX(value)
    }
 
-   get globalY() {
-      return this._globalY
+   get y() {
+      return this._y
    }
 
-   set globalY(value) {
-      this._globalY = value
-      this.globalY2 = value + this.y2 - this.y      
+   set y(value) {      
+      this._y = value
+      this.updateParentY(value)
+   }
+   
+   get x2() {
+      return this._x2
+   }
+
+   set x2(value) {
+      this._x2 = value
+      this.updateParentX(value)
+   }
+
+   get y2() {
+      return this._y2
+   }
+
+   set y2(value) {      
+      this._y2 = value
+      this.updateParentY(value)
+   }
+
+   // get globalX() {
+   //    return this._globalX
+   // }
+
+   // set globalX(value) {
+   //    this._globalX = value
+   //    // this.globalX2 = value + this.x2 - this.x
+   // }
+
+   // get globalY() {
+   //    return this._globalY
+   // }
+
+   // set globalY(value) {
+   //    this._globalY = value
+   //    // this.globalY2 = value + this.y2 - this.y      
+   // }
+
+   updateParentX() {
+      if (this.parent) {
+         this.parent.updateChild()
+      }
+   }
+
+   updateParentY() {
+      if (this.parent) {
+         this.parent.updateChild()
+      }
    }
 
    isVisible(width) {

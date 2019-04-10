@@ -11,6 +11,15 @@ export default class LinesGroup extends Children {
       this.lineCap = lineCap || 'butt';
    }
 
+   updateChild() {
+      this.children.forEach(child => {
+         child.globalX = child.x + this.globalX
+         child.globalY = child.y + this.globalY
+         child.globalX2 = child.x2 + this.globalX
+         child.globalY2 = child.y2 + this.globalY
+      })
+   }
+
    /**
     * Функция рендер. Вызывается при каждой отрисовке элемента
     * 

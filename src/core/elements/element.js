@@ -12,29 +12,6 @@ export default class Element extends Child {
       this.$is_mounted = true
    }
 
-   // get alpha() {
-   //    let result = this._alpha;
-
-   //    if (this.parent != null && this.parent.alpha != null) {
-   //       result = this.parent.alpha - this._alpha;
-   //    }
-
-   //    return result < 0 ? 0 : result;
-   // }
-
-   // set alpha(value) {
-   //    return this._alpha = value;
-   // }
-
-   get needUpdate() {
-      for(let i in this._children) {
-         if (this._children[i].needUpdate) {
-            return true;
-         }
-      }
-      return false
-   }
-   
    isHover({x, y}) {
       return x > this.globalX && x < this.globalX + this.w && y > this.globalY && y < this.globalY + this.h;
    }

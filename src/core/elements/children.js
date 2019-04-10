@@ -14,7 +14,7 @@ export default class Children {
 
    set x(value) {
       this._x = value
-      this.updateParentX(value)
+      this.updateParent()
    }
 
    get y() {
@@ -23,7 +23,7 @@ export default class Children {
 
    set y(value) {
       this._y = value
-      this.updateParentY(value)
+      this.updateParent()
    }
 
    get globalX() {
@@ -44,19 +44,9 @@ export default class Children {
       this.updateChild()
    }
 
-   updateParentX(value) {
+   updateParent() {
       if (this.parent) {
          this.parent.updateChild()
-      } else {
-         this.globalX = value
-      }
-   }
-
-   updateParentY(value) {
-      if (this.parent) {
-         this.parent.updateChild()
-      } else {
-         this.globalY = value
       }
    }
 
@@ -77,15 +67,6 @@ export default class Children {
       }
       this._children = children
       this.updateChild()
-   }
-   
-   get needUpdate() {
-      for(let i in this.children) {
-         if (this.children[i].needUpdate) {
-            return true
-         }
-      }
-      return false
    }
 
    /**

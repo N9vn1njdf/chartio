@@ -19,16 +19,16 @@ export default class Child extends Event {
 
    set x(value) {
       this._x = value
-      this.updateParentX(value)
+      this.updateParent()
    }
 
    get y() {
       return this._y
    }
 
-   set y(value) {
+   set y(value) {      
       this._y = value
-      this.updateParentY(value)
+      this.updateParent()
    }
 
    get globalX() {
@@ -49,19 +49,9 @@ export default class Child extends Event {
       this.updateChild()
    }
 
-   updateParentX(value) {
+   updateParent() {
       if (this.parent) {
          this.parent.updateChild()
-      } else {
-         this.globalX = value
-      }
-   }
-
-   updateParentY(value) {
-      if (this.parent) {
-         this.parent.updateChild()
-      } else {
-         this.globalY = value
       }
    }
 
@@ -80,10 +70,6 @@ export default class Child extends Event {
       child.parent = this
       this._child = child      
       this.updateChild()
-   }
-   
-   get needUpdate() {
-      return this.child.needUpdate
    }
 
    /**

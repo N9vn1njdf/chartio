@@ -1,12 +1,6 @@
 import Input from './input.js'
 import Observer from './observer.js';
 
-/**
- * 
- * Базовый компонент, с которого начинается рендеринг.
- * Проверяет необходимость обновления, и перерисовывает холст при необходимости
- * 
- */
 export default class Scaffold {
 
    static get theme() {
@@ -48,14 +42,14 @@ export default class Scaffold {
    
       this.components = components || []
 
-      this._need_update = {}
+      this.need_update = false
 
       requestAnimationFrame((time) => this.render(time))
    }
 
    setData(data) {
       this.data_observer.broadcast(data)
-      this.setNeedUpdate('set_data', true, 100)
+      this.update()
    }
 
    get components() {
@@ -89,38 +83,18 @@ export default class Scaffold {
 
       this.theme_observer.subscribe((e) => component.$onTheme(e))
       this.locale_observer.subscribe((e) => component.$onLocale(e))
-      this.data_observer.subscribe((e) => component.$onData(e))
-      this.show_column_observer.subscribe((e) => component.$onShowColumn(e))
-      this.hide_column_observer.subscribe((e) => component.$onHideColumn(e))
+      this.data_observer.subscribe((e) => component._onData(e))
+      this.show_column_observer.subscribe((e) => component._onShowColumn(e))
+      this.hide_column_observer.subscribe((e) => component._onHideColumn(e))
    }
 
-   get needUpdate() {
-      for(let i in this._need_update) {
-         if (this._need_update[i]) {
-            return true
-         }
-      }
-
-      for(let i in this.components) {
-         if (this.components[i].$need_update) {
-            return true
-         }
-      }
-
-      return false
-   }
-
-   setNeedUpdate(key, value, delay = null) {
-      if (this._need_update[key] !== value) {
-         this._need_update[key] = value
-         if (delay) {
-            setTimeout(() => this._need_update[key] = !value, delay)
-         }
-      }
+   update() {
+      this.need_update = true
    }
 
    render(time) {
-      if (this.needUpdate) {
+      if (this.need_update) {
+         this.need_update = false
          this.ctx.clearRect(0, 0, this.width, this.height)
          this.components.forEach(component => component.render(this.ctx, this.input, time))
       }
