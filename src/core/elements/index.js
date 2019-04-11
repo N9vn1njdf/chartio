@@ -1,17 +1,11 @@
-import Line from './line.js';
-import LinesGroup from './lines_group.js';
-import Text from './text.js';
-import Circle from './circle.js';
-import Rectangle from './rectangle.js';
-import Position from './position.js';
-import DragScaling from './drag_scaling.js';
+import RenderElement from './render_element'
+import HasChildren from './has_children'
+import HasChild from './has_child'
+import MouseElement from './mouse_element'
 
 export {
-   Line,
-   LinesGroup,
-   Text,
-   Circle,
-   Rectangle,
-   Position,
-   DragScaling,
+   RenderElement,
+   HasChildren,
+   HasChild,
+   MouseElement,
 }

@@ -24,40 +24,22 @@ export default class Map extends Component {
          onStart: this.startAnimate,
          handle: this.animate
       })
-
-      // localeObserver.subscribe(locale => {
-      //    this.locale = locale
-      //    this.createLines()
-      // })
-
-      // themeObserver.subscribe(theme => {
-      //    this.main_padding_top = theme.main_padding_top
-      //    this.main_padding_bottom = theme.main_padding_bottom
-      //    this.padding = theme.map_padding_top
-      //    this.padding = theme.map_padding_bottom
-
-      //    this.duration = theme.animation_duration_4
-      //    this.calcMapYScale()
-      //    this.createLines()
-         
-      //    if (this.$columns.length > 0) {
-      //       this.caclMainYScale()
-      //    }
-      // })
    }
-
-   $onTheme(theme) {
+   
+   /**
+    * @override
+    */
+   $onTheme(theme) {      
       this.main_padding_top = theme.main_padding_top
       this.main_padding_bottom = theme.main_padding_bottom
 
       this.padding = theme.map_padding
       this.animation.duration = theme.animation_duration_4
-
-      // this.calcMapYScale()
-      // this.calcMapVerticalOffset()
-      // this.createLines()
    }
 
+   /**
+    * @override
+    */
    $onData({dates, columns, colors, names}) {
       this.calcMapYScale()
       this.calcMapVerticalOffset()
@@ -65,20 +47,29 @@ export default class Map extends Component {
       // this.caclMainYScale()
    }
 
+   /**
+    * @override
+    */
    $onHideColumn(index) {            
       this.calcMapYScale()
       this.calcMapVerticalOffset()
       this.animation.run([0, index])
    }
 
+   /**
+    * @override
+    */
    $onShowColumn(index) {      
       this.calcMapYScale()
       this.calcMapVerticalOffset()
       this.animation.run([1, index])
    }
 
+   /**
+    * @override
+    */
    $build(theme, locale) {
-      this.navigator = new Navigator({width: this.$canvas.width, height: this.map_height})
+      this.navigator = new Navigator(this.map_height)
       this.navigator.on('update', () => this.caclMainYScale())
 
       this.lines_groups = new Position()

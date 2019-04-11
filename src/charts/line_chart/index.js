@@ -1,5 +1,4 @@
 import { Chart } from 'core'
-import { Position, Rectangle } from 'elements'
 import Main from './main'
 import Dates from './dates.js'
 import Map from './map.js'
@@ -38,32 +37,33 @@ export default class LineChart extends Chart {
       }
    }
 
+   get defaultLocale() {
+      return {
+         month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+         day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+      }
+   }
+
+   static get ruLocale() {
+      return {
+         month: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+         day: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+      }
+   }
+
    constructor(id, width, height, {locale, theme}) {
       super(id, width, height, locale, theme)
 
       // Создаем индиктор дат
       // this.dates = new Dates({y: main_height + date_height/4, animation_duration: 280, localeObserver, themeObserver});
       
-      // Создаем график
-      // this.main = new Main({canvas, width, height: main_height, localeObserver, themeObserver, hiddenColumnsObserver});
 
 
 
-      // this.map.on('update', (data) => {
-      //    if (!this.init) {         
-      //       this.init = true;
-      //       this.scaffold.setNeedUpdate('init', true, 100);
-      //    }
-
-      //    // this.main.update(data)
-      //    // this.dates.update(data)
-      // })
-
-      // this.main.columns.on('ready', () => {         
-      //    this.scaffold.setNeedUpdate('columns_ready', true, 100);
-      // })
-
-
+      this.map.on('update', (data) => {
+         this.main.onMapUpdate(data)
+         // this.dates.update(data)
+      })
    }
 
    $create(scaffold, theme, locale) {
@@ -73,17 +73,18 @@ export default class LineChart extends Chart {
       // Создаем миникарту
       this.map = new Map({map_height, main_height})
 
+      // Создаем график
+      this.main = new Main({height: main_height})
+
       // Чекбоксы
       this.checboxes = new Checkboxes(scaffold.id)
    }
 
-   $created(theme, locale) {
-      // this.scaffold.initComponent(this.checboxes)
-   }
+   $created(theme, locale) {}
 
    get components() {
       return [
-         // this.main.element,
+         this.main,
          // this.dates.element,
          this.map,
          this.checboxes,

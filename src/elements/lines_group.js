@@ -1,7 +1,7 @@
-import Children from "./children";
+import { HasChildren } from 'core/elements'
 
 // Используется совместно и Line
-export default class LinesGroup extends Children {
+export default class LinesGroup extends HasChildren {
 
    constructor({x, y, children, lineWidth, color, lineCap}) {
       super({x, y, children})
@@ -47,9 +47,6 @@ export default class LinesGroup extends Children {
       ctx.beginPath();
 
       super.render(ctx, input, time)
-
-      // ctx.fillStyle = 'rgba(123, 234, 123, 0.5)'
-      // ctx.fillRect(this.globalX, this.globalY, 600, 55);
 
       ctx.closePath();
       ctx.stroke();

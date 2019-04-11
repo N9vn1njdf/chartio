@@ -1,31 +1,30 @@
-import { Position, Rectangle, DragScaling } from 'elements'
 import { Component } from 'core'
+import { Position, Rectangle, DragScaling } from 'elements'
 
 export default class Navigator extends Component {
 
-   constructor({width, height}) {
+   constructor(height) {
       super()
-   
-      // themeObserver.subscribe(theme => {
-      //    if (this.navigator) {
-      //       this.offset = width-navigator_width-theme.map_navigator_edge_width
-      //       this.navigator.edgeWidth = theme.map_navigator_edge_width
-      //       this.navigator.minWidth = theme.map_navigator_min_width >>> 0
-      //       this.update(false)
-
-      //       this.navigator.edgeColor = this.border[0].color = this.border[1].color = theme.map_color1
-      //       this.background[0].color = this.background[1].color = theme.map_color2
-      //    }
-      // })
-
-      this.width = width
       this.height = height
    }
 
+   /**
+    * @override
+    */
+   $onTheme(theme) {      
+      this.navigator.edgeWidth = theme.map_navigator_edge_width
+      this.navigator.minWidth = theme.map_navigator_min_width >>> 0
+      this.navigator.edgeColor = this.border[0].color = this.border[1].color = theme.map_color1
+      this.background[0].color = this.background[1].color = theme.map_color2
+   }
+
+   /**
+    * @override
+    */
    $build(theme, locale) {
 
       this.navigator = new DragScaling({
-         axisX: {min: 0, max: this.width},
+         axisX: {min: 0, max: this.$canvas.width},
          onUpdate: () => this.update(),
          w: 100,
          h: this.height,
@@ -33,7 +32,7 @@ export default class Navigator extends Component {
          edgeColor: theme.map_color1
       })
 
-      this.offset = this.width-this.scale+theme.map_navigator_edge_width
+      this.offset = this.$canvas.width - this.scale + theme.map_navigator_edge_width
       
       this.background = [
          new Rectangle({h: this.height, color: theme.map_color2, border: {tr: 0, tl: 8, br: 0, bl: 8}, inputIgnore: true}),
@@ -48,7 +47,7 @@ export default class Navigator extends Component {
       this.update(false)
 
       return new Position({
-         w: this.width,
+         w: this.$canvas.width,
          h: this.height,
          children: [
             ...this.background,
@@ -61,7 +60,7 @@ export default class Navigator extends Component {
    update(event = true) {
       this.background[0].w = this.offset + this.navigator.edgeWidth
       this.background[1].x = this.navigator.x + this.navigator.w
-      this.background[1].w = this.width - this.background[1].x
+      this.background[1].w = this.$canvas.width - this.background[1].x
 
       this.border[0].w = this.border[1].w = this.navigator.w
       this.border[0].x = this.border[1].x = this.navigator.x

@@ -8,7 +8,10 @@ export default class Component extends Event {
 
       this.$is_component = true
 
-      this.$dates_column = []
+      this.$theme
+      this.$locale
+
+      this.$dates = []
       this.$columns = []
       this.$colors = []
       this.$names = []
@@ -19,6 +22,10 @@ export default class Component extends Event {
       this.$scaffold
 
       this._animations = []
+      this._mounted = false
+
+      this.x = this._globalX = 0
+      this.y = this._globalY = 0
    }
 
    /**
@@ -94,6 +101,16 @@ export default class Component extends Event {
       this.$onData({dates: this.$dates, columns: this.$columns, colors, names})
    }
 
+   _onTheme(theme) {      
+      this.$theme = theme
+      this.$onTheme(theme)
+   }
+
+   _onLocale(locale) {
+      this.$locale = locale
+      this.$onLocale(theme)
+   }
+
    _calcVisibleColumns() {      
       var result = []
       for (let i = 0; i < this.$columns.length; i++) {
@@ -104,15 +121,18 @@ export default class Component extends Event {
       this.$visible_columns = result
    }
 
-   get $element() {
-      if (!this._$element && this.$build) {
-         this._$element = this.$build(Scaffold.theme, Scaffold.$locale)
-         this.child = this._$element
-         this.y = this._$element.y
-         this.x = this._$element.x
-      }
+   _init(scaffold) {      
+      this.$scaffold = scaffold
+      this.$canvas = scaffold.canvas
+      
+      if (this.$build) {
+         this.$element = this.$build(scaffold.theme, scaffold.locale)
 
-      return this._$element
+         if (this.$element) {
+            this.$element.parent = this
+            this.child = this.$element
+         }
+      }
    }
 
    set parent(parent) {
@@ -127,21 +147,40 @@ export default class Component extends Event {
    }
 
    get globalX() {
-      return this.$element ? this.$element._globalX : null
+      return this._globalX
    }
 
    set globalX(value) {
-      this.$element._globalX = value
-      this.$element.updateChild()
+      this._globalX = value
+      this.updateChild()
    }
 
    get globalY() {
-      return this.$element ? this.$element._globalY : null
+      return this._globalY
    }
 
-   set globalY(value) {
-      this.$element._globalY = value
-      this.$element.updateChild()
+   set globalY(value) {      
+      this._globalY = value
+      this.updateChild()
+   }
+
+   updateChild() {
+      if (this.child) {         
+         this.child.globalY = this.child.y + this.globalY
+         this.child.globalX = this.child.x + this.globalX
+      }
+   }
+
+   get child() {
+      return this._child
+   }
+
+   set child(child) {
+      if (child) {
+         child.parent = this
+         this._child = child
+         this.updateChild()
+      }
    }
 
    /**
@@ -151,9 +190,9 @@ export default class Component extends Event {
     * @param {Input} input 
     * @param {Number} time 
     */
-   render(ctx, input, time) {
-      if (this._$element) {
-         this._$element.render(ctx, input, time)
+   render(ctx, input, time) {      
+      if (this.$element && (this.$element.$is_component || this.$element.isVisible(ctx.width, ctx.height))) {         
+         this.$element.render(ctx, input, time)
       }
 
       for (let i = 0; i < this._animations.length; i++) {

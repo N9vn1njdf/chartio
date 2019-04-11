@@ -1,53 +1,11 @@
+import RenderElement from './render_element';
 
-export default class Children {
+export default class HasChildren extends RenderElement {
 
    constructor({x, y, children}) {
-      this.x = this._globalX = x || 0
-      this.y = this._globalY = y || 0
+      super({x, y})
 
       this.children = children || []
-   }
-
-   get x() {
-      return this._x
-   }
-
-   set x(value) {
-      this._x = value
-      this.updateParent()
-   }
-
-   get y() {
-      return this._y
-   }
-
-   set y(value) {
-      this._y = value
-      this.updateParent()
-   }
-
-   get globalX() {
-      return this._globalX
-   }
-
-   set globalX(value) {
-      this._globalX = value
-      this.updateChild()
-   }
-
-   get globalY() {
-      return this._globalY
-   }
-
-   set globalY(value) {
-      this._globalY = value
-      this.updateChild()
-   }
-
-   updateParent() {
-      if (this.parent) {
-         this.parent.updateChild()
-      }
    }
 
    updateChild() {

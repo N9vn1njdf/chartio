@@ -1,6 +1,6 @@
-import Element from './element.js'
+import { RenderElement } from 'core/elements'
 
-export default class Text extends Element {
+export default class Text extends RenderElement {
 
    constructor({text, size, fontFamily, align}) {
       super(arguments[0]);
@@ -29,10 +29,9 @@ export default class Text extends Element {
       this.size = value;
    }
 
-   isHover({x, y}) {
-      return false;
-   }
-
+   /**
+    * @override
+    */
    isVisible(width) {
       if (this.alpha == 0 || this.w == 0 || this.h == 0 || !this.color || this.color == 'transparent') {
          return false;

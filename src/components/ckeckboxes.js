@@ -11,6 +11,9 @@ export default class Checkboxes extends Component {
     document.getElementById(id).appendChild(this.ui)
   }
 
+  /**
+   * @override
+   */
   $onData({dates, columns, $colors, $names}) {
     this.ui.innerHTML = ''
 

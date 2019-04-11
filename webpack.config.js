@@ -23,11 +23,11 @@ module.exports = {
   },
   resolve: {
     alias: {
-      animations: path.resolve(__dirname, 'src/animations/index.js'),
-      core: path.resolve(__dirname, 'src/core/index.js'),
-      elements: path.resolve(__dirname, 'src/core/elements/index.js'),
-      charts: path.resolve(__dirname, 'src/charts/index.js'),
-      components: path.resolve(__dirname, 'src/components/index.js'),
+      charts: path.resolve(__dirname, 'src/charts/'),
+      components: path.resolve(__dirname, 'src/components/'),
+      animations: path.resolve(__dirname, 'src/animations/'),
+      elements: path.resolve(__dirname, 'src/elements/'),
+      core: path.resolve(__dirname, 'src/core/'),
     }
   }
 }

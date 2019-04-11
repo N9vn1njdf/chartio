@@ -1,6 +1,6 @@
-import Element from './element.js'
+import { RenderElement } from 'core/elements'
 
-export default class Circle extends Element {
+export default class Circle extends RenderElement {
 
    constructor({r, border}) {
       super(arguments[0]);
@@ -9,13 +9,9 @@ export default class Circle extends Element {
       this.border = border;
    }
 
-   isHover({x, y}) {
-      if (this.r == 0) {
-         return false;
-      }
-      return x < this.x + this.r && x > this.x - this.r && y < this.y + this.r && y > this.y - this.r;
-   }
-
+   /**
+    * @override
+    */
    isVisible(width) {
       if (this.r == 0 || this.alpha == 0 || !this.color || this.color == 'transparent') {
          return false;

@@ -1,20 +1,16 @@
 import Rectangle from './rectangle.js'
-import Children from './children.js'
+import { HasChildren } from 'core/elements'
 
-export default class DragScaling extends Children {
+export default class DragScaling extends HasChildren {
 
    constructor({x, y, w, h, axisX, minWidth, onUpdate, edgeColor, edgeWidth}) {
       super({x, y})
 
       this.w = w
       this.h = h
-
       this.axisX = axisX
-
       this.minWidth = minWidth || 10  // минимальная ширина
-
       this.onUpdate = onUpdate
-
       this.edgeColor = edgeColor || 'rgba(0, 0, 0, 0.2)'
       this.edgeWidth = edgeWidth || 5
    }

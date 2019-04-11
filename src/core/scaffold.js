@@ -3,16 +3,7 @@ import Observer from './observer.js';
 
 export default class Scaffold {
 
-   static get theme() {
-      return this._theme
-   }
-
-   static set theme(theme) {
-      this._theme = theme
-      // this._components.forEach(component => component.$theme(theme))
-   }
-
-   constructor({id, width, height, theme, components}) {
+   constructor({id, width, height, theme, locale, components}) {
       this.id = id
 
       let canvas = document.createElement('canvas')
@@ -21,7 +12,8 @@ export default class Scaffold {
       canvas.style.background = theme.background
       document.getElementById(id).appendChild(canvas)
 
-      Scaffold.theme = theme
+      this.theme = theme
+      this.locale = locale
 
       this.canvas = canvas
       this.canvas.width = this.width = width/100*120
@@ -30,13 +22,11 @@ export default class Scaffold {
       this.ctx = this.canvas.getContext('2d')
       this.ctx.textBaseline = 'top'
       this.ctx.width = this.width
+      this.ctx.height = this.height
       this.ctx.miterLimit = 1
       
       this.input = new Input(this)
 
-      this.theme_observer = new Observer()
-      this.locale_observer = new Observer()
-      this.data_observer = new Observer()
       this.show_column_observer = new Observer()
       this.hide_column_observer = new Observer()
    
@@ -44,12 +34,24 @@ export default class Scaffold {
 
       this.need_update = false
 
-      requestAnimationFrame((time) => this.render(time))
+      requestAnimationFrame((time) => this._render(time))
    }
 
    setData(data) {
-      this.data_observer.broadcast(data)
+      this.data = data
+      this._eachComponent(component => component._onData(this.data))
       this.update()
+   }
+
+   setTheme(theme) {
+      this.theme = theme
+      this.canvas.style.background = theme.background
+      this._eachComponent(component => component._onTheme(this.theme))
+   }
+
+   setLocale(locale) {
+      this.locale = locale
+      this._eachComponent(component => component._onLocale(this.locale))
    }
 
    get components() {
@@ -57,33 +59,33 @@ export default class Scaffold {
    }
 
    set components(components) {      
-      this.buildComponents(components)
       this._components = components
+      this._eachComponent(this._initComponent)
    }
 
-   buildComponents(children) {
-      children.forEach(child => {
+   // Вызывает callback для каждого компонента
+   _eachComponent(callback) {
+      this._findComponentInChildren(this.components, callback)
+   }
 
+   // Рекурсивный поиск компонентов
+   _findComponentInChildren(children, callback) {      
+      children.forEach(child => {
          if (child.$is_component) {
-            this.initComponent(child)
+            callback.call(this, child)
             child = child.$element ? child.$element : child
          }
 
          if (child.children) {
-            this.buildComponents(child.children)
+            this._findComponentInChildren(child.children, callback)
          } else if (child.child) {
-            this.buildComponents([child.child])
+            this._findComponentInChildren([child.child], callback)
          }
       })
    }
 
-   initComponent(component) {
-      component.$scaffold = this
-      component.$canvas = this.canvas
-
-      this.theme_observer.subscribe((e) => component.$onTheme(e))
-      this.locale_observer.subscribe((e) => component.$onLocale(e))
-      this.data_observer.subscribe((e) => component._onData(e))
+   _initComponent(component) {
+      component._init(this)
       this.show_column_observer.subscribe((e) => component._onShowColumn(e))
       this.hide_column_observer.subscribe((e) => component._onHideColumn(e))
    }
@@ -92,13 +94,13 @@ export default class Scaffold {
       this.need_update = true
    }
 
-   render(time) {
+   _render(time) {
       if (this.need_update) {
          this.need_update = false
          this.ctx.clearRect(0, 0, this.width, this.height)
          this.components.forEach(component => component.render(this.ctx, this.input, time))
       }
 
-      requestAnimationFrame((time) => this.render(time))
+      requestAnimationFrame((time) => this._render(time))
    }
 }

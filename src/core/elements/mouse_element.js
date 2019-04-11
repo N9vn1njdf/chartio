@@ -1,6 +1,6 @@
-import Child from './child';
+import HasChild from "./has_child";
 
-export default class Element extends Child {
+export default class MouseElement extends HasChild {
 
    constructor({x, y, child, color, alpha, inputIgnore} = {}) {
       super({x, y, child})
@@ -8,23 +8,14 @@ export default class Element extends Child {
       this.color = color
       this.alpha = alpha != null ? alpha : 1
       this.inputIgnore = inputIgnore || false
-
-      this.$is_mounted = true
    }
 
-   isHover({x, y}) {
+   isHover(x, y) {
       return x > this.globalX && x < this.globalX + this.w && y > this.globalY && y < this.globalY + this.h;
-   }
-
-   isVisible(width) {
-      if (this.w == 0 || this.h == 0 || this.alpha == 0 || !this.color) {
-         return false;
-      }
-      return this.globalX + this.w > 0 && this.globalX < width;
    }
    
    onDown(input) {
-      if (!input.event_down && this.isHover(input) && this.color && this.alpha > 0 && !this.inputIgnore) {
+      if (!input.event_down && this.isHover(input.x, input.y) && this.color && this.alpha > 0 && !this.inputIgnore) {         
          input.event_down = true;
          this._mouse_down = true;
          this.emit('down', input, this);
@@ -34,7 +25,7 @@ export default class Element extends Child {
    onUp(input) {
       if (this._mouse_down) {
          this._mouse_down = false;
-         this.emit('up', input, this);          
+         this.emit('up', input, this);
       }
    }
 
@@ -48,7 +39,7 @@ export default class Element extends Child {
    render(ctx, input, time) {
       super.render(ctx, input, time)
       
-      if (this.isHover(input)) {         
+      if (this.isHover(input.x, input.y)) {         
          if(!input.el && !this.inputIgnore) {
             input.el = this;
          }
