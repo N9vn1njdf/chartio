@@ -25,7 +25,8 @@ export default class Navigator extends Component {
          w: 100,
          h: this.height,
          edgeWidth: theme.map_navigator_edge_width,
-         edgeColor: theme.map_color1
+         edgeColor: theme.map_color1,
+         minWidth: theme.map_navigator_min_width
       })
 
       this.offset = this.$canvas.width - 20 - this.scale + theme.map_navigator_edge_width

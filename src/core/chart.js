@@ -1,21 +1,21 @@
-import Scaffold from "./scaffold";
+import Scaffold from './scaffold.js';
 
 export default class Chart {
 
-   constructor(id, width, height, locale, theme) {      
+   constructor(id, width, height, theme, locale) {      
       theme = this._merge(theme, this.defaultTheme)
       locale = this._merge(locale, this.defaultLocale)
       
       this.scaffold = new Scaffold({id, width, height, theme, locale})
 
-      this.$create(this.scaffold, theme, locale)
+      this.$onCreate(theme, locale)
       this.scaffold.components = this.components
-      this.$created(theme, locale)
+      this.$onCreated(theme, locale)
    }
 
-   $create(theme, locale) {}
+   $onCreate(theme, locale) {}
 
-   $created(theme, locale) {}
+   $onCreated(theme, locale) {}
 
    setData(data) {      
       this.scaffold.setData(data)

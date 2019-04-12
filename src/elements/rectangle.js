@@ -17,7 +17,7 @@ export default class Rectangle extends MouseElement {
     * @override
     */
    isVisible(canvas_width, canvas_height) {
-      if ((this.w == 0 || this.h == 0 || this.alpha == 0 || !this.color) && !this.child) {         
+      if (this.w == 0 || this.h == 0 || this.alpha == 0) {         
          return false
       }
       return this.globalX + this.w > 0 && this.globalX < canvas_width
@@ -45,7 +45,7 @@ export default class Rectangle extends MouseElement {
          // ctx.save()
          // ctx.rect(this.x, this.y, this.w, this.h)
          // ctx.clip()
-      }
+      }      
 
       if (ctx.globalAlpha !== this.alpha) {
          ctx.globalAlpha = this.alpha

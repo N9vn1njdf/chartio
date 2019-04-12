@@ -68,24 +68,21 @@ export default class Columns extends Component {
       this.$element.x = offset.x
 
       if (this.lines_groups.children.length == 0) {
-         this.lines_groups.children = this.getColumnsGroup()
-   
+         this.createColumns()
       } else {
-         this.updatePositions()
+         this.updateColumns()
       }
    }
 
-   updatePositions() {
+   updateColumns() {
       if (this.prev_scale == this.scale && this.animation_data.length == 0) {
          return
       }
 
       let offset = this.height + this.offset.y
 
-      this.lines_groups.children.forEach(lines_groups => {
-         for (let i = 0; i < lines_groups.children.length; i++) {
-            let line = lines_groups.children[i];
-
+      this.lines_groups.children.forEach(lines_group => {
+         lines_group.children.forEach(line => {
             line.x = line.index * this.scale.x
             line.x2 = (line.index+1) * this.scale.x
 
@@ -98,7 +95,7 @@ export default class Columns extends Component {
                line.new_y2 =  offset - line.column_next_value * this.scale.y           
                line.offset_y2 = line.new_y2 - line.y2
             }
-         }
+         })
       })
 
       if (this.prev_scale.y !== this.scale.y) {
@@ -126,7 +123,7 @@ export default class Columns extends Component {
       })
    }
 
-   getColumnsGroup() {      
+   createColumns() {      
       var children = [];
       
       for (let c_i = 0; c_i < this.$columns.length; c_i++) {
@@ -144,27 +141,25 @@ export default class Columns extends Component {
             let y2 = column[i+1] * this.scale.y;
             let offset = this.height + this.offset.y
             
-            let child = new Line({
+            let line = new Line({
                x: (i-1) * this.scale.x,
                x2: i * this.scale.x,
                y: offset - y,
                y2: offset - y2,
             })
 
-            child.test = true
+            line.column_index = c_i;
+            line.column_value = column[i];
+            line.column_next_value = column[i+1];
+            line.index = i-1;
 
-            child.column_index = c_i;
-            child.column_value = column[i];
-            child.column_next_value = column[i+1];
-            child.index = i-1;
-
-            lines.push(child);
+            lines.push(line);
          }
 
          group.children = lines
          children.push(group)         
       }
 
-      return children;
+      this.lines_groups.children = children
    }
 }

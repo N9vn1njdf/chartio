@@ -15,8 +15,8 @@ export default class Line extends RenderElement {
    /**
     * @override
     */
-   isVisible(width) {
-      return (this.globalX > 0 || this.globalX2 > 0) && this.globalX < width
+   isVisible(canvas_width, canvas_height) {
+      return (this.globalX > 0 || this.globalX2 > 0) && this.globalX < canvas_width
    }
 
    /**

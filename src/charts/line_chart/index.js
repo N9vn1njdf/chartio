@@ -13,11 +13,11 @@ export default class LineChart extends Chart {
          main_padding: 10,
          date_height: 30,
          map_height: 56,
-         map_padding: 5,
+         map_padding: 2,
          map_color1: '#c0d1e1',
          map_color2: 'rgba(215, 228, 237, 0.5)',
          map_navigator_edge_width: 14,
-         map_navigator_min_width: 20,
+         map_navigator_min_width: 1,
          font_family: 'Arial',
          text_color1: '#99a4ac',
          text_size1: 14,
@@ -47,16 +47,7 @@ export default class LineChart extends Chart {
       }
    }
 
-   constructor(id, width, height, {locale, theme}) {
-      super(id, width, height, locale, theme)
-
-      this.map.on('update', (data) => {
-         this.main.onMapUpdate(data)
-         this.dates.onMapUpdate(data)
-      })
-   }
-
-   $create(scaffold, theme, locale) {
+   $onCreate(theme, locale) {
       // График
       this.main = new Main()
 
@@ -65,12 +56,16 @@ export default class LineChart extends Chart {
       
       // Миникарта
       this.map = new Map()
+      this.map.on('update', (data) => {
+         this.main.onMapUpdate(data)
+         this.dates.onMapUpdate(data)
+      })
 
       // Чекбоксы
       this.checboxes = new Checkboxes()
    }
 
-   $created(theme, locale) {}
+   $onCreated(theme, locale) {}
 
    get components() {
       return [

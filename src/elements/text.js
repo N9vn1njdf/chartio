@@ -2,11 +2,10 @@ import { RenderElement } from 'core/elements'
 
 export default class Text extends RenderElement {
 
-   constructor({text, size, fontFamily, align, color, alpha}) {
+   constructor({text, size, fontFamily, align, color}) {
       super(arguments[0]);
       
       this.color = color
-      this.alpha = alpha != null ? alpha : 1
 
       this.text = text+'' || '';
       this.size = size || 14;
@@ -19,11 +18,11 @@ export default class Text extends RenderElement {
    /**
     * @override
     */
-   isVisible(width) {      
+   isVisible(canvas_width, canvas_height) {      
       if (this.alpha == 0 || this.size == 0 || this.text.length == 0 || !this.color || this.color == 'transparent') {
          return false
       }
-      return this.x + this.size * this.text.length >= 0 && this.x < width
+      return this.globalX + this.size * this.text.length >= 0 && this.globalX < canvas_width
    }
 
    /**

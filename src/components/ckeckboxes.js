@@ -2,13 +2,6 @@ import { Component } from 'core'
 
 export default class Checkboxes extends Component {
 
-  $build(theme, locale) {
-    this.id = this.$scaffold.id
-
-    this.ui = document.createElement('div')
-    document.getElementById(this.id).appendChild(this.ui)
-  }
-
   /**
    * @override
    */
@@ -19,6 +12,16 @@ export default class Checkboxes extends Component {
       const column = this.$columns[i]
       this.createCheckbox(i, this.$names[column[0]], this.$colors[column[0]])
     }
+  }
+
+  /**
+   * @override
+   */
+  $build(theme, locale) {
+    this.id = this.$scaffold.id
+
+    this.ui = document.createElement('div')
+    document.getElementById(this.id).appendChild(this.ui)
   }
 
   createCheckbox(index, text, color) {

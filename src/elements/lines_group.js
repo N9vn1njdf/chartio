@@ -23,7 +23,7 @@ export default class LinesGroup extends HasChildren {
    /**
     * @override
     */
-   isVisible(width) {
+   isVisible(canvas_width, canvas_height) {
       return true
    }
 

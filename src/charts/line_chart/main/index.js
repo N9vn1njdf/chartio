@@ -22,13 +22,14 @@ export default class Main extends Component {
     */
    $build(theme, locale) {
       this.columns = new Columns()
+      this.hover = new Hover()
 
       return new Position({
          children: [
             // this.lines.element,
             this.columns,
             // this.y_axis.element,
-            // this.hover.element,
+            this.hover,
          ]
       })
    }
@@ -37,6 +38,6 @@ export default class Main extends Component {
       // this.y_axis.update({offset, scale, columns});
       // this.lines.update({scale, columns});
       this.columns.onMapUpdate({offset, scale});
-      // this.hover.update({offset, scale, columns, dates_column, colors, names});
+      this.hover.onMapUpdate({offset, scale});
    }
 }

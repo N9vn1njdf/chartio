@@ -33,7 +33,7 @@ export default class Input extends Event {
          } else if (document.mousedown_scaffold) {
             document.mousedown_scaffold.update()
          }
-      });
+      })
 
       document.addEventListener('mousedown', function(e) {
          _this.event = e;
@@ -44,7 +44,8 @@ export default class Input extends Event {
             _this.emit('down', _this)
             scaffold.update()
          }
-      });
+      })
+
       document.addEventListener('mouseup', function(e) {
          _this.el = null;
          _this.event = e;

@@ -9,7 +9,7 @@ export default class DragScaling extends HasChildren {
       this.w = w
       this.h = h
       this.axisX = axisX
-      this.minWidth = minWidth || 10  // минимальная ширина
+      this.minWidth = minWidth !== null ? minWidth : 10  // минимальная ширина
       this.onUpdate = onUpdate
       this.edgeColor = edgeColor || 'rgba(0, 0, 0, 0.2)'
       this.edgeWidth = edgeWidth || 5
@@ -18,7 +18,7 @@ export default class DragScaling extends HasChildren {
    /**
     * @override
     */
-   isVisible(width) {
+   isVisible(canvas_width, canvas_height) {
       return true
    }
 

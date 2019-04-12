@@ -2,21 +2,24 @@ import { RenderElement } from 'core/elements'
 
 export default class Circle extends RenderElement {
 
-   constructor({r, border}) {
+   constructor({r, color, border}) {
       super(arguments[0]);
       
-      this.r = r;
-      this.border = border;
+      this.r = r
+      this.color = color
+      this.border = border
+
+      this._endAngle = 2*Math.PI
    }
 
    /**
     * @override
     */
-   isVisible(width) {
+   isVisible(canvas_width, canvas_height) {      
       if (this.r == 0 || this.alpha == 0 || !this.color || this.color == 'transparent') {
-         return false;
+         return false
       }
-      return this.x + this.r/2 > 0 && this.x - this.r/2 < width;
+      return this.globalX + this.r/2 > 0 && this.globalX - this.r/2 < canvas_width
    }
 
    /**
@@ -34,13 +37,12 @@ export default class Circle extends RenderElement {
       if (ctx.fillStyle !== this.color) {
          ctx.fillStyle = this.color;
       }
-
+      
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+      ctx.arc(this.globalX, this.globalY, this.r, 0, this._endAngle)
       ctx.fill();
       
       if (this.border) {
-         // ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI);
          if (ctx.strokeStyle !== this.border.color) {
             ctx.strokeStyle = this.border.color;
          }

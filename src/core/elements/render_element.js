@@ -1,8 +1,10 @@
 import Event from '../event'
 
 export default class RenderElement extends Event {
-   constructor({x, y}) {
+   constructor({x, y, alpha}) {
       super()
+
+      this.alpha = alpha != null ? alpha : 1
 
       this.x = this._globalX = x || 0
       this.y = this._globalY = y || 0

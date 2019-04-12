@@ -25,7 +25,6 @@ module.exports = {
     alias: {
       charts: path.resolve(__dirname, 'src/charts/'),
       components: path.resolve(__dirname, 'src/components/'),
-      animations: path.resolve(__dirname, 'src/animations/'),
       elements: path.resolve(__dirname, 'src/elements/'),
       core: path.resolve(__dirname, 'src/core/'),
     }

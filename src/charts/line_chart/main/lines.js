@@ -1,5 +1,5 @@
 import { LinesGroup, Line, Position } from 'elements'
-import { FadeSlide } from 'animations'
+// import { FadeSlide } from 'animations'
 
 export default class Lines {
 
