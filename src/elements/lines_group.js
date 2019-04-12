@@ -21,6 +21,13 @@ export default class LinesGroup extends HasChildren {
    }
 
    /**
+    * @override
+    */
+   isVisible(width) {
+      return true
+   }
+
+   /**
     * Функция рендер. Вызывается при каждой отрисовке элемента
     * 
     * @param {CanvasRenderingContext2D} ctx 

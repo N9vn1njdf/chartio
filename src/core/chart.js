@@ -4,8 +4,9 @@ export default class Chart {
 
    constructor(id, width, height, locale, theme) {      
       theme = this._merge(theme, this.defaultTheme)
+      locale = this._merge(locale, this.defaultLocale)
       
-      this.scaffold = new Scaffold({id, width, height, theme})
+      this.scaffold = new Scaffold({id, width, height, theme, locale})
 
       this.$create(this.scaffold, theme, locale)
       this.scaffold.components = this.components

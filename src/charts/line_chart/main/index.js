@@ -8,13 +8,13 @@ import Lines from './lines.js'
 export default class Main extends Component {
 
    // constructor() {
-   //    // width -= 20
-   //    // this.width = width;
-   //    // this.height = height;
+      // width -= 20
+      // this.width = width;
+      // this.height = height;
 
-   //    // this.hover = new Hover({canvas, width, height, localeObserver, themeObserver, hiddenColumnsObserver});
-   //    // this.y_axis = new YAxis({width, height, themeObserver});
-   //    // this.lines = new Lines({width, height, themeObserver});
+      // this.hover = new Hover({canvas, width, height, localeObserver, themeObserver, hiddenColumnsObserver});
+      // this.y_axis = new YAxis({width, height, themeObserver});
+      // this.lines = new Lines({width, height, themeObserver});
    // }
    
    /**
@@ -24,7 +24,6 @@ export default class Main extends Component {
       this.columns = new Columns()
 
       return new Position({
-         x: 10,
          children: [
             // this.lines.element,
             this.columns,

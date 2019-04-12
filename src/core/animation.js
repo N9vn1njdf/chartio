@@ -1,11 +1,12 @@
 
 export default class Animation {
 
-   constructor({component, duration, curve, onStart, handle}) {
+   constructor({component, duration, curve, onStart, onEnd, handle}) {
       this.component = component
       this.duration = duration
       this.curve = curve
       this.onStart = onStart
+      this.onEnd = onEnd
       this.handle = handle
 
       this.running = false
@@ -20,7 +21,11 @@ export default class Animation {
     */
    run(data = null) {
       this._data = data
-      this.onStart.call(this.component, data)
+      
+      if (this.onStart) {
+         this.onStart.call(this.component, data)
+      }
+
       this.start_time = performance.now()
       this.running = true
       this.component.$update()
@@ -38,7 +43,11 @@ export default class Animation {
       this.handle.call(this.component, this.curve(time_fraction), this._data)
 
       if (time_fraction == 1) {
-         this.running = false         
+         this.running = false
+
+         if (this.onEnd) {
+            this.onEnd.call(this.component)
+         }
       }
 
       this.component.$update()

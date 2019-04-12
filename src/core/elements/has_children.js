@@ -35,6 +35,14 @@ export default class HasChildren extends RenderElement {
     * @param {Number} time 
     */
    render(ctx, input, time) {
-      this._children.forEach(child => child.render(ctx, input, time))
+      if (!this.isVisible(ctx.width, ctx.height)) {
+         return
+      }
+
+      this._children.forEach(child => {
+         if (child.$is_component || child.isVisible(ctx.width, ctx.height)) {
+            child.render(ctx, input, time)
+         }
+      })
    }
 }

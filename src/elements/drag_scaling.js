@@ -14,6 +14,13 @@ export default class DragScaling extends HasChildren {
       this.edgeColor = edgeColor || 'rgba(0, 0, 0, 0.2)'
       this.edgeWidth = edgeWidth || 5
    }
+   
+   /**
+    * @override
+    */
+   isVisible(width) {
+      return true
+   }
 
    get edgeColor() {
       return this._edgeColor

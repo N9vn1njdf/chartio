@@ -65,7 +65,7 @@ export default class Component extends Event {
    /**
     * @param {number} index
     */
-   $hideColumn(index) {      
+   $hideColumn(index) {
       this.$scaffold.hide_column_observer.broadcast(index)
    }
    
@@ -81,7 +81,7 @@ export default class Component extends Event {
    }
 
    _onShowColumn(index) {
-      for (let i = 0; i < this.$hidden_columns.length; i++) {      
+      for (let i = 0; i < this.$hidden_columns.length; i++) {
          if (index == this.$hidden_columns[i]) {
             this.$hidden_columns.splice(i, 1)
          }
@@ -111,19 +111,21 @@ export default class Component extends Event {
       this.$onLocale(theme)
    }
 
-   _calcVisibleColumns() {      
+   _calcVisibleColumns() {
       var result = []
       for (let i = 0; i < this.$columns.length; i++) {
-         if (!this.$hidden_columns.includes(i)) {            
+         if (!this.$hidden_columns.includes(i)) {
             result.push(i)
          }
       }
       this.$visible_columns = result
    }
 
-   _init(scaffold) {      
+   _init(scaffold) {
       this.$scaffold = scaffold
       this.$canvas = scaffold.canvas
+      this.$theme = scaffold.theme
+      this.$locale = scaffold.locale
       
       if (this.$build) {
          this.$element = this.$build(scaffold.theme, scaffold.locale)
@@ -151,21 +153,25 @@ export default class Component extends Event {
    }
 
    set globalX(value) {
-      this._globalX = value
-      this.updateChild()
+      if (this._globalX != value) {
+         this._globalX = value
+         this.updateChild()
+      }
    }
 
    get globalY() {
       return this._globalY
    }
 
-   set globalY(value) {      
-      this._globalY = value
-      this.updateChild()
+   set globalY(value) {
+      if (this._globalY != value) {
+         this._globalY = value
+         this.updateChild()
+      }
    }
 
    updateChild() {
-      if (this.child) {         
+      if (this.child) {
          this.child.globalY = this.child.y + this.globalY
          this.child.globalX = this.child.x + this.globalX
       }
@@ -190,8 +196,8 @@ export default class Component extends Event {
     * @param {Input} input 
     * @param {Number} time 
     */
-   render(ctx, input, time) {      
-      if (this.$element && (this.$element.$is_component || this.$element.isVisible(ctx.width, ctx.height))) {         
+   render(ctx, input, time) {
+      if (this.$element && (this.$element.$is_component || this.$element.isVisible(ctx.width, ctx.height))) {
          this.$element.render(ctx, input, time)
       }
 

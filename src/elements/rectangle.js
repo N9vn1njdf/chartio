@@ -41,14 +41,6 @@ export default class Rectangle extends MouseElement {
     * @param {Number} time 
     */
    render(ctx, input, time) {
-      
-      if (!this.isVisible(ctx.width, ctx.height)) {
-         this.color = 'red'
-         this.alpha = 0.5
-         // super.render(ctx, input, time)
-         // return
-      }
-
       if(this.clip) {
          // ctx.save()
          // ctx.rect(this.x, this.y, this.w, this.h)

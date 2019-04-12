@@ -3,36 +3,11 @@ import { LinesGroup, Line, Rectangle, Position } from 'elements'
 import { Navigator } from 'components'
 
 export default class Map extends Component {
-
-   constructor({map_height, main_height}) {
-      super()
-
-      this.map_height = map_height
-      this.padding = 0
-
-      this.main_height = main_height
-      this.main_padding_top = 0
-      this.main_padding_bottom = 0
-
-      this.main_scale_y = 1
-      this.map_scale_y = 1
-
-      this.animation = new Animation({
-         component: this,
-         duration: 200,
-         curve: (time_fraction) => Math.pow(time_fraction, 1),
-         onStart: this.startAnimate,
-         handle: this.animate
-      })
-   }
    
    /**
     * @override
     */
-   $onTheme(theme) {      
-      this.main_padding_top = theme.main_padding_top
-      this.main_padding_bottom = theme.main_padding_bottom
-
+   $onTheme(theme) {
       this.padding = theme.map_padding
       this.animation.duration = theme.animation_duration_4
    }
@@ -44,14 +19,15 @@ export default class Map extends Component {
       this.calcMapYScale()
       this.calcMapVerticalOffset()
       this.createLines()
-      // this.caclMainYScale()
+      this.calcMainYScale()
    }
 
    /**
     * @override
     */
-   $onHideColumn(index) {            
+   $onHideColumn(index) {
       this.calcMapYScale()
+      this.calcMainYScale()
       this.calcMapVerticalOffset()
       this.animation.run([0, index])
    }
@@ -59,8 +35,9 @@ export default class Map extends Component {
    /**
     * @override
     */
-   $onShowColumn(index) {      
+   $onShowColumn(index) {
       this.calcMapYScale()
+      this.calcMainYScale()
       this.calcMapVerticalOffset()
       this.animation.run([1, index])
    }
@@ -69,15 +46,29 @@ export default class Map extends Component {
     * @override
     */
    $build(theme, locale) {
-      this.navigator = new Navigator(this.map_height)
-      this.navigator.on('update', () => this.caclMainYScale())
+      this.animation = new Animation({
+         component: this,
+         duration: theme.animation_duration_4,
+         curve: (time_fraction) => Math.pow(time_fraction, 1),
+         onStart: this.startAnimate,
+         handle: this.animate
+      })
+
+      this.map_height = theme.map_height
+      this.padding = theme.map_padding
+
+      this.main_height = this.$canvas.height - theme.map_height - theme.date_height
+      
+      this.navigator = new Navigator()
+      this.navigator.on('update', () => this.calcMainYScale())
 
       this.lines_groups = new Position()
       this.$onTheme(theme)
       
       return new Rectangle({
          // clip: true,
-         y: this.$canvas.height - this.map_height,
+         x: 10,
+         y: this.$canvas.height - theme.map_height,
          w: this.$canvas.width,
          h: this.map_height,
          child: new Position({
@@ -128,36 +119,24 @@ export default class Map extends Component {
       })
    }
 
-   get main_offset() {
-      return {
-         x: -this.navigator.offset * ((this.scale.x * this.$canvas.width / this.navigator.scale) / this.scale.x),
-         y: this.main_offset_y || 0
-      }
-   }
-
-   get main_scale() {
-      return {
-         x: this.scale.x * (this.$canvas.width-5) / this.navigator.scale,
-         y: this.main_scale_y,
-      }
-   }
-
    get update_data() {
       return {
-         offset: this.main_offset,
-         scale: this.main_scale,
+         offset: {
+            x: -this.navigator.offset * ((this.scale.x * this.$canvas.width / this.navigator.scale) / this.scale.x),
+            y: this.main_offset_y || 0
+         },
+         scale: {
+            x: this.scale.x * (this.$canvas.width+4) / this.navigator.scale,
+            y: this.main_scale_y,
+         },
       }
    }
 
    get scale() {      
       return {
-         x: this.data_count > 0 ? this.$canvas.width/this.data_count : 0,
+         x: this.$columns[0] ? (this.$canvas.width-24) / (this.$columns[0].length-2) : 0,
          y: this.map_scale_y
       }
-   }
-
-   get data_count() {
-      return this.$columns[0] ? this.$columns[0].length-2 : 0
    }
 
    createLines() {
@@ -194,7 +173,7 @@ export default class Map extends Component {
    }
 
    calcMapVerticalOffset() {
-      this.vertical_offset = this.map_height + this.min_y * this.scale.y - this.padding
+      this.vertical_offset = this.$theme.map_height + this.min_y * this.scale.y - this.padding
    }
 
    calcMapYScale() {
@@ -207,21 +186,17 @@ export default class Map extends Component {
       if (items.length > 0) {         
          let min_max = this.getMinMaxY(items)
          this.min_y = min_max.min
-         this.map_scale_y = (this.map_height-this.padding*2)/(min_max.max - min_max.min)
+         this.map_scale_y = (this.$theme.map_height-this.padding*2)/(min_max.max - min_max.min)
          
       } else {
          this.map_scale_y = 0         
       }
    }
 
-   caclMainYScale() {
-      if (!this.scale) {
-         return
-      }
-
+   calcMainYScale() {
       var visible_items = []
       let s = this.scale.x * 2
-
+      
       for (let c = 0; c < this.$columns.length; c++) {
          if (this.$hidden_columns.includes(c)) {
             continue
@@ -236,11 +211,14 @@ export default class Map extends Component {
          }
       }
 
-      let min_max = this.getMinMaxY(visible_items)
-
-      this.main_scale_y = (this.main_height-this.main_padding_top-this.main_padding_bottom)/(min_max.max - min_max.min)
-      this.main_offset_y = this.main_scale_y * min_max.min
-
+      if (visible_items.length > 0) {
+         let min_max = this.getMinMaxY(visible_items)
+         this.main_scale_y = (this.main_height - this.$theme.main_padding)/(min_max.max - min_max.min)
+         this.main_offset_y = this.main_scale_y * min_max.min    
+      } else {
+         this.main_scale_y = 0
+      }
+      
       this.emit('update', this.update_data)
    }
 

@@ -27,10 +27,6 @@ export default class Circle extends RenderElement {
     * @param {Number} time 
     */
    render(ctx, input, time) {
-      if (!this.isVisible(ctx.width)) {
-         return;
-      }
-
       if (ctx.globalAlpha !== this.alpha) {
          ctx.globalAlpha = this.alpha;
       }

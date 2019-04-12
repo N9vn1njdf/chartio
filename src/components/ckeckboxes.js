@@ -2,13 +2,11 @@ import { Component } from 'core'
 
 export default class Checkboxes extends Component {
 
-  constructor(id) {
-    super()
-
-    this.id = id
+  $build(theme, locale) {
+    this.id = this.$scaffold.id
 
     this.ui = document.createElement('div')
-    document.getElementById(id).appendChild(this.ui)
+    document.getElementById(this.id).appendChild(this.ui)
   }
 
   /**

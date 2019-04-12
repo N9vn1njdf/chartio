@@ -2,9 +2,12 @@ import { RenderElement } from 'core/elements'
 
 export default class Text extends RenderElement {
 
-   constructor({text, size, fontFamily, align}) {
+   constructor({text, size, fontFamily, align, color, alpha}) {
       super(arguments[0]);
       
+      this.color = color
+      this.alpha = alpha != null ? alpha : 1
+
       this.text = text+'' || '';
       this.size = size || 14;
       this.fontFamily = fontFamily || 'Arial';
@@ -13,30 +16,14 @@ export default class Text extends RenderElement {
       this.cached = false;
    }
 
-   get w() {      
-      return this.size * this.text.length;
-   }
-
-   set w(value) {
-      this.size = value / this.text.length;
-   }
-
-   get h() {
-      return this.size;
-   }
-
-   set h(value) {
-      this.size = value;
-   }
-
    /**
     * @override
     */
-   isVisible(width) {
-      if (this.alpha == 0 || this.w == 0 || this.h == 0 || !this.color || this.color == 'transparent') {
-         return false;
+   isVisible(width) {      
+      if (this.alpha == 0 || this.size == 0 || this.text.length == 0 || !this.color || this.color == 'transparent') {
+         return false
       }
-      return this.x + this.w >= 0 && this.x < width;
+      return this.x + this.size * this.text.length >= 0 && this.x < width
    }
 
    /**
@@ -47,10 +34,6 @@ export default class Text extends RenderElement {
     * @param {Number} time 
     */
    render(ctx, input, time) {
-      if (!this.isVisible(ctx.width)) {
-         return;
-      }
-
       if (ctx.globalAlpha !== this.alpha) {
          ctx.globalAlpha = this.alpha;
       }
@@ -66,7 +49,7 @@ export default class Text extends RenderElement {
       if (ctx.textAlign !== this.align) {
          ctx.textAlign = this.align;
       }
-
-      ctx.fillText(this.text, this.x, this.y);
+      
+      ctx.fillText(this.text, this.globalX, this.globalY);
    }
 }

@@ -10,11 +10,9 @@ export default class Position extends HasChildren {
    }
 
    /**
-    * Простая проверка видимости, относительно ширины холста
-    * 
     * @override
     */
-   isVisible(canvas_width, canvas_height) {
-      return this.globalX + this.w > 0 && this.globalX < canvas_width
+   isVisible(canvas_width, canvas_height) {      
+      return true
    }
 }

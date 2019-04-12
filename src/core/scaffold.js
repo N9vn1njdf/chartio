@@ -14,7 +14,7 @@ export default class Scaffold {
 
       this.theme = theme
       this.locale = locale
-
+      
       this.canvas = canvas
       this.canvas.width = this.width = width/100*120
       this.canvas.height = this.height = height/100*120

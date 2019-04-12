@@ -9,7 +9,7 @@ export default class HasChild extends RenderElement {
    }
 
    updateChild() {
-      if (this.child) {
+      if (this.child) {         
          this.child.globalY = this.child.y + this.globalY
          this.child.globalX = this.child.x + this.globalX
       }
@@ -35,7 +35,7 @@ export default class HasChild extends RenderElement {
     * @param {Number} time 
     */
    render(ctx, input, time) {
-      if (this._child) {
+      if (this._child && (this._child.$is_component || this._child.isVisible(ctx.width, ctx.height))) {         
          this._child.render(ctx, input, time)
       }
    }

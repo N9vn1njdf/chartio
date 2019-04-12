@@ -13,17 +13,29 @@ export default class RenderElement extends Event {
    }
 
    set x(value) {
-      this._x = value
-      this.updateParent()
+      if (this._x != value) {
+         this._x = value
+
+         if (this.parent) {
+            this._globalX = value + this.parent._globalX
+         }
+         this.updateChild()
+      }
    }
 
    get y() {
       return this._y
    }
 
-   set y(value) {      
-      this._y = value
-      this.updateParent()
+   set y(value) {
+      if (this._y != value) {
+         this._y = value
+
+         if (this.parent) {
+            this._globalY = value + this.parent._globalY
+         }
+         this.updateChild()
+      }
    }
 
    get x2() {
@@ -31,17 +43,29 @@ export default class RenderElement extends Event {
    }
 
    set x2(value) {
-      this._x2 = value
-      this.updateParent()
+      if (this._x2 != value) {
+         this._x2 = value
+
+         if (this.parent) {
+            this.globalX2 = value + this.parent.globalX
+         }
+         this.updateChild()
+      }
    }
 
    get y2() {
       return this._y2
    }
 
-   set y2(value) {      
-      this._y2 = value
-      this.updateParent()
+   set y2(value) {
+      if (this._y2 != value) {
+         this._y2 = value
+
+         if (this.parent) {
+            this.globalY2 = value + this.parent.globalY
+         }
+         this.updateChild()
+      }
    }
 
    get globalX() {
@@ -49,8 +73,10 @@ export default class RenderElement extends Event {
    }
 
    set globalX(value) {
-      this._globalX = value
-      this.updateChild()
+      if (this._globalX != value) {
+         this._globalX = value
+         this.updateChild()
+      }
    }
 
    get globalY() {
@@ -58,15 +84,17 @@ export default class RenderElement extends Event {
    }
 
    set globalY(value) {
-      this._globalY = value
-      this.updateChild()
-   }
-
-   updateParent() {
-      if (this.parent && !this.parent.$is_component) {
-         this.parent.updateChild()
+      if (this._globalY != value) {
+         this._globalY = value
+         this.updateChild()
       }
    }
+
+   // updateParent() {
+   //    if (this.parent) {
+   //       this.parent.updateChild()
+   //    }
+   // }
 
    /**
     * Обновить координаты дочерних элементов, относительно родительского
