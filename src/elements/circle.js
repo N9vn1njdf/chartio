@@ -3,7 +3,7 @@ import { RenderElement } from 'core/elements'
 export default class Circle extends RenderElement {
 
    constructor({r, color, border}) {
-      super(arguments[0]);
+      super(arguments[0])
       
       this.r = r
       this.color = color
@@ -31,26 +31,26 @@ export default class Circle extends RenderElement {
     */
    render(ctx, input, time) {
       if (ctx.globalAlpha !== this.alpha) {
-         ctx.globalAlpha = this.alpha;
+         ctx.globalAlpha = this.alpha
       }
 
       if (ctx.fillStyle !== this.color) {
-         ctx.fillStyle = this.color;
+         ctx.fillStyle = this.color
       }
       
-      ctx.beginPath();
+      ctx.beginPath()
       ctx.arc(this.globalX, this.globalY, this.r, 0, this._endAngle)
-      ctx.fill();
+      ctx.fill()
       
       if (this.border) {
          if (ctx.strokeStyle !== this.border.color) {
-            ctx.strokeStyle = this.border.color;
+            ctx.strokeStyle = this.border.color
          }
    
          if (ctx.lineWidth !== this.border.w) {
-            ctx.lineWidth = this.border.w;
+            ctx.lineWidth = this.border.w
          }
-         ctx.stroke();
+         ctx.stroke()
       }
    }
 }

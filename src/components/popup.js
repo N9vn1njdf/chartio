@@ -24,7 +24,7 @@ export default class Popup extends Component {
   }
 
   show(index, input) {
-    index = (index) >> 0
+    index = index+1
 
     // Создаем или анимируем данные для попапа
     if (this.index == null) {      
@@ -33,7 +33,7 @@ export default class Popup extends Component {
       this.animatePopupData(index)
     }
 
-    this.index = index
+    // this.index = index
 
     // Позиционирование попапа
     let y = this.$canvas.offsetTop + input.y - 20
@@ -96,7 +96,8 @@ export default class Popup extends Component {
 
   createPopupData(index) {
     this.div_columns.innerHTML = null
-
+    this.date_text.innerHTML = null
+    
     for (let i = 0; i < this.$columns.length; i++) {
       if (!this.$hidden_columns.includes(i)) {
         let column = this.$columns[i]
@@ -158,7 +159,7 @@ export default class Popup extends Component {
   }
 
   getDateByIndex(index) {    
-    let date = new Date(this.$dates[index+1])
+    let date = new Date(this.$dates[index])
     let day = this.$locale.day[date.getDay()]
     let d = date.getDate()
     let m = this.$locale.month[date.getMonth()]

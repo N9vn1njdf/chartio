@@ -4,6 +4,7 @@ import Dates from './dates.js'
 import Map from './map.js'
 import { Checkboxes } from 'components'
 import YAxis from './y_axis.js';
+import Lines from './lines.js'
 
 export default class LineChart extends Chart {
 
@@ -12,14 +13,14 @@ export default class LineChart extends Chart {
          name: 'default',
          background: '#fff',
 
-         main_padding: 10,
+         main_padding: 20,
          main_margin: 25,
-         main_animation_duration: 220,
+         main_animation_duration: 340,
 
          map_height: 56,
          map_padding: 2,
          map_margin: 20,
-         map_animation_duration: 220,
+         map_animation_duration: 340,
 
          dates_height: 46,
          dates_animation_duration: 80,
@@ -28,7 +29,7 @@ export default class LineChart extends Chart {
          map_color1: '#c0d1e1',
          map_color2: 'rgba(215, 228, 237, 0.5)',
          map_navigator_edge_width: 14,
-         map_navigator_min_width: 1,
+         map_navigator_min_width: 2,
 
          font_family: 'Arial',
          text_color1: '#99a4ac',
@@ -66,10 +67,14 @@ export default class LineChart extends Chart {
       // Текст и линии по вертикальной оси
       this.y_axis = new YAxis()
 
+      // Горизонтальный линии
+      this.lines = new Lines()
+
       // Миникарта
       this.map = new Map()
       this.map.on('update', (data) => {
          this.main.onMapUpdate(data)
+         this.lines.onMapUpdate(data);
          this.dates.onMapUpdate(data)
          this.y_axis.onMapUpdate(data)
       })
@@ -82,6 +87,7 @@ export default class LineChart extends Chart {
 
    get components() {
       return [
+         this.lines,
          this.main,
          this.y_axis,
          this.dates,

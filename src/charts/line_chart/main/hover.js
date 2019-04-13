@@ -48,7 +48,7 @@ export default class Hover extends Component {
       this.height = this.$canvas.height - theme.dates_height - theme.map_height - this.padding
 
       this.circles = new Position()
-      this.line = new Rectangle({w: 1, h: this.height, color: theme.line_color2})
+      this.line = new Rectangle({alpha: 0, w: 1, h: this.height, color: theme.line_color2})
       
       this.popup = new Popup()
 

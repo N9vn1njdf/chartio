@@ -55,7 +55,7 @@ export default class Map extends Component {
       this.animation = new Animation({
          component: this,
          duration: theme.map_animation_duration,
-         curve: Curves.easeInOutQuad,
+         curve: Curves.easeOutCubic,
          onStart: this.startAnimate,
          handle: this.animate
       })

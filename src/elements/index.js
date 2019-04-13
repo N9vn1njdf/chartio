@@ -5,6 +5,7 @@ import Circle from './circle.js';
 import Rectangle from './rectangle.js';
 import Position from './position.js';
 import DragScaling from './drag_scaling.js';
+import HorizontalLine from './horizontal_line.js';
 
 export {
    Line,
@@ -14,4 +15,5 @@ export {
    Rectangle,
    Position,
    DragScaling,
+   HorizontalLine,
 }

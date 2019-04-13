@@ -1,13 +1,14 @@
 import { RenderElement } from 'core/elements';
 
-// Элемент должен быть помещен в LinesGroup для отрисовки
-export default class Line extends RenderElement {
+export default class HorizontalLine extends RenderElement {
 
-   constructor({x2, y2}) {
+   constructor({w, lineWidth, color, lineCap}) {
       super(arguments[0])
 
-      this.x2 = x2
-      this.y2 = y2
+      this.w = w
+      this.lineWidth = lineWidth
+      this.color = color
+      this.lineCap = lineCap || 'butt'
    }
 
    /**
@@ -29,7 +30,24 @@ export default class Line extends RenderElement {
          ctx.globalAlpha = this.alpha
       }
 
+      if (ctx.lineCap != this.lineCap) {
+         ctx.lineCap = this.lineCap
+      }
+
+      if (ctx.strokeStyle !== this.color) {
+         ctx.strokeStyle = this.color
+      }
+
+      if (ctx.lineWidth !== this.lineWidth) {
+         ctx.lineWidth = this.lineWidth
+      }
+
+      ctx.beginPath()
+
       ctx.moveTo(this.globalX, this.globalY)
-      ctx.lineTo(this.globalX2, this.globalY2)
+      ctx.lineTo(this.globalX + this.w, this.globalY)
+
+      ctx.closePath()
+      ctx.stroke()
    }
 }

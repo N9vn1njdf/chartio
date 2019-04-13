@@ -40,7 +40,7 @@ export default class Columns extends Component {
       this.animation = new Animation({
          component: this,
          duration: theme.main_animation_duration,
-         curve: Curves.easeInOutQuad,
+         curve: Curves.easeOutCubic,
          handle: this.animate,
          onEnd: () => {
             this.animation_data = []
@@ -127,7 +127,8 @@ export default class Columns extends Component {
 
    createColumns() {      
       var children = [];
-      
+      let offset = this.height + this.offset.y
+
       for (let c_i = 0; c_i < this.$columns.length; c_i++) {
          let column = this.$columns[c_i];
          
@@ -141,7 +142,6 @@ export default class Columns extends Component {
 
             let y = column[i] * this.scale.y;
             let y2 = column[i+1] * this.scale.y;
-            let offset = this.height + this.offset.y
             
             let line = new Line({
                x: (i-1) * this.scale.x,

@@ -65,15 +65,33 @@ export default class Input extends Event {
          if (e.target == _this.canvas) {
             var touch = e.targetTouches[0];
             
-            _this.down = true;
-            _this.x = touch.pageX - _this.canvas.offsetLeft;
-            _this.y = touch.pageY - _this.canvas.offsetTop;
+            _this.el = null;
+            _this.event = e;
+            _this.down = true
+
+            let rect = _this.canvas.getBoundingClientRect();
+            _this.x = (touch.pageX - rect.left)/100*120
+            _this.y = (touch.pageY - rect.top)/100*120         
+            
+            if (e.target == _this.canvas) {
+               scaffold.update()
+            } else if (document.mousedown_scaffold) {
+               document.mousedown_scaffold.update()
+            }
+            _this.emit('down', _this)
+
+            // _this.down = true;
+            // _this.x = touch.pageX - _this.canvas.offsetLeft;
+            // _this.y = touch.pageY - _this.canvas.offsetTop;
          }
       });
       document.addEventListener('touchend', function(e) {
          if (e.target == _this.canvas) {
             _this.down = false;
          }
+
+         _this.emit('up', _this);
+         scaffold.update()
       });
    }
 }

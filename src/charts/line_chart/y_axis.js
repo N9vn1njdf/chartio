@@ -1,7 +1,11 @@
 import { Component, Animation } from 'core'
-import { Position, Text, Rectangle } from 'elements'
+import { Position, Text, Rectangle, HorizontalLine } from 'elements'
 
 export default class YAxis extends Component {
+
+   constructor() {
+      super()
+   }
 
    /**
     * @override
@@ -38,6 +42,13 @@ export default class YAxis extends Component {
     * @override
     */
    $build(theme, locale) {
+      this.height = this.$canvas.height - theme.map_height - theme.dates_height
+      this.margin = 20
+      this.lines_count = 6
+
+      
+
+
       this.hidden_levels = []
 
       this.color = theme.dates_text_color
@@ -56,11 +67,17 @@ export default class YAxis extends Component {
          // y: this.$canvas.height - theme.map_height - theme.dates_height,
       })
 
+      this.width = this.$canvas.width - this.margin*2
+      this.height = this.height - this.margin
+      this.step = this.height / this.lines_count
+
       return new Rectangle({
-         w: this.$canvas.width,
-         h: this.$canvas.height - theme.map_height - theme.dates_height,
-         ignoreInput: true,
-         color: 'rgba(211,211,51,0.2)',
+         x: this.margin,
+         y: this.margin,
+         w: this.width,
+         h: this.height,
+         // ignoreInput: true,
+         // color: 'rgba(211,211,51,0.2)',
          child: this.el
       })
    }
@@ -69,59 +86,63 @@ export default class YAxis extends Component {
       this.offset = offset
       this.prev_scale = this.scale
       this.scale = scale
-
-      // this.$element.w = (this.$columns[0].length-2)*this.scale.x
-      // this.$element.x = 11
       
       if (this.el.children.length == 0) {
-         this.calcHidden(true)
+         // this.calcHidden(true)
          this.createItems()
       } else {
          // this.calcHidden()
-         // this.updateDates()
+         this.updateItems()
       }
+   }
+
+   getText(i) {
+      i = (i * this.step + this.offset.y) / this.scale.y
+
+      if (i > 1000000) {
+         return (i/1000000).toFixed(1)+'М'
+      }
+      if (i > 1000) {
+         return (i/1000).toFixed(1)+'К'
+      }
+      return (i) >> 0
    }
 
    createItems() {
       let children = []
-      
-      for (let i = 1; i < this.$columns[0].length; i++) {
-         let x = (i-1) * this.scale.x - this.font_size/5
 
+      for (let i = 1; i <= this.lines_count+100; i++) {
+         
          let text = new Text({
-            alpha: this.hidden.includes(i-1) ? 0 : 1,
-            x: 10,
-            y: 12,
-            text: 'test',
+            y: -20,
+            text: this.getText(i),
             size: this.font_size,
             fontFamily: this.font_family,
             color: this.color,
-            align: 'center'
          })
 
-         children.push(text)
+         let child = new Position({
+            // alpha: this.hidden.includes(i-1) ? 0 : 1,
+            y: this.height - i * this.step,
+            children: [
+               text,
+               // new HorizontalLine({w: this.width, lineWidth: 1, color: 'red', alpha: 0.2}),
+            ]
+         })
+         child.index = i
+
+         children.push(child)
       }
 
       this.el.children = children      
    }
 
-   updateDates() {
-      for (let i = 0; i < this.$element.children.length; i++) {
-         let element = this.$element.children[i];
+   updateItems() {
+      this.el.children.forEach(child => {
+         child.y = this.height - child.index * this.step
+      })
 
-         element.x = i * this.scale.x - this.font_size/5
-         
-         if (this.hidden.includes(i)) {
-            element.new_alpha = 0
-         } else {
-            element.new_alpha = 1
-         }
-
-         element.old_alpha = element.alpha
-         element.alpha_fraction = element.new_alpha - element.alpha
-      }
-
-      this.animation.run()
+      // this.animation.run()
    }
 
    animate(progress) {
@@ -129,6 +150,15 @@ export default class YAxis extends Component {
          element.alpha = element.alpha_fraction * progress + element.old_alpha
       })
    }
+
+
+
+
+
+
+
+
+
 
    // Возвращает индексы скрытых элементов
    get hidden() {

@@ -35,10 +35,6 @@ export default class LinesGroup extends HasChildren {
     * @param {Number} time 
     */
    render(ctx, input, time) {
-      if (this.alpha == 0) {
-         return;
-      }
-
       if (ctx.lineCap != this.lineCap) {
          ctx.lineCap = this.lineCap;
       }
