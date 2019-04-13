@@ -1,12 +1,16 @@
 import { Component } from 'core'
 
-export default class Checkboxes extends Component {
+/**
+ * show(index, input) - показать попап в соответствии с координатами Input
+ * hide() - скрыть попап
+ */
+export default class Popup extends Component {
 
   /**
    * @override
    */
   $onData({dates, columns, $colors, $names}) {
-    this.show(columns[0].length-4)
+    
   }
 
   /**
@@ -14,8 +18,40 @@ export default class Checkboxes extends Component {
    */
   $build(theme, locale) {
     this.id = this.$scaffold.id
+    this.index
 
     this.createPopup()
+  }
+
+  show(index, input) {
+    index = (index) >> 0
+
+    // Создаем или анимируем данные для попапа
+    if (this.index == null) {      
+      this.createPopupData(index)
+    } else if (this.index !== index) {
+      this.animatePopupData(index)
+    }
+
+    this.index = index
+
+    // Позиционирование попапа
+    let y = this.$canvas.offsetTop + input.y - 20
+    let x = input.event.x + 20         
+    
+    if (x + this.div.offsetWidth > this.$canvas.width) {
+      x = input.event.x - 20 - this.div.offsetWidth
+    }
+
+    this.div.style.display = 'block'
+    this.div.style.top = y + 'px'
+    this.div.style.left = x + 'px'
+  }
+
+  hide() {      
+    // this.line.alpha = 0
+    this.div.style.display = 'none'
+    // this.circles.children.forEach(circle => circle.alpha = 0)
   }
 
   createPopup() {
@@ -32,63 +68,104 @@ export default class Checkboxes extends Component {
     this.div.appendChild(this.div_columns)
 
     document.body.appendChild(this.div)
+
+    this.div.addEventListener('webkitAnimationStart', () => {
+      console.log(123);
+      
+    });
   }
 
-  createColumnInfo(index, value) {
-    index = (index) >> 0
-    if (this.$hidden_columns.includes(index)) {
-       return
-    }
-
+  createColumnInfo(name, color, value) {
     let div = document.createElement('div')
     div.setAttribute('class', 'chart-popup-value')
 
     let count = document.createElement('div')      
-    count.style.color = this.$colors[this.$columns[index][0]]
+    count.style.color = color
     count.setAttribute('class', 'chart-popup-value-count')
-    count.innerHTML = value
+    count.innerText = value
     div.appendChild(count)
 
     let label = document.createElement('div')
     label.setAttribute('class', 'chart-popup-value-label')
 
-    label.innerHTML = this.$names[this.$columns[index][0]]
+    label.innerHTML = name
     div.appendChild(label)
 
     this.div_columns.appendChild(div)
   }
 
-  show(column_index) {
+  createPopupData(index) {
     this.div_columns.innerHTML = null
 
     for (let i = 0; i < this.$columns.length; i++) {
-      let column = this.$columns[i]
-      
+      if (!this.$hidden_columns.includes(i)) {
+        let column = this.$columns[i]
+        this.createColumnInfo(this.$names[column[0]], this.$colors[column[0]], column[index])
+      }
     }
 
-    // for(let i in data) {
-    //   data[i].alpha = 1
-    //   let value = data[i].column_value
-    //   this.createColumnInfo(i, value)
+    let date = this.getDateByIndex(index)
+
+    this.el1 = document.createElement('span')
+    // this.el1.setAttribute('class', 'chart-popup-date-day')
+    this.el1.innerText = date[0]
+    this.date_text.appendChild(this.el1)
+
+    this.el2 = document.createElement('span')
+    this.el2.innerText = date[1]
+    this.date_text.appendChild(this.el2)
+
+    this.el3 = document.createElement('span')
+    this.el3.innerText = date[2]
+    this.date_text.appendChild(this.el3)
+
+    this.el4 = document.createElement('span')
+    this.el4.innerText = date[3]
+    this.date_text.appendChild(this.el4)
+  }
+
+  animatePopupData(index) {
+    // if (this.new_el1) {
+    //   return
     // }
 
-    this.date_text.innerHTML = this.getDateByIndex(column_index)
-    this.div.style.display = 'block'
+    let date = this.getDateByIndex(index)
+    this.el1.innerText = date[0]
+    this.el2.innerText = date[1]
+    this.el3.innerText = date[2]
+    this.el4.innerText = date[3]
+
+    // this.new_el1 = document.createElement('span')
+    // this.new_el1.setAttribute('class', 'chart-popup-fade-in hidden')
+    // this.new_el1.innerText = date[0]
+    // this.date_text.insertBefore(this.new_el1, this.el2)
+
+    // this.new_el1.addEventListener('webkitAnimationStart', () => {
+    //   console.log(123);
+      
+    // });
+
+    // // remove
+    // this.date_text.removeChild(this.el1)
+    // this.el1 = this.new_el1
+    // // remove
+
+
+
+    // let new_date = this.getDateByIndex(index)
+    // new_date.setAttribute
+    // this.date_text.appendChild(new_date)
   }
 
-  hidePopup() {      
-    this.line.alpha = 0
-    this.div.style.display = 'none'
-    this.circles.children.forEach(circle => circle.alpha = 0)
-  }
-
-  getDateByIndex(column_index) {    
-    let date = new Date(this.$dates[column_index])
+  getDateByIndex(index) {    
+    let date = new Date(this.$dates[index+1])
     let day = this.$locale.day[date.getDay()]
     let d = date.getDate()
     let m = this.$locale.month[date.getMonth()]
     let y = date.getFullYear()
 
-    return day + ', ' + d + ' ' + m + ' ' + y
+    return [day, d, m, y]
+
+    // return day + ', ' + d + ' ' + m + ' ' + y
   }
 }

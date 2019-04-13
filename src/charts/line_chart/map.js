@@ -57,7 +57,7 @@ export default class Map extends Component {
       this.map_height = theme.map_height
       this.padding = theme.map_padding
 
-      this.main_height = this.$canvas.height - theme.map_height - theme.date_height
+      this.main_height = this.$canvas.height - theme.map_height - theme.date_height - theme.main_padding
       
       this.navigator = new Navigator()
       this.navigator.on('update', () => this.calcMainYScale())
@@ -67,7 +67,7 @@ export default class Map extends Component {
       
       return new Rectangle({
          // clip: true,
-         x: 10,
+         x: theme.map_margin,
          y: this.$canvas.height - theme.map_height,
          w: this.$canvas.width,
          h: this.map_height,
@@ -80,7 +80,7 @@ export default class Map extends Component {
       })
    }
 
-   startAnimate([type, column_index]) {      
+   startAnimate([type, column_index]) {
       this.lines_groups.children.forEach(lines_group => {
          for (let i = 0; i < lines_group.children.length; i++) {
             let line = lines_group.children[i]
@@ -92,7 +92,7 @@ export default class Map extends Component {
            
             if (line2) {
                line.old_y2 = line.y2
-               line.new_y2 =  this.vertical_offset - line2.column_value * this.scale.y            
+               line.new_y2 =  this.vertical_offset - line2.column_value * this.scale.y
                line.offset_y2 = line.new_y2 - line.y2
             }
          }
@@ -106,7 +106,7 @@ export default class Map extends Component {
          for (let i = 0; i < lines_group.children.length; i++) {
             let line = lines_group.children[i]
 
-            if (line.column_index == column_index) {               
+            if (line.column_index == column_index) {
                line.alpha = type == 0 ? 1 - progress : progress
             }
 
@@ -120,21 +120,23 @@ export default class Map extends Component {
    }
 
    get update_data() {
+      let main_scale_x = this.scale.x * (this.$canvas.width-this.$theme.main_margin*2) / this.navigator.scale
+
       return {
          offset: {
-            x: -this.navigator.offset * ((this.scale.x * this.$canvas.width / this.navigator.scale) / this.scale.x),
+            x: -this.navigator.offset * (main_scale_x / this.scale.x),
             y: this.main_offset_y || 0
          },
          scale: {
-            x: this.scale.x * (this.$canvas.width+4) / this.navigator.scale,
+            x: main_scale_x,
             y: this.main_scale_y,
          },
       }
    }
 
-   get scale() {      
+   get scale() {
       return {
-         x: this.$columns[0] ? (this.$canvas.width-24) / (this.$columns[0].length-2) : 0,
+         x: this.$columns[0] ? (this.$canvas.width-this.$theme.map_margin*2) / (this.$columns[0].length-2) : 0,
          y: this.map_scale_y
       }
    }
@@ -149,6 +151,10 @@ export default class Map extends Component {
          let lines = []
 
          for (let i = 1; i < column.length; i++) {
+            if (!column[i+1]) {
+               break;
+            }
+
             let y = column[i] * this.scale.y
             let y2 = column[i+1] ? column[i+1] * this.scale.y : y
             
@@ -179,17 +185,17 @@ export default class Map extends Component {
    calcMapYScale() {
       let items = []
 
-      for (let i in this.$visible_columns) {         
+      for (let i in this.$visible_columns) {
          this.$columns[this.$visible_columns[i]].forEach(item => items.push(item))
       }
       
-      if (items.length > 0) {         
+      if (items.length > 0) {
          let min_max = this.getMinMaxY(items)
          this.min_y = min_max.min
          this.map_scale_y = (this.$theme.map_height-this.padding*2)/(min_max.max - min_max.min)
          
       } else {
-         this.map_scale_y = 0         
+         this.map_scale_y = 0
       }
    }
 
@@ -213,7 +219,7 @@ export default class Map extends Component {
 
       if (visible_items.length > 0) {
          let min_max = this.getMinMaxY(visible_items)
-         this.main_scale_y = (this.main_height - this.$theme.main_padding)/(min_max.max - min_max.min)
+         this.main_scale_y = this.main_height/(min_max.max - min_max.min)
          this.main_offset_y = this.main_scale_y * min_max.min    
       } else {
          this.main_scale_y = 0

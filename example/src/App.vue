@@ -96,6 +96,12 @@ p {
   border-radius: 14px;
   width: 170px;
 
+  &-fade {
+    &-in {
+      
+    }
+  }
+
   &-date {
     font-size: 14px;
     font-weight: bold;

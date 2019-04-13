@@ -20,7 +20,7 @@ export default class Navigator extends Component {
       this.height = theme.map_height
 
       this.navigator = new DragScaling({
-         axisX: {min: 0, max: this.$canvas.width - 20},
+         axisX: {min: 0, max: this.$canvas.width - theme.map_margin*2},
          onUpdate: () => this.update(),
          w: 100,
          h: this.height,
@@ -29,7 +29,7 @@ export default class Navigator extends Component {
          minWidth: theme.map_navigator_min_width
       })
 
-      this.offset = this.$canvas.width - 20 - this.scale + theme.map_navigator_edge_width
+      this.offset = this.$canvas.width - theme.map_margin*2 - this.scale + theme.map_navigator_edge_width
       
       this.background = [
          new Rectangle({h: this.height, color: theme.map_color2, border: {tr: 0, tl: 8, br: 0, bl: 8}, inputIgnore: true}),
@@ -57,7 +57,7 @@ export default class Navigator extends Component {
    update(event = true) {
       this.background[0].w = this.offset + this.navigator.edgeWidth
       this.background[1].x = this.navigator.x + this.navigator.w
-      this.background[1].w = this.$canvas.width - this.background[1].x - 20
+      this.background[1].w = this.$canvas.width - this.background[1].x - this.$theme.map_margin*2
 
       this.border[0].w = this.border[1].w = this.navigator.w
       this.border[0].x = this.border[1].x = this.navigator.x

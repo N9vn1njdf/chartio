@@ -10,10 +10,12 @@ export default class LineChart extends Chart {
       return {
          name: 'default',
          background: '#fff',
-         main_padding: 10,
          date_height: 30,
+         main_padding: 10,
+         main_margin: 30,
          map_height: 56,
          map_padding: 2,
+         map_margin: 20,
          map_color1: '#c0d1e1',
          map_color2: 'rgba(215, 228, 237, 0.5)',
          map_navigator_edge_width: 14,

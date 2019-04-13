@@ -65,7 +65,7 @@ export default class Columns extends Component {
       this.scale = scale
 
       this.$element.w = (this.$columns[0].length-2)*this.scale.x
-      this.$element.x = offset.x
+      this.$element.x = offset.x + this.$theme.main_margin
 
       if (this.lines_groups.children.length == 0) {
          this.createColumns()
@@ -133,7 +133,7 @@ export default class Columns extends Component {
          let lines = [];
          
          for (let i = 1; i < column.length; i++) {
-            if (i > column.length-1) {
+            if (!column[i+1]) {
                break;
             }
 

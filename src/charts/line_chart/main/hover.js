@@ -64,7 +64,7 @@ export default class Hover extends Component {
          })
       })
       el.on('move', (input, element) => this.onMove(input))
-      el.on('leave', (input, element) => this.hidePopup())
+      el.on('leave', (input, element) => this.popup.hide())
 
       return el
    }
@@ -74,8 +74,8 @@ export default class Hover extends Component {
       this.prev_scale = this.scale
       this.scale = scale
 
-      this.$element.w = (this.$columns[0].length-2)*this.scale.x + 10
-      this.$element.x = offset.x
+      this.$element.w = (this.$columns[0].length-2)*this.scale.x + this.$theme.main_margin
+      this.$element.x = offset.x + this.$theme.main_margin
 
       if (this.circles.children.length == 0) {
          this.createCircles()
@@ -130,7 +130,7 @@ export default class Hover extends Component {
 
    onMove(input) {
       if (input.event.target !== this.$canvas) {
-         this.hidePopup()
+         this.popup.hide()
          return
       }
 
@@ -164,25 +164,23 @@ export default class Hover extends Component {
          point.alpha = 0
       }      
 
-      if (closerLeft[0] || closerRight[0]) {
-         if (closerRight[0] && (!closerLeft[0] || input.x - closerLeft[0].globalX >= closerRight[0].globalX - input.x)) {
-            this.showPopup(closerRight)
-         } else {
-            this.showPopup(closerLeft)
+      
+      if (!closerLeft[0] && !closerRight[0]) {
+         this.popup.hide()
+         return
+      }
+
+
+      if (closerRight[0] && (!closerLeft[0] || input.x - closerLeft[0].globalX >= closerRight[0].globalX - input.x)) {
+         this.popup.show(closerRight[0].index, input)
+         for(let i in closerRight) {
+            closerRight[i].alpha = 1
          }
-
-         let y = this.$canvas.offsetTop + input.y - 20
-         let x = input.event.x + 20         
-         
-         if (x + this.div.offsetWidth > this.$canvas.width) {
-            x = input.event.x - 20 - this.div.offsetWidth
-         }
-
-         this.div.style.top = y + 'px'
-         this.div.style.left = x + 'px'
-
       } else {
-         this.hidePopup()
+         this.popup.show(closerLeft[0].index, input)
+         for(let i in closerLeft) {
+            closerLeft[i].alpha = 1
+         }
       }
    }
 }
