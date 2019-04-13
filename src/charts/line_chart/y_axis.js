@@ -1,7 +1,7 @@
 import { Component, Animation } from 'core'
-import { Position, Text } from 'elements'
+import { Position, Text, Rectangle } from 'elements'
 
-export default class Dates extends Component {
+export default class YAxis extends Component {
 
    /**
     * @override
@@ -25,6 +25,18 @@ export default class Dates extends Component {
    /**
     * @override
     */
+   $onHideColumn(index) {
+   }
+
+   /**
+    * @override
+    */
+   $onShowColumn(index) {
+   }
+
+   /**
+    * @override
+    */
    $build(theme, locale) {
       this.hidden_levels = []
 
@@ -40,8 +52,16 @@ export default class Dates extends Component {
          handle: this.animate,
       })
 
-      return new Position({
-         y: this.$canvas.height - theme.map_height - theme.dates_height,
+      this.el = new Position({
+         // y: this.$canvas.height - theme.map_height - theme.dates_height,
+      })
+
+      return new Rectangle({
+         w: this.$canvas.width,
+         h: this.$canvas.height - theme.map_height - theme.dates_height,
+         ignoreInput: true,
+         color: 'rgba(211,211,51,0.2)',
+         child: this.el
       })
    }
 
@@ -50,33 +70,29 @@ export default class Dates extends Component {
       this.prev_scale = this.scale
       this.scale = scale
 
-      this.$element.w = (this.$columns[0].length-2)*this.scale.x
-      this.$element.x = offset.x + this.$theme.main_margin
+      // this.$element.w = (this.$columns[0].length-2)*this.scale.x
+      // this.$element.x = 11
       
-      if (this.$element.children.length == 0) {
+      if (this.el.children.length == 0) {
          this.calcHidden(true)
-         this.createDates()
+         this.createItems()
       } else {
-         this.calcHidden()
-         this.updateDates()
+         // this.calcHidden()
+         // this.updateDates()
       }
    }
 
-   createDates() {
+   createItems() {
       let children = []
       
-      for (let i = 1; i < this.$dates.length; i++) {
-         let date = new Date(this.$dates[i])
-         let d = date.getDate()
-         let m = this.$locale.month[date.getMonth()]
-
+      for (let i = 1; i < this.$columns[0].length; i++) {
          let x = (i-1) * this.scale.x - this.font_size/5
 
          let text = new Text({
             alpha: this.hidden.includes(i-1) ? 0 : 1,
-            x: x,
-            y: 14,
-            text: `${m} ${d}`,
+            x: 10,
+            y: 12,
+            text: 'test',
             size: this.font_size,
             fontFamily: this.font_family,
             color: this.color,
@@ -86,17 +102,17 @@ export default class Dates extends Component {
          children.push(text)
       }
 
-      this.$element.children = children      
+      this.el.children = children      
    }
 
-   updateDates() {      
+   updateDates() {
       for (let i = 0; i < this.$element.children.length; i++) {
          let element = this.$element.children[i];
 
          element.x = i * this.scale.x - this.font_size/5
          
          if (this.hidden.includes(i)) {
-            element.new_alpha = i == 0 && this.scale.is_full ? 1 : 0
+            element.new_alpha = 0
          } else {
             element.new_alpha = 1
          }

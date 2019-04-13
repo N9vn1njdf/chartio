@@ -45,7 +45,7 @@ export default class Hover extends Component {
 
       this.padding = theme.main_padding
       this.background = theme.background
-      this.height = this.$canvas.height - theme.date_height - theme.map_height - this.padding
+      this.height = this.$canvas.height - theme.dates_height - theme.map_height - this.padding
 
       this.circles = new Position()
       this.line = new Rectangle({w: 1, h: this.height, color: theme.line_color2})
@@ -56,6 +56,7 @@ export default class Hover extends Component {
          y: this.padding,
          h: this.height,
          child: new Position({
+            x: this.$theme.main_margin,
             children: [
                this.line,
                this.circles,
@@ -64,7 +65,7 @@ export default class Hover extends Component {
          })
       })
       el.on('move', (input, element) => this.onMove(input))
-      el.on('leave', (input, element) => this.popup.hide())
+      el.on('leave', (input, element) => this.hide())
 
       return el
    }
@@ -74,8 +75,8 @@ export default class Hover extends Component {
       this.prev_scale = this.scale
       this.scale = scale
 
-      this.$element.w = (this.$columns[0].length-2)*this.scale.x + this.$theme.main_margin
-      this.$element.x = offset.x + this.$theme.main_margin
+      this.$element.w = (this.$columns[0].length-2)*this.scale.x + this.$theme.main_margin*2
+      this.$element.x = offset.x
 
       if (this.circles.children.length == 0) {
          this.createCircles()
@@ -128,9 +129,25 @@ export default class Hover extends Component {
       })
    }
 
+   show(input) {
+      for(let i in this.hover_points) {
+         this.hover_points[i].alpha = 1
+      }
+      this.popup.show(this.hover_points[0].index, input)
+   }
+
+   hide() {
+      for(let i in this.hover_points) {
+         this.hover_points[i].alpha = 0
+      }
+      this.popup.hide()
+      this.line.alpha = 0
+      this.$update()
+   }
+
    onMove(input) {
       if (input.event.target !== this.$canvas) {
-         this.popup.hide()
+         this.hide()
          return
       }
 
@@ -141,46 +158,42 @@ export default class Hover extends Component {
       this.prev_input.x = input.x
       this.prev_input.y = input.y
 
-      this.line.x = -this.$element.x + input.x
+      this.line.x = -this.$element.x + input.x - this.$theme.main_margin
       this.line.alpha = 1
 
       let closerLeft = []
       let closerRight = []
 
       for(let i in this.circles.children) {
-         let point = this.circles.children[i]
-         if (this.$hidden_columns.includes(point.column_index)) {
+         let circle = this.circles.children[i]
+         if (this.$hidden_columns.includes(circle.column_index)) {
             continue
          }
 
-         let x = point.globalX
+         let x = circle.globalX
 
-         if (x < input.x && (!closerLeft[point.column_index] || closerLeft[point.column_index].globalX < x)) {
-            closerLeft[point.column_index] = point
-         } else if (x > input.x && (!closerRight[point.column_index] || closerRight[point.column_index].globalX > x)) {
-            closerRight[point.column_index] = point
+         // Бижайшие слева и справа
+         if (x < input.x && (!closerLeft[circle.column_index] || closerLeft[circle.column_index].globalX < x)) {
+            closerLeft[circle.column_index] = circle
+         } else if (x > input.x && (!closerRight[circle.column_index] || closerRight[circle.column_index].globalX > x)) {
+            closerRight[circle.column_index] = circle
          }
 
-         point.alpha = 0
-      }      
-
+         circle.alpha = 0
+      }
       
       if (!closerLeft[0] && !closerRight[0]) {
-         this.popup.hide()
+         this.hide()
          return
       }
 
-
+      // Ближайшая точка
       if (closerRight[0] && (!closerLeft[0] || input.x - closerLeft[0].globalX >= closerRight[0].globalX - input.x)) {
-         this.popup.show(closerRight[0].index, input)
-         for(let i in closerRight) {
-            closerRight[i].alpha = 1
-         }
+         this.hover_points = closerRight
       } else {
-         this.popup.show(closerLeft[0].index, input)
-         for(let i in closerLeft) {
-            closerLeft[i].alpha = 1
-         }
+         this.hover_points = closerLeft
       }
+
+      this.show(input)
    }
 }

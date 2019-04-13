@@ -2,12 +2,12 @@ import HasChild from "./has_child";
 
 export default class MouseElement extends HasChild {
 
-   constructor({x, y, child, color, alpha, inputIgnore} = {}) {
+   constructor({x, y, child, color, alpha, ignoreInput} = {}) {
       super({x, y, child})
 
       this.color = color
       this.alpha = alpha != null ? alpha : 1
-      this.inputIgnore = inputIgnore || false
+      this.ignoreInput = ignoreInput || false
    }
 
    isHover(x, y) {
@@ -15,7 +15,7 @@ export default class MouseElement extends HasChild {
    }
    
    onDown(input) {
-      if (!input.event_down && this.isHover(input.x, input.y) && this.color && this.alpha > 0 && !this.inputIgnore) {         
+      if (!input.event_down && this.isHover(input.x, input.y) && this.color && this.alpha > 0 && !this.ignoreInput) {         
          input.event_down = true;
          this._mouse_down = true;
          this.emit('down', input, this);
@@ -40,7 +40,7 @@ export default class MouseElement extends HasChild {
       super.render(ctx, input, time)
       
       if (this.isHover(input.x, input.y)) {         
-         if(!input.el && !this.inputIgnore) {
+         if(!input.el && !this.ignoreInput) {
             input.el = this;
          }
 

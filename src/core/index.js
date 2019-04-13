@@ -1,11 +1,11 @@
 import Chart from './chart.js'
 import Component from './component.js'
-import Event from './event.js'
 import Animation from './animation.js'
+import Curves from './curves.js'
 
 export {
    Chart,
    Component,
-   Event,
    Animation,
+   Curves,
 }

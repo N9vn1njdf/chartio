@@ -32,8 +32,8 @@ export default class Navigator extends Component {
       this.offset = this.$canvas.width - theme.map_margin*2 - this.scale + theme.map_navigator_edge_width
       
       this.background = [
-         new Rectangle({h: this.height, color: theme.map_color2, border: {tr: 0, tl: 8, br: 0, bl: 8}, inputIgnore: true}),
-         new Rectangle({h: this.height, color: theme.map_color2, border: {tr: 8, tl: 0, br: 8, bl: 0}, inputIgnore: true})
+         new Rectangle({h: this.height, color: theme.map_color2, border: {tr: 0, tl: 8, br: 0, bl: 8}, ignoreInput: true}),
+         new Rectangle({h: this.height, color: theme.map_color2, border: {tr: 8, tl: 0, br: 8, bl: 0}, ignoreInput: true})
       ]
 
       this.border = [

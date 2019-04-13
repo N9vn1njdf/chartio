@@ -1,4 +1,4 @@
-import { Component, Animation } from 'core'
+import { Component, Animation, Curves } from 'core'
 import { Position, Line, LinesGroup, Rectangle } from 'elements'
 
 export default class Columns extends Component {
@@ -39,8 +39,8 @@ export default class Columns extends Component {
 
       this.animation = new Animation({
          component: this,
-         duration: theme.animation_duration_4,
-         curve: (time_fraction) => Math.pow(time_fraction, 1),
+         duration: theme.main_animation_duration,
+         curve: Curves.easeInOutQuad,
          handle: this.animate,
          onEnd: () => {
             this.animation_data = []
@@ -50,7 +50,7 @@ export default class Columns extends Component {
       this.lines_groups = new Position()
 
       this.padding = theme.main_padding
-      this.height = this.$canvas.height - theme.date_height - theme.map_height - this.padding
+      this.height = this.$canvas.height - theme.dates_height - theme.map_height - this.padding
       
       return new Rectangle({
          y: this.padding,
@@ -75,40 +75,42 @@ export default class Columns extends Component {
    }
 
    updateColumns() {
-      if (this.prev_scale == this.scale && this.animation_data.length == 0) {
-         return
-      }
-
       let offset = this.height + this.offset.y
-
+      let run = true
+      
       this.lines_groups.children.forEach(lines_group => {
          lines_group.children.forEach(line => {
             line.x = line.index * this.scale.x
             line.x2 = (line.index+1) * this.scale.x
 
-            if (this.prev_scale.y !== this.scale.y) {
-               line.old_y = line.y
-               line.new_y = offset - line.column_value * this.scale.y
-               line.offset_y = line.new_y - line.y
+            let line_new_y = offset - line.column_value * this.scale.y
+            let line_new_y2 = offset - line.column_next_value * this.scale.y
 
-               line.old_y2 = line.y2
-               line.new_y2 =  offset - line.column_next_value * this.scale.y           
-               line.offset_y2 = line.new_y2 - line.y2
+            // Если нет изменений, то не перезапускаем анимацию
+            if (line.new_y == line_new_y && line.new_y2 == line_new_y2) {               
+               run = false
+               return
             }
+
+            line.old_y = line.y
+            line.new_y = line_new_y
+            line.offset_y = line.new_y - line.y
+
+            line.old_y2 = line.y2
+            line.new_y2 = line_new_y2           
+            line.offset_y2 = line.new_y2 - line.y2
          })
       })
 
-      if (this.prev_scale.y !== this.scale.y) {
+      if (run) {
          this.animation.run(this.animation_data)
       }
    }
 
    // type: 1 - показать, 0 скрыть
    animate(progress, [type, column_index]) {      
-      this.lines_groups.children.forEach(lines_groups => {
-         
-         for (let i = 0; i < lines_groups.children.length; i++) {
-            let line = lines_groups.children[i]
+      this.lines_groups.children.forEach(lines_group => {
+         lines_group.children.forEach(line => {
 
             if (line.column_index == column_index) {
                line.alpha = type == 0 ? 1 - progress : progress
@@ -119,7 +121,7 @@ export default class Columns extends Component {
             if (line.offset_y2) {
                line.y2 = line.offset_y2 * progress + line.old_y2
             }
-         }
+         })
       })
    }
 

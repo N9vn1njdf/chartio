@@ -1,4 +1,4 @@
-import { Component, Animation } from 'core'
+import { Component, Animation, Curves } from 'core'
 import { LinesGroup, Line, Rectangle, Position } from 'elements'
 import { Navigator } from 'components'
 
@@ -9,7 +9,13 @@ export default class Map extends Component {
     */
    $onTheme(theme) {
       this.padding = theme.map_padding
-      this.animation.duration = theme.animation_duration_4
+      this.animation.duration = theme.map_animation_duration
+
+      this.map_height = theme.map_height
+      this.map_width = this.$canvas.width - this.$theme.map_margin * 2
+
+      this.main_height = this.$canvas.height - theme.map_height - theme.dates_height - theme.main_padding
+      this.main_width = this.$canvas.width - this.$theme.main_margin * 2
    }
 
    /**
@@ -27,8 +33,8 @@ export default class Map extends Component {
     */
    $onHideColumn(index) {
       this.calcMapYScale()
-      this.calcMainYScale()
       this.calcMapVerticalOffset()
+      this.calcMainYScale()
       this.animation.run([0, index])
    }
 
@@ -37,8 +43,8 @@ export default class Map extends Component {
     */
    $onShowColumn(index) {
       this.calcMapYScale()
-      this.calcMainYScale()
       this.calcMapVerticalOffset()
+      this.calcMainYScale()
       this.animation.run([1, index])
    }
 
@@ -48,16 +54,11 @@ export default class Map extends Component {
    $build(theme, locale) {
       this.animation = new Animation({
          component: this,
-         duration: theme.animation_duration_4,
-         curve: (time_fraction) => Math.pow(time_fraction, 1),
+         duration: theme.map_animation_duration,
+         curve: Curves.easeInOutQuad,
          onStart: this.startAnimate,
          handle: this.animate
       })
-
-      this.map_height = theme.map_height
-      this.padding = theme.map_padding
-
-      this.main_height = this.$canvas.height - theme.map_height - theme.date_height - theme.main_padding
       
       this.navigator = new Navigator()
       this.navigator.on('update', () => this.calcMainYScale())
@@ -120,8 +121,7 @@ export default class Map extends Component {
    }
 
    get update_data() {
-      let main_scale_x = this.scale.x * (this.$canvas.width-this.$theme.main_margin*2) / this.navigator.scale
-
+      let main_scale_x = this.scale.x * this.main_width / this.navigator.scale      
       return {
          offset: {
             x: -this.navigator.offset * (main_scale_x / this.scale.x),
@@ -130,13 +130,14 @@ export default class Map extends Component {
          scale: {
             x: main_scale_x,
             y: this.main_scale_y,
+            is_full: this.navigator.scale == this.map_width
          },
       }
    }
 
    get scale() {
       return {
-         x: this.$columns[0] ? (this.$canvas.width-this.$theme.map_margin*2) / (this.$columns[0].length-2) : 0,
+         x: this.$columns[0] ? this.map_width / (this.$columns[0].length-2) : 0,
          y: this.map_scale_y
       }
    }
@@ -200,6 +201,22 @@ export default class Map extends Component {
    }
 
    calcMainYScale() {
+      // Если не было фактических обновлений, то не пересчитывать данные
+      if (
+         this.prev_update_data
+         && this.prev_update_data.offset.x == this.update_data.offset.x
+         && this.prev_update_data.offset.y == this.update_data.offset.y
+         && this.prev_update_data.scale.x == this.update_data.scale.x
+         && this.prev_update_data.scale.y == this.update_data.scale.y
+         && this.prev_map_scale.y == this.scale.y
+      ) {
+         return
+      }
+
+      this.prev_update_data = this.update_data
+      this.prev_map_scale = this.scale
+
+
       var visible_items = []
       let s = this.scale.x * 2
       
