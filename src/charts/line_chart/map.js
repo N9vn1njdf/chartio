@@ -32,6 +32,7 @@ export default class Map extends Component {
     * @override
     */
    $onHideColumn(index) {
+      this.prev_update_data = null
       this.calcMapYScale()
       this.calcMapVerticalOffset()
       this.calcMainYScale()
@@ -42,6 +43,7 @@ export default class Map extends Component {
     * @override
     */
    $onShowColumn(index) {
+      this.prev_update_data = null
       this.calcMapYScale()
       this.calcMapVerticalOffset()
       this.calcMainYScale()

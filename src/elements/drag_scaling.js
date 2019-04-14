@@ -165,6 +165,8 @@ export default class DragScaling extends HasChildren {
       }
 
       if (this.left._scaling) {
+         console.log('scale');
+         
          this._scaleLeft(input)
          this.center.w = this.w
       }

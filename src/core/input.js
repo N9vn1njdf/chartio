@@ -1,10 +1,8 @@
 import Event from './event.js'
 
 /**
- * 
- * Слой ввода данных.
+ * Слой ввода данных
  * Отвечает за прием событий ввода(мышь, тач), конвертацию и передачу в Scaffold
- * 
  */
 export default class Input extends Event {
    
@@ -20,13 +18,13 @@ export default class Input extends Event {
       this.canvas.addEventListener('mouseout', () => scaffold.update())
 
       // Мышь
-      document.addEventListener('mousemove', function(e) {         
+      document.addEventListener('mousemove', function(e) {
          _this.el = null;
          _this.event = e;
 
          let rect = _this.canvas.getBoundingClientRect();
          _this.x = (e.x - rect.left)/100*120
-         _this.y = (e.y - rect.top)/100*120         
+         _this.y = (e.y - rect.top)/100*120
 
          if (e.target == _this.canvas) {
             scaffold.update()
@@ -35,7 +33,7 @@ export default class Input extends Event {
          }
       })
 
-      document.addEventListener('mousedown', function(e) {
+      document.addEventListener('mousedown', function(e) {         
          _this.event = e;
          document.mousedown_scaffold = scaffold
          
@@ -62,30 +60,34 @@ export default class Input extends Event {
 
       // Тач
       this.canvas.addEventListener('touchmove', function(e) {
-         if (e.target == _this.canvas) {
-            var touch = e.targetTouches[0];
-            
-            _this.el = null;
-            _this.event = e;
-            _this.down = true
+         e.preventDefault();
 
-            let rect = _this.canvas.getBoundingClientRect();
-            _this.x = (touch.pageX - rect.left)/100*120
-            _this.y = (touch.pageY - rect.top)/100*120         
-            
-            if (e.target == _this.canvas) {
-               scaffold.update()
-            } else if (document.mousedown_scaffold) {
-               document.mousedown_scaffold.update()
-            }
+         var touch = e.targetTouches[0];
+         
+         _this.el = null;
+         _this.event = touch;
+
+         let rect = _this.canvas.getBoundingClientRect();
+         _this.x = (touch.pageX - rect.left)/100*120
+         _this.y = (touch.pageY - rect.top)/100*120
+         
+         if (e.target == _this.canvas) {            
+            _this.down = true;
             _this.emit('down', _this)
+            scaffold.update()
+            document.mousedown_scaffold = scaffold
 
-            // _this.down = true;
-            // _this.x = touch.pageX - _this.canvas.offsetLeft;
-            // _this.y = touch.pageY - _this.canvas.offsetTop;
+         } else if (document.mousedown_scaffold) {
+            document.mousedown_scaffold.update()
          }
       });
       document.addEventListener('touchend', function(e) {
+         e.preventDefault();
+         _this.el = null;
+         _this.event = e;
+         _this.event_down = false;
+         document.mousedown_scaffold = null
+
          if (e.target == _this.canvas) {
             _this.down = false;
          }

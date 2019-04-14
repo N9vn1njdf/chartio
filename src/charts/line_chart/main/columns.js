@@ -27,7 +27,7 @@ export default class Columns extends Component {
    /**
     * @override
     */
-   $onShowColumn(index) {
+   $onShowColumn(index) {      
       this.animation_data = [1, index]
    }
 
@@ -59,7 +59,7 @@ export default class Columns extends Component {
       })
    }
    
-   onMapUpdate({offset, scale}) {
+   onMapUpdate({offset, scale}) {      
       this.offset = offset
       this.prev_scale = this.scale
       this.scale = scale
@@ -87,7 +87,7 @@ export default class Columns extends Component {
             let line_new_y2 = offset - line.column_next_value * this.scale.y
 
             // Если нет изменений, то не перезапускаем анимацию
-            if (line.new_y == line_new_y && line.new_y2 == line_new_y2) {               
+            if (line.new_y == line_new_y && line.new_y2 == line_new_y2 && this.animation_data.length == 0) {               
                run = false
                return
             }
@@ -102,7 +102,7 @@ export default class Columns extends Component {
          })
       })
 
-      if (run) {
+      if (run) {         
          this.animation.run(this.animation_data)
       }
    }

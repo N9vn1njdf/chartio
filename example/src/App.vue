@@ -1,8 +1,9 @@
 <template>
 <div class="container">
   <div class="row">
-    <div class="col-12 col-md-9">
+    <div class="col-12 col-md-9 p-0">
       <p>The graph does not use third-party libraries. All code is written from scratch.</p>
+
       <Chart :json="json[0]" ref="chart0" id="chart0" :locale="locale" :theme="theme" />
       <!-- <Chart :json="json[1]" ref="chart1" id="chart1" :locale="locale" :theme="theme" />
       <Chart :json="json[2]" ref="chart2" id="chart2" :locale="locale" :theme="theme" />
@@ -95,12 +96,6 @@ p {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px;
   border-radius: 14px;
   width: 170px;
-
-  &-fade {
-    &-in {
-      
-    }
-  }
 
   &-date {
     font-size: 14px;

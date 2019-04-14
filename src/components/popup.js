@@ -1,7 +1,8 @@
 import { Component } from 'core'
+import { SlideText } from '../helpers.js'
 
 /**
- * show(index, input) - показать попап в соответствии с координатами Input
+ * show(index, input) - показать попап
  * hide() - скрыть попап
  */
 export default class Popup extends Component {
@@ -23,7 +24,7 @@ export default class Popup extends Component {
     this.createPopup()
   }
 
-  show(index, input) {
+  show(index) {
     index = index+1
 
     // Создаем или анимируем данные для попапа
@@ -36,11 +37,11 @@ export default class Popup extends Component {
     // this.index = index
 
     // Позиционирование попапа
-    let y = this.$canvas.offsetTop + input.y - 20
-    let x = input.event.x + 20         
+    let y = this.$canvas.offsetTop + this.$scaffold.input.y - 20
+    let x = this.$scaffold.input.event.x + 20         
     
     if (x + this.div.offsetWidth > this.$canvas.width) {
-      x = input.event.x - 20 - this.div.offsetWidth
+      x = this.$scaffold.input.event.x - 20 - this.div.offsetWidth
     }
 
     this.div.style.display = 'block'
@@ -106,9 +107,8 @@ export default class Popup extends Component {
     }
 
     let date = this.getDateByIndex(index)
-
     this.el1 = document.createElement('span')
-    // this.el1.setAttribute('class', 'chart-popup-date-day')
+
     this.el1.innerText = date[0]
     this.date_text.appendChild(this.el1)
 
@@ -126,36 +126,11 @@ export default class Popup extends Component {
   }
 
   animatePopupData(index) {
-    // if (this.new_el1) {
-    //   return
-    // }
-
     let date = this.getDateByIndex(index)
     this.el1.innerText = date[0]
     this.el2.innerText = date[1]
     this.el3.innerText = date[2]
     this.el4.innerText = date[3]
-
-    // this.new_el1 = document.createElement('span')
-    // this.new_el1.setAttribute('class', 'chart-popup-fade-in hidden')
-    // this.new_el1.innerText = date[0]
-    // this.date_text.insertBefore(this.new_el1, this.el2)
-
-    // this.new_el1.addEventListener('webkitAnimationStart', () => {
-    //   console.log(123);
-      
-    // });
-
-    // // remove
-    // this.date_text.removeChild(this.el1)
-    // this.el1 = this.new_el1
-    // // remove
-
-
-
-    // let new_date = this.getDateByIndex(index)
-    // new_date.setAttribute
-    // this.date_text.appendChild(new_date)
   }
 
   getDateByIndex(index) {    
@@ -166,7 +141,5 @@ export default class Popup extends Component {
     let y = date.getFullYear()
 
     return [day, d, m, y]
-
-    // return day + ', ' + d + ' ' + m + ' ' + y
   }
 }

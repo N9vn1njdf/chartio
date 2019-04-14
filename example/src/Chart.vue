@@ -29,7 +29,12 @@ export default {
       },
    },
    mounted() {
-      this.chart = new LineChart(this.id, 380, 400, {locale: this.locale});
+      let w = 380
+      if (window.innerWidth < w) {
+         w = window.innerWidth
+      }
+
+      this.chart = new LineChart(this.id, w, w*1.2, {locale: this.locale});
    },
    methods: {
       setTheme(value) {         

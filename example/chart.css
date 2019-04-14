@@ -1,0 +1,17 @@
+.text-animation {
+   position: relative;
+   overflow: hidden;
+   height: 24px;
+}
+.text-animation > span {
+   position: absolute;
+}
+
+.text-animation > .top {
+   transition: transform .25s;
+   transform: translateY(-20px);
+}
+.text-animation > .bottom {
+   transition: transform .25s;
+   transform: translateY(20px);
+}
