@@ -27,7 +27,7 @@ class SlideText {
     this.next = document.createElement('span')
     this.next.textContent = value    
     this.container.appendChild(this.next)
-    this.container.style.width = (this.next.textContent.length * 11) + 'px'
+    this.container.style.width = (this.next.textContent.length * 8) + 'px'
     this.next.style.top = direction == 'top' ? '20px' : '-20px'
 
     setTimeout(() => {

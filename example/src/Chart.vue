@@ -7,7 +7,10 @@
 <script>
 export default {
    props: {
-      json: {
+      type: {
+         required: true
+      },
+      data: {
          required: true,
       },
       id: {
@@ -21,8 +24,8 @@ export default {
       }
    },
    watch: {
-      json(json) {
-         this.chart.setData(json);
+      data(data) {
+         this.chart.setData(data);
       },
       locale(value) {         
          this.chart.setLocale(value);
@@ -34,7 +37,14 @@ export default {
          w = window.innerWidth
       }
 
-      this.chart = new LineChart(this.id, w, w*1.2, {locale: this.locale});
+      switch(this.type) {
+         case 'bar':
+            this.chart = new BarChart(this.id, w, w*1.2, {locale: this.locale});
+            break;
+         case 'line':
+            this.chart = new LineChart(this.id, w, w*1.2, {locale: this.locale});
+            break;
+      }
    },
    methods: {
       setTheme(value) {         

@@ -1,5 +1,6 @@
 import { Chart } from 'core'
-import { Columns, Hover, YAxis, Lines, Map, Checkboxes, Dates } from 'components'
+import { Hover, YAxis, Lines, Map, Dates } from 'components'
+import BarColumns from './bar_columns.js'
 
 export default class BarChart extends Chart {
 
@@ -53,7 +54,7 @@ export default class BarChart extends Chart {
    }
 
    $onCreate(theme, locale) {
-      this.columns = new Columns()
+      this.columns = new BarColumns()
       
       this.hover = new Hover()
 
@@ -75,9 +76,6 @@ export default class BarChart extends Chart {
          this.dates.onMapUpdate(data)
          this.y_axis.onMapUpdate(data)
       })
-
-      // Чекбоксы
-      this.checboxes = new Checkboxes()
    }
 
    $onCreated(theme, locale) {}
@@ -90,7 +88,6 @@ export default class BarChart extends Chart {
          this.y_axis,
          this.dates,
          this.map,
-         this.checboxes,
       ]
    }
 }

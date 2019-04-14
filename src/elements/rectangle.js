@@ -59,7 +59,7 @@ export default class Rectangle extends MouseElement {
          if (this.border) {
             this.fillRoundedRect(ctx, this.globalX, this.globalY, this.w, this.h, this.border)
          } else {
-            ctx.fillRect(this.globalX, this.globalY, this.w, this.h)
+            ctx.fillRect(this.globalX, this.globalY, this.w + .12, this.h)
          }
       }
 

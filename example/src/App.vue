@@ -4,7 +4,7 @@
     <div class="col-12 col-md-9 p-0">
       <p>The graph does not use third-party libraries. All code is written from scratch.</p>
 
-      <Chart :json="json[0]" ref="chart0" id="chart0" :locale="locale" :theme="theme" />
+      <Chart type="bar" :data="json.bar" ref="chart0" id="chart0" :locale="locale" :theme="theme"/>
       <!-- <Chart :json="json[1]" ref="chart1" id="chart1" :locale="locale" :theme="theme" />
       <Chart :json="json[2]" ref="chart2" id="chart2" :locale="locale" :theme="theme" />
       <Chart :json="json[3]" ref="chart3" id="chart3" :locale="locale" :theme="theme" />
@@ -28,8 +28,8 @@ export default {
     Options,
   },
   mounted() {
-    this.axios.get('./chart_data.json').then((response) => {
-      this.json = response.data;
+    this.axios.get('./data/4/overview.json').then((response) => {
+      this.json.bar = response.data;      
     })
   },
   methods: {
@@ -43,9 +43,11 @@ export default {
   },
   data () {
     return {
-      locale: LineChart.en,
+      locale: null,
       theme: {},
-      json: []
+      json: {
+        bar: null
+      }
     }
   }
 }
