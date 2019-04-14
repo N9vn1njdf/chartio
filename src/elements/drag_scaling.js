@@ -41,12 +41,13 @@ export default class DragScaling extends HasChildren {
    }
 
    _updateChildren() {
-      this.left = new Rectangle({
-         x: -this.edgeWidth,
+      let leftEdge = new Rectangle({
+         x: 15,
          w: this.edgeWidth,
          h: this.h,
          color: this.edgeColor,
          border: {tr: 0, tl: 8, br: 0, bl: 8},
+         ignoreInput: true,
          child: new Rectangle({
             x: this.edgeWidth/2 - 1.5,
             y: this.h/2 - 6,
@@ -55,15 +56,22 @@ export default class DragScaling extends HasChildren {
             color: '#fff'
          })
       })
+      this.left = new Rectangle({
+         x: -this.edgeWidth - 15,
+         w: this.edgeWidth + 15,
+         h: this.h,
+         color: 'rgba(0,0,0,0)',
+         child: leftEdge
+      })
       this.left.on('down', () => this.left._scaling = true)
       this.left.on('up', () => this._stop())
       
-      this.right = new Rectangle({
-         x: this.w,
+      let rightEdge = new Rectangle({
          w: this.edgeWidth,
          h: this.h,
          color: this.edgeColor,
          border: {tr: 8, tl: 0, br: 8, bl: 0},
+         ignoreInput: true,
          child: new Rectangle({
             x: this.edgeWidth/2 - 1.5,
             y: this.h/2 - 7,
@@ -72,16 +80,17 @@ export default class DragScaling extends HasChildren {
             color: '#fff'
          })
       })
+      this.right = new Rectangle({
+         x: this.w,
+         w: this.edgeWidth + 15,
+         h: this.h,
+         color: 'rgba(0,0,0,0)',
+         child: rightEdge
+      })
       this.right.on('down', () => this.right._scaling = true)
       this.right.on('up', () => this._stop())
 
-
-      this.center = new Rectangle({
-         x: 0,
-         w: this.w,
-         h: this.h,
-         color: 'transparent',
-      })
+      this.center = new Rectangle({w: this.w, h: this.h, color: 'transparent'})
       this.center.on('down', () => this._dragging = true)
       this.center.on('up', () => this._stop())
 
@@ -164,9 +173,7 @@ export default class DragScaling extends HasChildren {
          this._drag(input)
       }
 
-      if (this.left._scaling) {
-         console.log('scale');
-         
+      if (this.left._scaling) {         
          this._scaleLeft(input)
          this.center.w = this.w
       }

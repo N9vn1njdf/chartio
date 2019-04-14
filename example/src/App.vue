@@ -52,6 +52,9 @@ export default {
 </script>
 
 <style lang="scss">
+body {
+  overflow-x: hidden;
+}
 .container {
   margin-top: 50px;
 }
@@ -60,6 +63,9 @@ p {
 }
 
 
+.chart-checkboxes {
+  padding-left: 20px;
+}
 
 .chart-checkbox {
   display:none;
@@ -95,11 +101,23 @@ p {
   padding: 6px 14px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px;
   border-radius: 14px;
-  width: 170px;
+  width: 150px;
 
   &-date {
     font-size: 14px;
     font-weight: bold;
+    width: 100%;
+    display: table;
+    
+    & > span {
+      padding-right: 5px;
+      display: block;
+      float: left;
+
+      &:first-child {
+        margin-right: -6px;
+      }
+    }
   }
 
   &-value {
@@ -109,6 +127,10 @@ p {
       font-size: 14px;
       font-weight: bold;
       float: right;
+
+      & .text-animation > span {
+        right: 0;
+      }
     }
     &-label {
       font-size: 13px;

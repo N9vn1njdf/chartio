@@ -15,13 +15,7 @@ export default class MouseElement extends HasChild {
    }
    
    onDown(input) {
-      if (this.color == '#c0d1e1') {
-         console.log(!input.event_down , this.isHover(input.x+140, input.y));
-      }
-      if (!input.event_down && this.isHover(input.x-20, input.y) && this.color && this.alpha > 0 && !this.ignoreInput) {
-         if (this.color == '#c0d1e1') {
-            console.log('122121');
-         }
+      if (!input.event_down && this.isHover(input.x, input.y) && this.color && this.alpha > 0 && !this.ignoreInput) {
          input.event_down = true;
          this._mouse_down = true;
          this.emit('down', input, this);
@@ -45,7 +39,13 @@ export default class MouseElement extends HasChild {
     */
    render(ctx, input, time) {
       super.render(ctx, input, time)
-      
+
+      if (!this._has_input_event) {
+         this._has_input_event = true;
+         input.on('down', (input) => this.onDown(input));
+         input.on('up', (input) => this.onUp(input));
+      }
+
       if (this.isHover(input.x, input.y)) {
          if(!input.el && !this.ignoreInput) {
             input.el = this;
@@ -53,12 +53,6 @@ export default class MouseElement extends HasChild {
 
          this._move = true;
          this.emit('move', input, this);
-
-         if (!this._has_input_event) {
-            this._has_input_event = true;
-            input.on('down', (input) => this.onDown(input));
-            input.on('up', (input) => this.onUp(input));
-         }
 
       } else if(this._move) {
          this._move = false;

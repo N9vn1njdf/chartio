@@ -21,6 +21,7 @@ export default class Checkboxes extends Component {
     this.id = this.$scaffold.id
 
     this.ui = document.createElement('div')
+    this.ui.setAttribute('class', 'chart-checkboxes')
     document.getElementById(this.id).appendChild(this.ui)
   }
 

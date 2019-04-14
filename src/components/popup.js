@@ -26,7 +26,7 @@ export default class Popup extends Component {
 
   show(index) {
     index = index+1
-
+    
     // Создаем или анимируем данные для попапа
     if (this.index == null) {      
       this.createPopupData(index)
@@ -34,14 +34,16 @@ export default class Popup extends Component {
       this.animatePopupData(index)
     }
 
-    // this.index = index
+    this.index = index
 
     // Позиционирование попапа
     let y = this.$canvas.offsetTop + this.$scaffold.input.y - 20
-    let x = this.$scaffold.input.event.x + 20         
-    
-    if (x + this.div.offsetWidth > this.$canvas.width) {
-      x = this.$scaffold.input.event.x - 20 - this.div.offsetWidth
+    let x = this.$scaffold.input.pageX + 20
+        
+    if (x + this.div.offsetWidth + 80 > this.$canvas.width) {
+      x = this.$scaffold.input.pageX - 20 - this.div.offsetWidth
+    } else if (x < 0) {
+      x = 0
     }
 
     this.div.style.display = 'block'
@@ -50,9 +52,8 @@ export default class Popup extends Component {
   }
 
   hide() {      
-    // this.line.alpha = 0
     this.div.style.display = 'none'
-    // this.circles.children.forEach(circle => circle.alpha = 0)
+    this.index = null
   }
 
   createPopup() {
@@ -61,7 +62,6 @@ export default class Popup extends Component {
 
     this.date_text = document.createElement('div')
     this.date_text.setAttribute('class', 'chart-popup-date')
-
     this.div.appendChild(this.date_text)
 
     this.div_columns = document.createElement('div')
@@ -69,21 +69,20 @@ export default class Popup extends Component {
     this.div.appendChild(this.div_columns)
 
     document.body.appendChild(this.div)
-
-    this.div.addEventListener('webkitAnimationStart', () => {
-      console.log(123);
-      
-    });
   }
 
   createColumnInfo(name, color, value) {
+    if (!this.slide_count) {
+      this.slide_count = {}
+    }
+
     let div = document.createElement('div')
     div.setAttribute('class', 'chart-popup-value')
 
     let count = document.createElement('div')      
     count.style.color = color
     count.setAttribute('class', 'chart-popup-value-count')
-    count.innerText = value
+    this.slide_count[name] = new SlideText(value, count)
     div.appendChild(count)
 
     let label = document.createElement('div')
@@ -106,31 +105,29 @@ export default class Popup extends Component {
       }
     }
 
-    let date = this.getDateByIndex(index)
-    this.el1 = document.createElement('span')
-
-    this.el1.innerText = date[0]
-    this.date_text.appendChild(this.el1)
-
-    this.el2 = document.createElement('span')
-    this.el2.innerText = date[1]
-    this.date_text.appendChild(this.el2)
-
-    this.el3 = document.createElement('span')
-    this.el3.innerText = date[2]
-    this.date_text.appendChild(this.el3)
-
-    this.el4 = document.createElement('span')
-    this.el4.innerText = date[3]
-    this.date_text.appendChild(this.el4)
+    let date = this.getDateByIndex(index)    
+    this.slide_date = new SlideText(`${date[0]}, ${date[1]} ${date[2]} ${date[3]}`, this.date_text)
   }
 
   animatePopupData(index) {
     let date = this.getDateByIndex(index)
-    this.el1.innerText = date[0]
-    this.el2.innerText = date[1]
-    this.el3.innerText = date[2]
-    this.el4.innerText = date[3]
+    this.slide_date.animateTo(`${date[0]}, ${date[1]} ${date[2]} ${date[3]}`, this.index < index ? 'bottom' : 'top')
+
+    for (let i = 0; i < this.$columns.length; i++) {
+      if (!this.$hidden_columns.includes(i)) {
+        let column = this.$columns[i]
+        let name = this.$names[column[0]]
+        let value = column[index]
+        this.slide_count[name].animateTo(value, this.index < index ? 'bottom' : 'top')
+      }
+    }
+
+    // for (let i = 0; i < this.$columns.length; i++) {
+    //   if (!this.$hidden_columns.includes(i)) {
+    //     let column = this.$columns[i]
+    //     this.createColumnInfo(this.$names[column[0]], this.$colors[column[0]], column[index])
+    //   }
+    // }
   }
 
   getDateByIndex(index) {    

@@ -21,7 +21,9 @@ export default class Input extends Event {
       document.addEventListener('mousemove', function(e) {
          _this.el = null;
          _this.event = e;
-
+         _this.pageX = e.pageX
+         _this.pageY = e.pageY
+         
          let rect = _this.canvas.getBoundingClientRect();
          _this.x = (e.x - rect.left)/100*120
          _this.y = (e.y - rect.top)/100*120
@@ -35,6 +37,8 @@ export default class Input extends Event {
 
       document.addEventListener('mousedown', function(e) {         
          _this.event = e;
+         _this.pageX = e.pageX
+         _this.pageY = e.pageY
          document.mousedown_scaffold = scaffold
          
          if (e.target == _this.canvas) {
@@ -47,6 +51,8 @@ export default class Input extends Event {
       document.addEventListener('mouseup', function(e) {
          _this.el = null;
          _this.event = e;
+         _this.pageX = e.pageX
+         _this.pageY = e.pageY
          _this.event_down = false;
          document.mousedown_scaffold = null
 
@@ -60,31 +66,36 @@ export default class Input extends Event {
 
       // Тач
       this.canvas.addEventListener('touchmove', function(e) {
-         e.preventDefault();
-
          var touch = e.targetTouches[0];
          
          _this.el = null;
          _this.event = touch;
+         _this.pageX = touch.pageX
+         _this.pageY = touch.pageY
 
          let rect = _this.canvas.getBoundingClientRect();
          _this.x = (touch.pageX - rect.left)/100*120
          _this.y = (touch.pageY - rect.top)/100*120
          
-         if (e.target == _this.canvas) {            
-            _this.down = true;
-            _this.emit('down', _this)
+         if (e.target == _this.canvas) {
+
+            if (!_this.down) {
+               _this.down = true
+               _this.emit('down', _this)
+               document.mousedown_scaffold = scaffold
+            }
+
             scaffold.update()
-            document.mousedown_scaffold = scaffold
 
          } else if (document.mousedown_scaffold) {
             document.mousedown_scaffold.update()
          }
       });
       document.addEventListener('touchend', function(e) {
-         e.preventDefault();
          _this.el = null;
          _this.event = e;
+         _this.pageX = e.pageX
+         _this.pageY = e.pageY
          _this.event_down = false;
          document.mousedown_scaffold = null
 
