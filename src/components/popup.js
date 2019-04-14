@@ -121,13 +121,6 @@ export default class Popup extends Component {
         this.slide_count[name].animateTo(value, this.index < index ? 'bottom' : 'top')
       }
     }
-
-    // for (let i = 0; i < this.$columns.length; i++) {
-    //   if (!this.$hidden_columns.includes(i)) {
-    //     let column = this.$columns[i]
-    //     this.createColumnInfo(this.$names[column[0]], this.$colors[column[0]], column[index])
-    //   }
-    // }
   }
 
   getDateByIndex(index) {    

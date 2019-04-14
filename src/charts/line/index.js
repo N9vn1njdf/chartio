@@ -1,10 +1,5 @@
 import { Chart } from 'core'
-import Main from './main'
-import Dates from './dates.js'
-import Map from './map.js'
-import { Checkboxes } from 'components'
-import YAxis from './y_axis.js';
-import Lines from './lines.js'
+import { Columns, Hover, YAxis, Lines, Map, Checkboxes, Dates } from 'components'
 
 export default class LineChart extends Chart {
 
@@ -58,13 +53,14 @@ export default class LineChart extends Chart {
    }
 
    $onCreate(theme, locale) {
-      // График
-      this.main = new Main()
+      this.columns = new Columns()
+      
+      this.hover = new Hover()
 
       // Индиктор дат
       this.dates = new Dates()
 
-      // Текст и линии по вертикальной оси
+      // Текст по вертикальной оси
       this.y_axis = new YAxis()
 
       // Горизонтальный линии
@@ -73,7 +69,8 @@ export default class LineChart extends Chart {
       // Миникарта
       this.map = new Map()
       this.map.on('update', (data) => {
-         this.main.onMapUpdate(data)
+         this.columns.onMapUpdate(data)
+         this.hover.onMapUpdate(data)
          this.lines.onMapUpdate(data);
          this.dates.onMapUpdate(data)
          this.y_axis.onMapUpdate(data)
@@ -88,7 +85,8 @@ export default class LineChart extends Chart {
    get components() {
       return [
          this.lines,
-         this.main,
+         this.columns,
+         this.hover,
          this.y_axis,
          this.dates,
          this.map,

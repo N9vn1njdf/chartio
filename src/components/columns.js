@@ -1,6 +1,9 @@
 import { Component, Animation, Curves } from 'core'
 import { Position, Line, LinesGroup, Rectangle } from 'elements'
 
+/**
+ * Основное отображение данных для графика
+ */
 export default class Columns extends Component {
 
    /**

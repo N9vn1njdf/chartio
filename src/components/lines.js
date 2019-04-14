@@ -34,8 +34,6 @@ export default class Lines extends Component {
          y: this.margin,
          w: this.width,
          h: this.height,
-         // ignoreInput: true,
-         // color: 'rgba(221, 211, 51, 0.2)',
          child: new Position({
             children: [
                this.lines1,
