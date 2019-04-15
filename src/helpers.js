@@ -12,12 +12,12 @@ class SlideText {
     this.container.appendChild(this.value)
   }
   
-  animateTo(value, direction) {
+  animateTo(value, direction) {    
     if (this.progress) {
       return
     }
+
     this.progress = true
-    
     this.done = false
 
     if (this.next) {
@@ -33,7 +33,7 @@ class SlideText {
     setTimeout(() => {
       this.value.setAttribute('class', direction)
       this.next.setAttribute('class', direction)
-    }, 100);
+    }, 10)
   }
 
   _ended() {

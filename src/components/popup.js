@@ -36,17 +36,23 @@ export default class Popup extends Component {
 
     this.index = index
 
-    // Позиционирование попапа
-    let y = this.$canvas.offsetTop + this.$scaffold.input.y - 20
-    let x = this.$scaffold.input.pageX + 20
-        
-    if (x + this.div.offsetWidth + 80 > this.$canvas.width) {
-      x = this.$scaffold.input.pageX - 20 - this.div.offsetWidth
+    if (!this.rect) {
+      this.rect = this.$canvas.getBoundingClientRect()
+    }
+
+    this.div.style.display = 'block'
+
+    // Позиционирование попапа    
+    let y = this.$scaffold.input.pageY - this.div.offsetHeight - 10
+    let x = this.$scaffold.input.pageX - this.div.offsetWidth/2
+    
+    if (this.$scaffold.input.pageX + this.div.offsetWidth > this.$canvas.width) {
+      x = this.rect.left + this.$canvas.width - this.div.offsetWidth - this.div.offsetWidth/2
+
     } else if (x < 0) {
       x = 0
     }
 
-    this.div.style.display = 'block'
     this.div.style.top = y + 'px'
     this.div.style.left = x + 'px'
   }
@@ -101,7 +107,9 @@ export default class Popup extends Component {
     for (let i = 0; i < this.$columns.length; i++) {
       if (!this.$hidden_columns.includes(i)) {
         let column = this.$columns[i]
-        this.createColumnInfo(this.$names[column[0]], this.$colors[column[0]], column[index])
+        let value = this.$names[column[0]]
+        value = value.toLocaleString()
+        this.createColumnInfo(value, this.$colors[column[0]], column[index])
       }
     }
 
@@ -118,6 +126,7 @@ export default class Popup extends Component {
         let column = this.$columns[i]
         let name = this.$names[column[0]]
         let value = column[index]
+        value = value.toLocaleString()
         this.slide_count[name].animateTo(value, this.index < index ? 'bottom' : 'top')
       }
     }

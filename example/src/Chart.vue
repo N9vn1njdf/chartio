@@ -24,7 +24,7 @@ export default {
       }
    },
    watch: {
-      data(data) {
+      data(data) {         
          this.chart.setData(data);
       },
       locale(value) {         

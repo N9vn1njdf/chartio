@@ -4,6 +4,13 @@ import { Popup } from 'components'
 
 export default class Hover extends Component {
 
+   constructor({showCircles, showLine}) {
+      super()
+
+      this.showCircles = showCircles
+      this.showLine = showLine
+   }
+
    /**
     * @override
     */
@@ -48,7 +55,7 @@ export default class Hover extends Component {
       this.height = this.$canvas.height - theme.dates_height - theme.map_height - this.padding
 
       this.circles = new Position()
-      this.line = new Rectangle({alpha: 0, w: 1, h: this.height, color: theme.line_color2})
+      this.line = new Rectangle({alpha: 0, w: this.showLine ? 1 : 0, h: this.height, color: theme.line_color2})
       
       this.popup = new Popup()
 
@@ -102,7 +109,7 @@ export default class Hover extends Component {
                y: this.height + this.offset.y - column[i] * this.scale.y,
                r: this.r,
                border: {w: this.r/2, color: this.$colors[column[0]]},
-               color: this.background
+               color: this.showCircles ? this.background : null
             })
 
             circle.column_index = c_i
@@ -129,14 +136,16 @@ export default class Hover extends Component {
       })
    }
 
-   show(input) {
+   show() {
       for(let i in this.hover_points) {
          this.hover_points[i].alpha = 1
       }
-      this.popup.show(this.hover_points[0].index, input)
+      this.popup.show(this.hover_points[0].index, this.$scaffold.input)
+      this.emit('move', this.hover_points[0].index)
    }
 
    hide() {
+      this.emit('leave')
       for(let i in this.hover_points) {
          this.hover_points[i].alpha = 0
       }
@@ -194,6 +203,6 @@ export default class Hover extends Component {
          this.hover_points = closerLeft
       }
 
-      this.show(input)
+      this.show()
    }
 }

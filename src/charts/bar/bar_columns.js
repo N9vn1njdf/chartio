@@ -1,5 +1,5 @@
 import { Columns } from 'components'
-import { Position, Rectangle } from 'elements'
+import { Position, Rectangle, LinesGroup, Line } from 'elements'
 
 export default class LineColumns extends Columns {
 
@@ -7,7 +7,7 @@ export default class LineColumns extends Columns {
     * @override
     */
    createColumns() {
-      var children = []
+      let children = []
       let offset = this.height + this.offset.y
       let column_h = []
       
@@ -18,40 +18,37 @@ export default class LineColumns extends Columns {
          let lines = [];
          
          for (let i = 1; i < column.length; i++) {
-            if (!column[i+1]) {
-               break;
-            }
-
             let x = (i-1) * this.scale.x
-            let prev_h = column_h[c_i-1] ? column_h[c_i-1][i] : 0
+            let w = i * this.scale.x - x
             
             let y = offset - column[i] * this.scale.y
             let h = this.height - y
+            // let prev_h = column_h[c_i-1] ? column_h[c_i-1][i] : 0
 
-            let line = new Rectangle({
+            let bar = new Rectangle({
                alpha: 0.5,
                color: this.$colors[column[0]],
-               x,
-               w: i * this.scale.x - x,
-               y: offset - 10020, //this.height - h - prev_h
-               h: -y + 100
+               x: x - w/2,
+               w: w,
+               y: y,
+               h: h
             })
-            line.on('move', () => line.alpha = 1)
-            line.on('leave', () => line.alpha = 0.5)
+            bar.on('move', () => bar.alpha = 1)
+            bar.on('leave', () => bar.alpha = 0.5)
 
-            if (!column_h[c_i]) {
-               column_h[c_i] = []
-            }
-            column_h[c_i][i] = h
+            // if (!column_h[c_i]) {
+            //    column_h[c_i] = []
+            // }
+            // column_h[c_i][i] = h
             
 
-            line.column_index = c_i;
-            line.column_value = column[i];
-            line.column_next_value = column[i+1];
-            line.index = i-1;
-            line.prev_h = prev_h
+            bar.column_index = c_i;
+            bar.column_value = column[i];
+            bar.column_next_value = column[i+1];
+            bar.index = i-1;
+            // bar.prev_h = prev_h
 
-            lines.push(line);
+            lines.push(bar);
          }
 
          group.children = lines
@@ -66,36 +63,28 @@ export default class LineColumns extends Columns {
     */
    updateColumns() {
       let offset = this.height + this.offset.y
-      let run = true
       
-      this.columns.children.forEach(lines_group => {
-         lines_group.children.forEach(line => {
-            line.x = line.index * this.scale.x
-            line.w = (line.index+1) * this.scale.x - line.x
+      this.columns.children.forEach(group => {
+         group.children.forEach(bar => {
+            let x = bar.index * this.scale.x
+            let w = (bar.index+1) * this.scale.x - x
+            bar.x = x - w/2
+            bar.w = w
 
-            let y = offset - line.column_value * this.scale.y
-            let h = this.height - y
-            let new_y = this.height - h - line.prev_h
+            let new_y = offset - bar.column_value * this.scale.y
+            let new_h = this.height - new_y
 
-            // Если нет изменений, то не перезапускаем анимацию
-            if (line.new_y == new_y && this.animation_data.length == 0) {
-               run = false
-               return
-            }
+            bar.old_y = bar.y
+            bar.new_y = new_y
+            bar.offset_y = bar.new_y - bar.y
 
-            line.old_y = line.y
-            line.new_y = new_y
-            line.offset_y = line.new_y - line.y
-
-            line.old_h = line.h
-            line.new_h = h
-            line.offset_h = line.new_h - line.h
+            bar.old_h = bar.h
+            bar.new_h = new_h
+            bar.offset_h = bar.new_h - bar.h
          })
       })
 
-      if (run) {
-         this.animation.run(this.animation_data)
-      }
+      this.animation.run(this.animation_data)
    }
 
    /**
@@ -106,15 +95,31 @@ export default class LineColumns extends Columns {
     * @param {*} column_index - индекс колонки для скрытия/показа
     */
    animate(progress, [type, column_index]) {
-      this.columns.children.forEach(lines_group => {
-         lines_group.children.forEach(line => {
+      this.columns.children.forEach(group => {
+         group.children.forEach(bar => {
 
-            if (line.column_index == column_index) {
-               line.alpha = type == false ? 1 - progress : progress
+            if (bar.column_index == column_index) {
+               bar.alpha = type == false ? 1 - progress : progress
             }
 
-            line.y = line.offset_y * progress + line.old_y
-            line.h = line.offset_h * progress + line.old_h
+            bar.y = bar.offset_y * progress + bar.old_y
+            bar.h = bar.offset_h * progress + bar.old_h
+         })
+      })
+   }
+
+   onMove(index) {      
+      this.columns.children.forEach(group => {
+         group.children.forEach(bar => {            
+            bar.alpha = bar.index == index ? 1 : 0.5
+         })
+      })
+   }
+
+   onLeave() {
+      this.columns.children.forEach(group => {
+         group.children.forEach(bar => {            
+            bar.alpha = 0.5
          })
       })
    }

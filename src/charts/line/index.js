@@ -1,6 +1,7 @@
 import { Chart } from 'core'
-import { Hover, YAxis, Lines, Map, Checkboxes, Dates } from 'components'
+import { Hover, YAxis, Lines, Checkboxes, Dates } from 'components'
 import LineColumns from './line_columns.js'
+import LineMap from './line_map.js'
 
 export default class LineChart extends Chart {
 
@@ -56,7 +57,7 @@ export default class LineChart extends Chart {
    $onCreate(theme, locale) {
       this.columns = new LineColumns()
       
-      this.hover = new Hover()
+      this.hover = new Hover({showCircles: true})
 
       // Индиктор дат
       this.dates = new Dates()
@@ -68,7 +69,7 @@ export default class LineChart extends Chart {
       this.lines = new Lines()
 
       // Миникарта
-      this.map = new Map()
+      this.map = new LineMap()
       this.map.on('update', (data) => {
          this.columns.onMapUpdate(data)
          this.hover.onMapUpdate(data)

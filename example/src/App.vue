@@ -4,7 +4,14 @@
     <div class="col-12 col-md-9 p-0">
       <p>The graph does not use third-party libraries. All code is written from scratch.</p>
 
-      <Chart type="bar" :data="json.bar" ref="chart0" id="chart0" :locale="locale" :theme="theme"/>
+      <!-- <h4>Views</h4>
+      <Chart type="bar" :data="json.bar" ref="chart0" id="chart0" :locale="locale" :theme="theme"/> -->
+
+      <!-- <h4>Followers</h4>
+      <Chart type="line" :data="json.line" ref="chart1" id="chart1" :locale="locale" :theme="theme"/> -->
+
+      <Chart type="area" :data="json.area" ref="chart2" id="chart2" :locale="locale" :theme="theme"/> 
+
       <!-- <Chart :json="json[1]" ref="chart1" id="chart1" :locale="locale" :theme="theme" />
       <Chart :json="json[2]" ref="chart2" id="chart2" :locale="locale" :theme="theme" />
       <Chart :json="json[3]" ref="chart3" id="chart3" :locale="locale" :theme="theme" />
@@ -28,9 +35,16 @@ export default {
     Options,
   },
   mounted() {
+    this.axios.get('./data/1/overview.json').then((response) => {
+      this.json.line = response.data;      
+    })
     this.axios.get('./data/4/overview.json').then((response) => {
       this.json.bar = response.data;      
     })
+    // this.axios.get('./chart_data.json').then((response) => {
+    //   response.data[0].columns.splice(2, 1)
+    //   this.json.bar = response.data[0];      
+    // })
   },
   methods: {
     setTheme(value) {
@@ -46,7 +60,9 @@ export default {
       locale: null,
       theme: {},
       json: {
-        bar: null
+        bar: null,
+        line: null,
+        area: null,
       }
     }
   }
@@ -62,6 +78,11 @@ body {
 }
 p {
   font-size: 14px;
+}
+h4 {
+  font-size: 19px;
+  font-weight: bolder;
+  margin: 40px 15px 15px;
 }
 
 

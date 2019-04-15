@@ -53,8 +53,8 @@ export default class LineColumns extends Columns {
       let offset = this.height + this.offset.y
       let run = true
       
-      this.columns.children.forEach(lines_group => {
-         lines_group.children.forEach(line => {
+      this.columns.children.forEach(group => {
+         group.children.forEach(line => {
             line.x = line.index * this.scale.x
             line.x2 = (line.index+1) * this.scale.x
 
@@ -90,8 +90,8 @@ export default class LineColumns extends Columns {
     * @param {*} column_index - индекс колонки для скрытия/показа
     */
    animate(progress, [type, column_index]) {
-      this.columns.children.forEach(lines_group => {
-         lines_group.children.forEach(line => {
+      this.columns.children.forEach(group => {
+         group.children.forEach(line => {
 
             if (line.column_index == column_index) {
                line.alpha = type == false ? 1 - progress : progress

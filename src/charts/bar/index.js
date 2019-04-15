@@ -1,6 +1,7 @@
 import { Chart } from 'core'
-import { Hover, YAxis, Lines, Map, Dates } from 'components'
+import { Hover, YAxis, Lines, Dates } from 'components'
 import BarColumns from './bar_columns.js'
+import BarMap from './bar_map.js'
 
 export default class BarChart extends Chart {
 
@@ -56,7 +57,9 @@ export default class BarChart extends Chart {
    $onCreate(theme, locale) {
       this.columns = new BarColumns()
       
-      this.hover = new Hover()
+      this.hover = new Hover({showCircles: false})
+      this.hover.on('move', (index) => this.columns.onMove(index))
+      this.hover.on('leave', () => this.columns.onLeave())
 
       // Индиктор дат
       this.dates = new Dates()
@@ -68,7 +71,7 @@ export default class BarChart extends Chart {
       this.lines = new Lines()
 
       // Миникарта
-      this.map = new Map()
+      this.map = new BarMap()
       this.map.on('update', (data) => {
          this.columns.onMapUpdate(data)
          this.hover.onMapUpdate(data)
