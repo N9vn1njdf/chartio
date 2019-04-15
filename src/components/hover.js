@@ -15,11 +15,9 @@ export default class Hover extends Component {
     * @override
     */
    $onTheme(theme) {
-      // this.padding_bottom = theme.main_padding_bottom
-      // this.background = theme.background
-      // this.line.color = theme.line_color2
-
-      // this.div.setAttribute('class', 'chart-popup ' + theme.name + '-theme')
+      this.padding = theme.main_padding
+      this.background = theme.background
+      this.createCircles()
    }
 
    /**
@@ -55,7 +53,7 @@ export default class Hover extends Component {
       this.height = this.$canvas.height - theme.dates_height - theme.map_height - this.padding
 
       this.circles = new Position()
-      this.line = new Rectangle({alpha: 0, w: this.showLine ? 1 : 0, h: this.height, color: theme.line_color2})
+      this.line = new Rectangle({alpha: 0, w: this.showLine ? 1 : 0, h: this.height, color: theme.lines_color})
       
       this.popup = new Popup()
 

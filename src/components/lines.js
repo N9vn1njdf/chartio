@@ -6,6 +6,15 @@ export default class Lines extends Component {
    /**
     * @override
     */
+   $onTheme(theme) {
+      this.color = theme.lines_color
+      this.animation.duration = theme.lines_animation_duration
+      this.lines1.color = this.lines2.color = this.color
+   }
+
+   /**
+    * @override
+    */
    $build(theme, locale) {
       // Передается в параметрах
       this.height = this.$canvas.height - theme.map_height - theme.dates_height
@@ -13,11 +22,11 @@ export default class Lines extends Component {
       
       // Тема
       this.lines_count = 6
-      this.color = 'rgb(233, 233, 233)'
+      this.color = theme.lines_color
 
       this.animation = new Animation({
          component: this,
-         duration: 340,
+         duration: theme.lines_animation_duration,
          curve: Curves.easeOutCubic,
          handle: this.animate,
       })
@@ -128,75 +137,4 @@ export default class Lines extends Component {
          line.y = line.y2 = line.offset_y * progress + line.old_y
       })
    }
-
-
-
-
-   // constructor({width, height, themeObserver}) {      
-   //    this.width = width;
-   //    this.height = height;
-
-   //    this.lines = {
-   //       top: new LinesGroup({lineWidth: 1, color: this.color}),
-   //       bottom: new LinesGroup({lineWidth: 1, color: this.color}),
-   //    }
-
-   //    themeObserver.subscribe(theme => {
-   //       this.lines_count = theme.lines_count-1;
-   //       this.step = (this.height-30)/this.lines_count;         
-   //       this.color = this.lines.top.color = this.lines.bottom.color = theme.line_color1;         
-   //       this.duration = theme.animation_duration_1;
-   //       this.lines.top.children = this.getLinesGroup(0, 0, 0);
-   //    })
-      
-   //    this.element = new Position({
-   //       children: [
-   //          this.lines.top,
-   //          this.lines.bottom,
-   //       ]
-   //    });
-   // }
-
-   // update({scale, columns}) {
-   //    this.element.w = (columns[0].length-2)*scale.x;      
-   //    this.element.x = 0;
-   //    this.prev_scale = this.scale;
-   //    this.scale = scale;
-   //    this.columns = columns;
-
-   //    if (this.prev_scale) {
-   //       this.animateDirection();
-   //    }
-   // }
-
-   // animateDirection() {
-   //    if (this.lines.top.children.running) {
-   //       return;
-   //    }
-
-   //    if (this.prev_scale.y < this.scale.y) {
-   //       this.animateFrom('bottom');
-   //    }
-      
-   //    if (this.prev_scale.y > this.scale.y) {
-   //       this.animateFrom('top');
-   //    }
-   // }
-
-   // animateFrom(from) {
-   //    let to = from == 'top' ? 'bottom' : 'top';
-
-   //    this.lines[from].children = this.getLinesGroup(0, -60, -20);
-   //    this.lines[to].children = this.getLinesGroup(0, 100, 5);
-      
-   //    this.lines.top.children.forEach(element => {
-   //       element.completed = true
-   //       element.reverse()
-   //    });
-
-   //    this.lines.bottom.children.forEach(element => {
-   //       element.forward()
-   //    });
-   // }
-
 }

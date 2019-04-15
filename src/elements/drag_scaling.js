@@ -60,7 +60,7 @@ export default class DragScaling extends HasChildren {
          x: -this.edgeWidth - 15,
          w: this.edgeWidth + 15,
          h: this.h,
-         color: 'rgba(0,0,0,0)',
+         color: 'transparent',
          child: leftEdge
       })
       this.left.on('down', () => this.left._scaling = true)
@@ -84,7 +84,7 @@ export default class DragScaling extends HasChildren {
          x: this.w,
          w: this.edgeWidth + 15,
          h: this.h,
-         color: 'rgba(0,0,0,0)',
+         color: 'transparent',
          child: rightEdge
       })
       this.right.on('down', () => this.right._scaling = true)

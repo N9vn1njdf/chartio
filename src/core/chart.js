@@ -22,11 +22,11 @@ export default class Chart {
    }
 
    setTheme(theme) {
-      this.scaffold.setTheme(this._merge(theme, this.defaultTheme))
+      this.scaffold.setTheme(this._merge(this[theme], this.defaultTheme))
    }
 
-   setLocale(locale) {
-      this.scaffold.setLocale(this._merge(locale, this.defaultLocale))
+   setLocale(locale) {      
+      this.scaffold.setLocale(this._merge(this[locale], this.defaultLocale))
    }
 
    _merge(obj1, obj2) {

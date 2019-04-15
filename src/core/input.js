@@ -53,7 +53,6 @@ export default class Input extends Event {
          _this.event = e;
          _this.pageX = e.pageX
          _this.pageY = e.pageY
-         _this.event_down = false;
          document.mousedown_scaffold = null
 
          if (e.target == _this.canvas) {
@@ -62,7 +61,7 @@ export default class Input extends Event {
 
          _this.emit('up', _this);
          scaffold.update()
-      });
+      })
 
       // Тач
       this.canvas.addEventListener('touchmove', function(e) {
@@ -96,7 +95,6 @@ export default class Input extends Event {
          _this.event = e;
          _this.pageX = e.pageX
          _this.pageY = e.pageY
-         _this.event_down = false;
          document.mousedown_scaffold = null
 
          if (e.target == _this.canvas) {

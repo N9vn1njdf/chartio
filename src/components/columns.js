@@ -89,10 +89,10 @@ export default class Columns extends Component {
     * Прогесс анимации к новому состоянию
     * 
     * @param {*} progress прогресс анимации
-    * @param {*} type - true скрыть, false показать
+    * @param {*} hide - true скрыть, false показать
     * @param {*} column_index - индекс колонки для скрытия/показа
     */
-   animate(progress, [type, column_index]) {}
+   animate(progress, [hide, column_index]) {}
 
    /**
     * Создать колонки

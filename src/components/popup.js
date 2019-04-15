@@ -10,8 +10,8 @@ export default class Popup extends Component {
   /**
    * @override
    */
-  $onData({dates, columns, $colors, $names}) {
-    
+  $onTheme(theme) {
+    this.div.setAttribute('class', 'chart-popup ' + theme.name + '-theme')
   }
 
   /**

@@ -15,7 +15,7 @@ export default class YAxis extends Component {
       this.font_size = theme.text_size2
       this.font_family = theme.font_family
       this.item_width = this.font_size*3.5
-      this.createDates()
+      this.createItems()
 
       this.animation.duration = theme.dates_animation_duration
    }
@@ -63,9 +63,7 @@ export default class YAxis extends Component {
          handle: this.animate,
       })
 
-      this.el = new Position({
-         // y: this.$canvas.height - theme.map_height - theme.dates_height,
-      })
+      this.el = new Position()
 
       this.width = this.$canvas.width - this.margin*2
       this.height = this.height - this.margin
@@ -76,8 +74,6 @@ export default class YAxis extends Component {
          y: this.margin,
          w: this.width,
          h: this.height,
-         // ignoreInput: true,
-         // color: 'rgba(211,211,51,0.2)',
          child: this.el
       })
    }

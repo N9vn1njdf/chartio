@@ -19,7 +19,8 @@ export default class Dates extends Component {
    /**
     * @override
     */
-   $onData({dates, columns, colors, names}) {
+   $onLocale(locale) {
+      this.createDates()
    }
 
    /**

@@ -4,13 +4,16 @@
     <div class="col-12 col-md-9 p-0">
       <p>The graph does not use third-party libraries. All code is written from scratch.</p>
 
-      <!-- <h4>Views</h4>
-      <Chart type="bar" :data="json.bar" ref="chart0" id="chart0" :locale="locale" :theme="theme"/> -->
-
       <!-- <h4>Followers</h4>
       <Chart type="line" :data="json.line" ref="chart1" id="chart1" :locale="locale" :theme="theme"/> -->
 
-      <Chart type="area" :data="json.area" ref="chart2" id="chart2" :locale="locale" :theme="theme"/> 
+      <h4>Messages</h4>
+      <Chart type="bar" :data="json.messages" ref="chart2" id="chart2" :locale="locale" :theme="theme"/>
+
+      <!-- <h4>Views</h4>
+      <Chart type="bar" :data="json.views" ref="chart3" id="chart3" :locale="locale" :theme="theme"/> -->
+
+      <!-- <Chart type="area" :data="json.area" ref="chart3" id="chart3" :locale="locale" :theme="theme"/>  -->
 
       <!-- <Chart :json="json[1]" ref="chart1" id="chart1" :locale="locale" :theme="theme" />
       <Chart :json="json[2]" ref="chart2" id="chart2" :locale="locale" :theme="theme" />
@@ -38,20 +41,33 @@ export default {
     this.axios.get('./data/1/overview.json').then((response) => {
       this.json.line = response.data;      
     })
-    this.axios.get('./data/4/overview.json').then((response) => {
-      this.json.bar = response.data;      
-    })
-    // this.axios.get('./chart_data.json').then((response) => {
-    //   response.data[0].columns.splice(2, 1)
-    //   this.json.bar = response.data[0];      
+    // this.axios.get('./data/3/overview.json').then((response) => {
+    //   this.json.messages = response.data;      
     // })
+    this.axios.get('./data/4/overview.json').then((response) => {
+      this.json.views = response.data;      
+    })
+    // this.axios.get('./data/5/overview.json').then((response) => {
+    //   this.json.bar = response.data;      
+    // })
+    this.axios.get('./chart_data.json').then((response) => {
+      // response.data[0].columns.splice(1, 1)
+      this.json.messages = response.data[0];      
+    })
   },
   methods: {
     setTheme(value) {
-      this.$refs.chart0.setTheme(value)
-      // this.$refs.chart1.setTheme(value)
-      // this.$refs.chart2.setTheme(value)
-      // this.$refs.chart3.setTheme(value)
+      if (value == 'darkTheme') {
+        document.body.style.background = '#212e3b'
+        document.body.style.color = '#fff'
+      } else {
+        document.body.style.background = '#fff'
+        document.body.style.color = '#000'
+      }
+
+      this.$refs.chart1.setTheme(value)
+      this.$refs.chart2.setTheme(value)
+      this.$refs.chart3.setTheme(value)
       // this.$refs.chart4.setTheme(value)
     }
   },
@@ -60,7 +76,8 @@ export default {
       locale: null,
       theme: {},
       json: {
-        bar: null,
+        messages: null,
+        views: null,
         line: null,
         area: null,
       }
@@ -161,7 +178,10 @@ h4 {
   }
   
   &.default-theme {
-    background: rgb(255, 255, 255);
+    background: #fff;
+  }
+  &.dark-theme {
+    background: #1c2532;
   }
 }
 </style>

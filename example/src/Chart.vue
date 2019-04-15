@@ -39,15 +39,18 @@ export default {
 
       switch(this.type) {
          case 'bar':
-            this.chart = new BarChart(this.id, w, w*1.2, {locale: this.locale});
+            this.chart = new BarChart(this.id, w, w*1.2)
             break;
          case 'line':
-            this.chart = new LineChart(this.id, w, w*1.2, {locale: this.locale});
+            this.chart = new LineChart(this.id, w, w*1.2)
+            break;
+         case 'area':
+            this.chart = new AreaChart(this.id, w, w*1.2)
             break;
       }
    },
    methods: {
-      setTheme(value) {         
+      setTheme(value) {
          this.chart.setTheme(value);
       },
    }

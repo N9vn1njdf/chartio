@@ -1,9 +1,43 @@
 import { Chart } from 'core'
-import { Hover, YAxis, Lines, Dates } from 'components'
+import { Checkboxes, Hover, YAxis, Lines, Dates } from 'components'
 import BarColumns from './bar_columns.js'
 import BarMap from './bar_map.js'
 
 export default class BarChart extends Chart {
+
+   get darkTheme() {
+      return {
+         name: 'dark',
+         background: '#242f3e',
+
+         main_padding: 20,
+         main_margin: 25,
+         main_animation_duration: 340,
+
+         map_height: 56,
+         map_padding: 2,
+         map_margin: 20,
+         map_animation_duration: 340,
+
+         dates_height: 46,
+         dates_animation_duration: 80,
+         dates_text_color: '#99a4ac',
+
+         map_color1: '#56626D',
+         map_color2: 'rgba(48, 66, 89, 0.6)',
+         map_navigator_edge_width: 14,
+         map_navigator_min_width: 2,
+
+         font_family: 'Arial',
+         text_color1: '#99a4ac',
+         text_size1: 14,
+         text_size2: 14,
+
+         lines_color: 'rgba(255, 255, 255, 0.1)',
+         lines_count: 6,
+         lines_animation_duration: 340,
+      }
+   }
 
    get defaultTheme() {
       return {
@@ -23,8 +57,8 @@ export default class BarChart extends Chart {
          dates_animation_duration: 80,
          dates_text_color: '#99a4ac',
 
-         map_color1: '#c0d1e1',
-         map_color2: 'rgba(215, 228, 237, 0.5)',
+         map_color1: '#C0D1E1',
+         map_color2: 'rgba(226, 238, 249, 0.6)',
          map_navigator_edge_width: 14,
          map_navigator_min_width: 2,
 
@@ -32,11 +66,10 @@ export default class BarChart extends Chart {
          text_color1: '#99a4ac',
          text_size1: 14,
          text_size2: 14,
-         line_color1: '#f2f4f5',
-         line_color2: '#d2d2d2',
+
+         lines_color: 'rgba(24, 45, 59, 0.1)',
          lines_count: 6,
-         animation_duration_1: 220,
-         animation_duration_2: 220,
+         lines_animation_duration: 340,
       }
    }
 
@@ -47,7 +80,7 @@ export default class BarChart extends Chart {
       }
    }
 
-   static get ruLocale() {
+   get ruLocale() {
       return {
          month: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
          day: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
@@ -79,6 +112,9 @@ export default class BarChart extends Chart {
          this.dates.onMapUpdate(data)
          this.y_axis.onMapUpdate(data)
       })
+
+      // Чекбоксы
+      this.checkboxes = new Checkboxes()
    }
 
    $onCreated(theme, locale) {}
@@ -91,6 +127,7 @@ export default class BarChart extends Chart {
          this.y_axis,
          this.dates,
          this.map,
+         this.checkboxes
       ]
    }
 }

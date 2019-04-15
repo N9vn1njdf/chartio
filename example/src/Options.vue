@@ -1,20 +1,20 @@
 <template>
-<div class="options">
+<div class="options" :class="theme">
    <h5>Settings</h5>
 
    <div class="block">
       <b>Language</b>
       <div class="float-right btn-group btn-group-sm" role="group" aria-label="Basic example">
-         <button class="btn btn-info" :class="{focus: locale == 'ru'}" v-on:click="setLocale('ru')">Ru</button>
-         <button class="btn btn-info" :class="{focus: locale == 'en'}" v-on:click="setLocale('en')">En</button>
+         <button class="btn btn-info" :class="{focus: locale == 'ruLocale'}" v-on:click="setLocale('ruLocale')">Ru</button>
+         <button class="btn btn-info" :class="{focus: locale == 'defaultLocale'}" v-on:click="setLocale('defaultLocale')">En</button>
       </div>
    </div>
 
    <div class="block">
       <b>Theme</b>
       <div class="float-right btn-group btn-group-sm" role="group" aria-label="Basic example">
-         <button class="btn btn-light" :class="{focus: theme == 'day'}" v-on:click="setTheme('day')">Day</button>
-         <button class="btn btn-dark" :class="{focus: theme == 'night'}" v-on:click="setTheme('night')">Night</button>
+         <button class="btn btn-light" :class="{focus: theme == 'defaultTheme'}" v-on:click="setTheme('defaultTheme')">Day</button>
+         <button class="btn btn-dark" :class="{focus: theme == 'darkTheme'}" v-on:click="setTheme('darkTheme')">Night</button>
       </div>
    </div>
 </div>
@@ -25,31 +25,17 @@ export default {
    methods: {
       setLocale(locale) {
          this.locale = locale;
-         this.$emit('locale', LineChart[locale]);
+         this.$emit('locale', locale);
       },
       setTheme(theme) {
-         this.theme = theme;
-         this.$emit('theme', this.themes[theme]);
+         this.theme = theme
+         this.$emit('theme', theme)
       },
    },
    data() {
       return {
-         locale: 'en',
-         theme: 'default',
-         themes: {
-            day: {},
-            night: {
-               name: 'night',
-               background: '#1e2a38',
-               map_color1: 'rgba(205, 211, 236, 0.1)',
-               map_color2: 'rgba(212, 220, 244, 0.2)',
-               line_color1: '#293443',
-               line_color2: '#3b4a59',
-               text_color1: '#546777',
-               text_color2: '#546777',
-               text_color3: '#fff'
-            },
-         }
+         locale: 'defaultLocale',
+         theme: 'defaultTheme',
       }
    }
 }
@@ -61,6 +47,10 @@ export default {
    padding: 14px;
    border-radius: 4px;
    border: 1px solid #dadada;
+
+   &.darkTheme {
+      border-color: rgba(255, 255, 255, 0.1);
+   }
 }
 .block {
    margin: 20px 0;

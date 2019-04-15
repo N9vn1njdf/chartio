@@ -5,12 +5,16 @@ export default class Checkboxes extends Component {
   /**
    * @override
    */
-  $onData({dates, columns, $colors, $names}) {
+  $onData({dates, columns, colors, names}) {
     this.ui.innerHTML = ''
 
-    for (let i = 0; i < this.$columns.length; i++) {
-      const column = this.$columns[i]
-      this.createCheckbox(i, this.$names[column[0]], this.$colors[column[0]])
+    if (columns.length == 1) {
+      return
+    }
+    
+    for (let i = 0; i < columns.length; i++) {
+      const column = columns[i]
+      this.createCheckbox(i, names[column[0]], colors[column[0]])
     }
   }
 

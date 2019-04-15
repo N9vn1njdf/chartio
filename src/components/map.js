@@ -42,7 +42,7 @@ export default class Map extends Component {
       if (this.needMainUpdate) {
          this.calcMainYScale()
       }
-      this.animation.run([0, index])
+      this.animation.run([false, index])
    }
 
    /**
@@ -56,7 +56,7 @@ export default class Map extends Component {
       if (this.needMainUpdate) {
          this.calcMainYScale()
       }
-      this.animation.run([1, index])
+      this.animation.run([true, index])
    }
 
    /**
@@ -153,12 +153,12 @@ export default class Map extends Component {
       this.vertical_offset = this.$theme.map_height + this.min_y * this.scale.y - this.padding
    }
 
-   startAnimate([type, column_index]) {}
+   startAnimate([hide, column_index]) {}
 
    /**
     * Переход к новому состоянию 
     */
-   animate(progress, [type, column_index]) {}
+   animate(progress, [hide, column_index]) {}
 
    /**
     * Создает содержимое миникарты

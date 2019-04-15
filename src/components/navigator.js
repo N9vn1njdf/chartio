@@ -22,7 +22,7 @@ export default class Navigator extends Component {
       this.navigator = new DragScaling({
          axisX: {min: 0, max: this.$canvas.width - theme.map_margin*2},
          onUpdate: () => this.update(),
-         w: 60,
+         w: 40,
          h: this.height,
          edgeWidth: theme.map_navigator_edge_width,
          edgeColor: theme.map_color1,

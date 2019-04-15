@@ -91,9 +91,8 @@ export default class Component extends Event {
    }
 
    _onData({columns, colors, names}) {
-      columns = columns.slice()
       this.$dates = columns[0]
-      this.$columns = columns.splice(1, columns.length)
+      this.$columns = columns.slice(1, columns.length)
       this.$colors = colors
       this.$names = names
       this._calcVisibleColumns()
@@ -107,8 +106,8 @@ export default class Component extends Event {
    }
 
    _onLocale(locale) {
-      this.$locale = locale
-      this.$onLocale(theme)
+      this.$locale = locale      
+      this.$onLocale(locale)
    }
 
    _calcVisibleColumns() {

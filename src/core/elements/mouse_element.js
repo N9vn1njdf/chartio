@@ -15,8 +15,7 @@ export default class MouseElement extends HasChild {
    }
    
    onDown(input) {
-      if (!input.event_down && this.isHover(input.x, input.y) && this.color && this.alpha > 0 && !this.ignoreInput) {
-         input.event_down = true;
+      if (this.isHover(input.x, input.y) && this.color && this.alpha > 0 && (!this.ignoreInput || this.listeners.length == 0)) {
          this._mouse_down = true;
          this.emit('down', input, this);
       }
