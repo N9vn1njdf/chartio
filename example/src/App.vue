@@ -1,28 +1,37 @@
 <template>
 <div class="container">
   <div class="row">
-    <div class="col-12 col-md-9 p-0">
-      <p>The graph does not use third-party libraries. All code is written from scratch.</p>
+    <div class="col-12 col-md-3 mt-n4">
+      <Options ref="options" v-on:locale="(value) => locale = value" v-on:theme="setTheme" />
+    </div>
 
-      <!-- <h4>Followers</h4>
-      <Chart type="line" :data="json.line" ref="chart1" id="chart1" :locale="locale" :theme="theme"/> -->
+    <div class="col-12 col-md-9 p-3">
+      <p>К сожалению не успел сделать все графики, по личным причинам.</p>
+
+      <p>В рамках конкурса был разработан специальный фреймворк, задача которого облегчить процесс создания графиков. Основной акцент при разработке делался на универсальность и скорость работы. В результате новый тип графика(bar) был создан менее чем за сутки, без влияния на производительность</p>
+
+      <p>Его развитие я продолжу и после окончания конкурса. Поэтому просьба ознакомиться с репозиторием: </p>
+      <a target="_blank" href="https://github.com/Zeratyll/chartio">https://github.com/Zeratyll/chartio</a>
+    </div>
+
+    <div class="col-12 col-md-9 p-0">
+      <h4>Followers</h4>
+      <Chart type="line" :data="json.line" ref="chart1" id="chart1" :locale="locale" :theme="theme"/>
 
       <h4>Messages</h4>
       <Chart type="bar" :data="json.messages" ref="chart2" id="chart2" :locale="locale" :theme="theme"/>
 
-      <!-- <h4>Views</h4>
-      <Chart type="bar" :data="json.views" ref="chart3" id="chart3" :locale="locale" :theme="theme"/> -->
+      <h4>Views</h4>
+      <Chart type="bar" :data="json.views" ref="chart3" id="chart3" :locale="locale" :theme="theme"/>
 
-      <!-- <Chart type="area" :data="json.area" ref="chart3" id="chart3" :locale="locale" :theme="theme"/>  -->
-
-      <!-- <Chart :json="json[1]" ref="chart1" id="chart1" :locale="locale" :theme="theme" />
-      <Chart :json="json[2]" ref="chart2" id="chart2" :locale="locale" :theme="theme" />
-      <Chart :json="json[3]" ref="chart3" id="chart3" :locale="locale" :theme="theme" />
-      <Chart :json="json[4]" ref="chart4" id="chart4" :locale="locale" :theme="theme" /> -->
-    </div>
-
-    <div class="col-12 col-md-3">
-      <Options ref="options" v-on:locale="(value) => locale = value" v-on:theme="setTheme" />
+      <!-- <h4>Chart 1</h4>
+      <Chart type="line" :data="json_old[1]" ref="chart4" id="chart4" :locale="locale" :theme="theme" />
+      <h4>Chart 2</h4>
+      <Chart type="line" :data="json_old[2]" ref="chart5" id="chart5" :locale="locale" :theme="theme" />
+      <h4>Chart 3</h4>
+      <Chart type="line" :data="json_old[3]" ref="chart6" id="chart6" :locale="locale" :theme="theme" />
+      <h4>Chart 4</h4>
+      <Chart type="line" :data="json_old[4]" ref="chart7" id="chart7" :locale="locale" :theme="theme" /> -->
     </div>
   </div>
 </div>
@@ -41,19 +50,15 @@ export default {
     this.axios.get('./data/1/overview.json').then((response) => {
       this.json.line = response.data;      
     })
-    // this.axios.get('./data/3/overview.json').then((response) => {
-    //   this.json.messages = response.data;      
-    // })
+    this.axios.get('./data/3/overview.json').then((response) => {
+      this.json.messages = response.data;      
+    })
     this.axios.get('./data/4/overview.json').then((response) => {
       this.json.views = response.data;      
     })
-    // this.axios.get('./data/5/overview.json').then((response) => {
-    //   this.json.bar = response.data;      
+    // this.axios.get('./chart_data.json').then((response) => {
+    //   this.json_old = response.data;      
     // })
-    this.axios.get('./chart_data.json').then((response) => {
-      // response.data[0].columns.splice(1, 1)
-      this.json.messages = response.data[0];      
-    })
   },
   methods: {
     setTheme(value) {
@@ -69,12 +74,16 @@ export default {
       this.$refs.chart2.setTheme(value)
       this.$refs.chart3.setTheme(value)
       // this.$refs.chart4.setTheme(value)
+      // this.$refs.chart5.setTheme(value)
+      // this.$refs.chart6.setTheme(value)
+      // this.$refs.chart7.setTheme(value)
     }
   },
   data () {
     return {
       locale: null,
       theme: {},
+      json_old: {},
       json: {
         messages: null,
         views: null,

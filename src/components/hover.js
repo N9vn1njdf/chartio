@@ -4,11 +4,12 @@ import { Popup } from 'components'
 
 export default class Hover extends Component {
 
-   constructor({showCircles, showLine}) {
+   constructor({showCircles, showLine, showTotal}) {
       super()
 
       this.showCircles = showCircles
       this.showLine = showLine
+      this.showTotal = showTotal || false
    }
 
    /**
@@ -55,7 +56,7 @@ export default class Hover extends Component {
       this.circles = new Position()
       this.line = new Rectangle({alpha: 0, w: this.showLine ? 1 : 0, h: this.height, color: theme.lines_color})
       
-      this.popup = new Popup()
+      this.popup = new Popup({showTotal: this.showTotal})
 
       let el = new Rectangle({
          y: this.padding,
@@ -135,11 +136,15 @@ export default class Hover extends Component {
    }
 
    show() {
+      let index = null
       for(let i in this.hover_points) {
+         if (!index) {
+            index = this.hover_points[i].index
+         }
          this.hover_points[i].alpha = 1
       }
-      this.popup.show(this.hover_points[0].index, this.$scaffold.input)
-      this.emit('move', this.hover_points[0].index)
+      this.popup.show(index)
+      this.emit('move', index)
    }
 
    hide() {
@@ -152,7 +157,7 @@ export default class Hover extends Component {
       this.$update()
    }
 
-   onMove(input) {
+   onMove(input) {      
       if (input.event.target !== this.$canvas) {
          this.hide()
          return
@@ -175,7 +180,7 @@ export default class Hover extends Component {
          let circle = this.circles.children[i]
          if (this.$hidden_columns.includes(circle.column_index)) {
             continue
-         }
+         }         
 
          let x = circle.globalX
 
@@ -189,13 +194,14 @@ export default class Hover extends Component {
          circle.alpha = 0
       }
       
-      if (!closerLeft[0] && !closerRight[0]) {
+      if (closerLeft.length == 0 && closerRight.length == 0) {
          this.hide()
          return
       }
 
       // Ближайшая точка
-      if (closerRight[0] && (!closerLeft[0] || input.x - closerLeft[0].globalX >= closerRight[0].globalX - input.x)) {
+      let n = 1
+      if (closerRight[n] && (!closerLeft[n] || input.x - closerLeft[n].globalX >= closerRight[n].globalX - input.x)) {
          this.hover_points = closerRight
       } else {
          this.hover_points = closerLeft

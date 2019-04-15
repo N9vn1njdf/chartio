@@ -42,7 +42,7 @@ export default class Map extends Component {
       if (this.needMainUpdate) {
          this.calcMainYScale()
       }
-      this.animation.run([false, index])
+      this.animation.run([true, index])
    }
 
    /**
@@ -56,7 +56,7 @@ export default class Map extends Component {
       if (this.needMainUpdate) {
          this.calcMainYScale()
       }
-      this.animation.run([true, index])
+      this.animation.run([false, index])
    }
 
    /**

@@ -16,9 +16,10 @@ export default class Lines extends Component {
     * @override
     */
    $build(theme, locale) {
-      // Передается в параметрах
+      // TODO: Принимать в параметрах
       this.height = this.$canvas.height - theme.map_height - theme.dates_height
       this.margin = 20
+      
       
       // Тема
       this.lines_count = 6
@@ -71,7 +72,7 @@ export default class Lines extends Component {
       for (let i = 1; i <= this.lines_count; i++) {
          let value = (i * this.step + this.offset.y) / this.scale.y
          let y = this.height - i * this.step
-
+         
          let child = new Line({
             x2: this.width,
             y: y,
@@ -127,11 +128,12 @@ export default class Lines extends Component {
       line.alpha_fraction = line.new_alpha - line.alpha
    }
 
-   animate(progress, direction) {      
+   animate(progress) {      
       this.lines1.children.forEach(line => {
          line.alpha = line.alpha_fraction * progress + line.old_alpha
          line.y = line.y2 = line.offset_y * progress + line.old_y
       })
+
       this.lines2.children.forEach(line => {
          line.alpha = line.alpha_fraction * progress + line.old_alpha
          line.y = line.y2 = line.offset_y * progress + line.old_y

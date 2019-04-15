@@ -36,6 +36,8 @@ export default class LineChart extends Chart {
          lines_color: 'rgba(255, 255, 255, 0.1)',
          lines_count: 6,
          lines_animation_duration: 340,
+
+         y_axis_animation_duration: 340,
       }
    }
 
@@ -70,6 +72,8 @@ export default class LineChart extends Chart {
          lines_color: 'rgba(24, 45, 59, 0.1)',
          lines_count: 6,
          lines_animation_duration: 340,
+         
+         y_axis_animation_duration: 340,
       }
    }
 

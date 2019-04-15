@@ -1,5 +1,5 @@
 import { Columns } from 'components'
-import { Position, Rectangle, LinesGroup, Line } from 'elements'
+import { Position, Rectangle } from 'elements'
 
 export default class LineColumns extends Columns {
 
@@ -10,8 +10,8 @@ export default class LineColumns extends Columns {
       let children = []
       let offset = this.height + this.offset.y
       
-      for (let c_i = 0; c_i < this.$columns.length; c_i++) {
-         let column = this.$columns[c_i]
+      for (let c = 0; c < this.$columns.length; c++) {
+         let column = this.$columns[c]
          
          let group = new Position()
          let lines = []
@@ -22,8 +22,8 @@ export default class LineColumns extends Columns {
             
             let y = offset - column[i] * this.scale.y
             let h = this.height - y
-            let column_height = children[c_i-1] ? children[c_i-1].children[i-1].h : 0
-            
+            let column_height = this.getColumnHeight(c, i-1)
+
             let bar = new Rectangle({
                alpha: 0.5,
                color: this.$colors[column[0]],
@@ -32,12 +32,9 @@ export default class LineColumns extends Columns {
                y: y - column_height,
                h: h
             })
-            bar.on('move', () => bar.alpha = 1)
-            bar.on('leave', () => bar.alpha = 0.5)
 
-            bar.column_index = c_i
+            bar.column_index = c
             bar.column_value = column[i]
-            bar.column_next_value = column[i+1]
             bar.index = i-1
 
             lines.push(bar)
@@ -65,15 +62,32 @@ export default class LineColumns extends Columns {
 
             let new_y = offset - bar.column_value * this.scale.y
             let new_h = this.height - new_y
-            let column_height = bar.column_index > 0 ? this.columns.children[bar.column_index-1].children[bar.index].new_h : 0
-            
-            bar.old_y = bar.y
-            bar.new_y = new_y - column_height
-            bar.offset_y = bar.new_y - bar.y
 
-            bar.old_h = bar.h
-            bar.new_h = new_h
-            bar.offset_h = bar.new_h - bar.h
+
+            if (this.animation_data[1] == bar.column_index) {
+               bar.new_alpha = this.animation_data[0] ? 0.5 : 0
+               bar.old_alpha = bar.alpha
+               bar.alpha_fraction = bar.new_alpha - bar.alpha
+
+               bar.old_y = bar.y
+               bar.new_y = bar.y
+               bar.offset_y = bar.new_y - bar.old_y
+
+               bar.old_h = bar.h
+               bar.new_h = bar.h
+               bar.offset_h = bar.new_h - bar.old_h
+
+            } else {
+               let column_height = this.getColumnHeight(bar.column_index, bar.index)
+
+               bar.old_y = bar.y
+               bar.new_y = new_y - column_height
+               bar.offset_y = bar.new_y - bar.y
+   
+               bar.old_h = bar.h
+               bar.new_h = new_h
+               bar.offset_h = bar.new_h - bar.h
+            }
          })
       })
 
@@ -92,7 +106,7 @@ export default class LineColumns extends Columns {
          group.children.forEach(bar => {
 
             if (bar.column_index == column_index) {
-               bar.alpha = hide == false ? 1 - progress : progress
+               bar.alpha = bar.alpha_fraction * progress + bar.old_alpha
             }
 
             bar.y = bar.offset_y * progress + bar.old_y
@@ -103,17 +117,34 @@ export default class LineColumns extends Columns {
 
    onMove(index) {      
       this.columns.children.forEach(group => {
-         group.children.forEach(bar => {            
-            bar.alpha = bar.index == index ? 1 : 0.5
+         group.children.forEach(bar => {
+            if (bar.alpha !== 0) {
+               bar.alpha = bar.index == index ? 1 : 0.5
+            }
          })
       })
    }
 
    onLeave() {
       this.columns.children.forEach(group => {
-         group.children.forEach(bar => {            
-            bar.alpha = 0.5
+         group.children.forEach(bar => {
+            if (bar.alpha == 1) {
+               bar.alpha = 0.5
+            }
          })
       })
+   }
+
+   getColumnHeight(column_index, value_index) {
+      let result = 0
+
+      for (let c = 0; c < column_index; c++) {
+         if (this.$hidden_columns.includes(c)) {
+            continue
+         }
+         result += this.$columns[c][value_index+1]
+      }
+
+      return result * this.scale.y
    }
 }

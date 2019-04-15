@@ -9,6 +9,8 @@ class SlideText {
 
     this.value = document.createElement('span')
     this.value.innerText = value
+    
+    this.container.style.width = (this.value.innerText.length * 8) + 'px'
     this.container.appendChild(this.value)
   }
   

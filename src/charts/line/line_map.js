@@ -1,5 +1,4 @@
-import { Component, Animation, Curves } from 'core'
-import { LinesGroup, Line, Rectangle, Position } from 'elements'
+import { LinesGroup, Line } from 'elements'
 import { Map } from 'components'
 
 export default class LineMap extends Map {
@@ -23,15 +22,14 @@ export default class LineMap extends Map {
       })
    }
 
-   // type: 1 - показать, 0 скрыть
-   animate(progress, [type, column_index]) {
+   animate(progress, [hide, column_index]) {
       this.columns.children.forEach(lines_group => {
          
          for (let i = 0; i < lines_group.children.length; i++) {
             let line = lines_group.children[i]
 
             if (line.column_index == column_index) {
-               line.alpha = type == 0 ? 1 - progress : progress
+               line.alpha = hide ? 1 - progress : progress
             }
 
             line.y = line.offset_y * progress + line.old_y

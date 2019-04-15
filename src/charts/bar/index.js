@@ -36,6 +36,8 @@ export default class BarChart extends Chart {
          lines_color: 'rgba(255, 255, 255, 0.1)',
          lines_count: 6,
          lines_animation_duration: 340,
+
+         y_axis_animation_duration: 340,
       }
    }
 
@@ -70,6 +72,8 @@ export default class BarChart extends Chart {
          lines_color: 'rgba(24, 45, 59, 0.1)',
          lines_count: 6,
          lines_animation_duration: 340,
+
+         y_axis_animation_duration: 340,
       }
    }
 
@@ -90,7 +94,7 @@ export default class BarChart extends Chart {
    $onCreate(theme, locale) {
       this.columns = new BarColumns()
       
-      this.hover = new Hover({showCircles: false})
+      this.hover = new Hover({showCircles: false, showLine: false, showTotal: true})
       this.hover.on('move', (index) => this.columns.onMove(index))
       this.hover.on('leave', () => this.columns.onLeave())
 

@@ -2,10 +2,16 @@ import { Component } from 'core'
 import { SlideText } from '../helpers.js'
 
 /**
- * show(index, input) - показать попап
+ * show(index) - показать попап
  * hide() - скрыть попап
  */
 export default class Popup extends Component {
+
+  constructor({showTotal}) {
+    super()
+
+    this.showTotal = showTotal || false
+ }
 
   /**
    * @override
@@ -24,11 +30,15 @@ export default class Popup extends Component {
     this.createPopup()
   }
 
+  /**
+   * 
+   * @param {number} index
+   */
   show(index) {
     index = index+1
     
     // Создаем или анимируем данные для попапа
-    if (this.index == null) {      
+    if (this.index == null) {
       this.createPopupData(index)
     } else if (this.index !== index) {
       this.animatePopupData(index)
@@ -77,7 +87,7 @@ export default class Popup extends Component {
     document.body.appendChild(this.div)
   }
 
-  createColumnInfo(name, color, value) {
+  createColumnInfo(name, color, value) {    
     if (!this.slide_count) {
       this.slide_count = {}
     }
@@ -88,12 +98,12 @@ export default class Popup extends Component {
     let count = document.createElement('div')      
     count.style.color = color
     count.setAttribute('class', 'chart-popup-value-count')
-    this.slide_count[name] = new SlideText(value, count)
     div.appendChild(count)
+  
+    this.slide_count[name] = new SlideText(value, count)
 
     let label = document.createElement('div')
     label.setAttribute('class', 'chart-popup-value-label')
-
     label.innerHTML = name
     div.appendChild(label)
 
@@ -104,31 +114,53 @@ export default class Popup extends Component {
     this.div_columns.innerHTML = null
     this.date_text.innerHTML = null
     
+    let total = 0
+
     for (let i = 0; i < this.$columns.length; i++) {
-      if (!this.$hidden_columns.includes(i)) {
-        let column = this.$columns[i]
-        let value = this.$names[column[0]]
-        value = value.toLocaleString()
-        this.createColumnInfo(value, this.$colors[column[0]], column[index])
+      if (this.$hidden_columns.includes(i)) {
+        continue
       }
+
+      let column = this.$columns[i]
+      let name = this.$names[column[0]]
+      let value = column[index]
+      total += value
+      value = value.toLocaleString()
+
+      this.createColumnInfo(name, this.$colors[column[0]], value)
+    }
+
+    if (this.showTotal && this.$columns.length > 1) {
+      this.createColumnInfo('All', 'inherit', total)
     }
 
     let date = this.getDateByIndex(index)    
     this.slide_date = new SlideText(`${date[0]}, ${date[1]} ${date[2]} ${date[3]}`, this.date_text)
   }
 
-  animatePopupData(index) {
+  animatePopupData(index) {    
     let date = this.getDateByIndex(index)
     this.slide_date.animateTo(`${date[0]}, ${date[1]} ${date[2]} ${date[3]}`, this.index < index ? 'bottom' : 'top')
 
+    let total = 0
+
     for (let i = 0; i < this.$columns.length; i++) {
-      if (!this.$hidden_columns.includes(i)) {
-        let column = this.$columns[i]
-        let name = this.$names[column[0]]
-        let value = column[index]
-        value = value.toLocaleString()
-        this.slide_count[name].animateTo(value, this.index < index ? 'bottom' : 'top')
+      if (this.$hidden_columns.includes(i)) {
+        continue
       }
+
+      let column = this.$columns[i]
+      let name = this.$names[column[0]]
+      let value = column[index]
+      total += value
+      value = value.toLocaleString()
+
+      this.slide_count[name].animateTo(value, this.index < index ? 'bottom' : 'top')
+    }
+
+    if (this.showTotal && this.$columns.length > 1) {
+      total = total.toLocaleString()
+      this.slide_count['All'].animateTo(total, this.index < index ? 'bottom' : 'top')
     }
   }
 
